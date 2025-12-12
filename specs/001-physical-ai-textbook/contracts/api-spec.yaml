@@ -1,0 +1,232 @@
+openapi: 3.0.3
+info:
+  title: Physical AI Textbook API
+  description: Backend API for RAG chatbot, authentication, personalization, and translation
+  version: 1.0.0
+  contact:
+    name: Panaversity Hackathon Team
+
+servers:
+  - url: https://api.physical-ai-textbook.com/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Development
+
+paths:
+  /chatbot/ask:
+    post:
+      summary: Ask chatbot a question
+      tags: [Chatbot]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question:
+                  type: string
+                  description: User's question
+                  example: "What is a ROS 2 node?"
+                selected_text:
+                  type: string
+                  description: Optional text user selected for context
+                  example: "ROS 2 provides a publish-subscribe pattern..."
+                user_id:
+                  type: string
+                  format: uuid
+                  description: Optional user ID for logged-in users
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    example: "A ROS 2 node is a process that performs computation..."
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chapter:
+                          type: string
+                        module:
+                          type: string
+                        file_path:
+                          type: string
+                        heading:
+                          type: string
+                  conversation_id:
+                    type: string
+                    format: uuid
+
+  /auth/signup:
+    post:
+      summary: Create new user account
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, software_background, hardware_background]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                software_background:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                hardware_background:
+                  type: string
+                  enum: [no_experience, hobbyist, professional]
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+
+  /auth/signin:
+    post:
+      summary: Sign in to existing account
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+      responses:
+        '200':
+          description: Signed in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+
+  /personalize:
+    post:
+      summary: Personalize chapter content
+      tags: [Personalization]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [chapter_path, user_id, original_content]
+              properties:
+                chapter_path:
+                  type: string
+                  example: "module-1-ros2/week2-nodes.md"
+                user_id:
+                  type: string
+                  format: uuid
+                original_content:
+                  type: string
+                  description: Original markdown content
+      responses:
+        '200':
+          description: Personalized content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  personalized_content:
+                    type: string
+                    description: Adapted markdown content
+                  cached:
+                    type: boolean
+
+  /translate:
+    post:
+      summary: Translate chapter to Urdu
+      tags: [Translation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [chapter_path, content]
+              properties:
+                chapter_path:
+                  type: string
+                content:
+                  type: string
+                  description: Original markdown content
+                target_language:
+                  type: string
+                  enum: [urdu]
+                  default: urdu
+      responses:
+        '200':
+          description: Translated content
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  translated_content:
+                    type: string
+                  cached:
+                    type: boolean
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        software_background:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        hardware_background:
+          type: string
+          enum: [no_experience, hobbyist, professional]
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
