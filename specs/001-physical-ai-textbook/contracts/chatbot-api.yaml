@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: Physical AI Textbook - Chatbot API
+  description: RAG-powered chatbot API for answering questions about textbook content
+  version: 1.0.0
+  contact:
+    name: Panaversity Hackathon Team
+
+servers:
+  - url: https://api.physical-ai-textbook.com/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Development
+
+paths:
+  /chatbot/ask:
+    post:
+      summary: Ask chatbot a question
+      description: Submit a question to the RAG chatbot. Optionally include selected text for context-aware answers.
+      tags: [Chatbot]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [question]
+              properties:
+                question:
+                  type: string
+                  description: User's question about the textbook content
+                  example: "What is a ROS 2 node?"
+                selected_text:
+                  type: string
+                  description: Optional text user selected for context
+                  example: "ROS 2 provides a publish-subscribe pattern..."
+                user_id:
+                  type: string
+                  format: uuid
+                  description: Optional user ID for logged-in users (enables conversation history)
+      responses:
+        '200':
+          description: Successful response with answer and sources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  answer:
+                    type: string
+                    description: AI-generated answer based on textbook content
+                    example: "A ROS 2 node is a process that performs computation..."
+                  sources:
+                    type: array
+                    description: References to book sections used to generate the answer
+                    items:
+                      type: object
+                      properties:
+                        chapter:
+                          type: string
+                          example: "week2-nodes"
+                        module:
+                          type: string
+                          example: "module-1-ros2"
+                        file_path:
+                          type: string
+                          example: "module-1-ros2/week2-nodes.md"
+                        heading:
+                          type: string
+                          example: "Understanding ROS 2 Nodes"
+                  conversation_id:
+                    type: string
+                    format: uuid
+                    description: Unique ID for this conversation (saved to database)
+        '400':
+          description: Bad request (missing question)
+        '500':
+          description: Server error (OpenAI API failure, vector search failure)

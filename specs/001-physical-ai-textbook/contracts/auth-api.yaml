@@ -1,0 +1,126 @@
+openapi: 3.0.3
+info:
+  title: Physical AI Textbook - Authentication API
+  description: User authentication and profile management using better-auth
+  version: 1.0.0
+  contact:
+    name: Panaversity Hackathon Team
+
+servers:
+  - url: https://api.physical-ai-textbook.com/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Development
+
+paths:
+  /auth/signup:
+    post:
+      summary: Create new user account
+      description: Register a new user with email, password, and background information
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password, software_background, hardware_background]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "student@example.com"
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  description: Minimum 8 characters
+                  example: "SecurePass123"
+                software_background:
+                  type: string
+                  enum: [beginner, intermediate, advanced]
+                  description: User's programming experience level
+                  example: "intermediate"
+                hardware_background:
+                  type: string
+                  enum: [no_experience, hobbyist, professional]
+                  description: User's robotics/hardware experience level
+                  example: "hobbyist"
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '400':
+          description: Bad request (invalid email, weak password, missing fields)
+        '409':
+          description: Conflict (email already exists)
+
+  /auth/signin:
+    post:
+      summary: Sign in to existing account
+      description: Authenticate user with email and password
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "student@example.com"
+                password:
+                  type: string
+                  format: password
+                  example: "SecurePass123"
+      responses:
+        '200':
+          description: Signed in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  token:
+                    type: string
+                    description: JWT token for authentication
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        '401':
+          description: Unauthorized (invalid email or password)
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        email:
+          type: string
+          format: email
+          example: "student@example.com"
+        software_background:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: "intermediate"
+        hardware_background:
+          type: string
+          enum: [no_experience, hobbyist, professional]
+          example: "hobbyist"

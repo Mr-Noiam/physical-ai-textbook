@@ -33,7 +33,7 @@ Create an AI-native interactive textbook platform for teaching Physical AI & Hum
 - E2E: Playwright (optional, time permitting)
 
 **Target Platform**:
-- **Frontend**: GitHub Pages (static hosting), Vercel (static hosting)
+- **Frontend**: GitHub Pages (static hosting) or Vercel (static hosting)
 - **Backend**: Railway.app or Render.com (Free tier with FastAPI)
 - **Browsers**: Modern browsers (Chrome, Firefox, Safari, Edge)
 
@@ -79,14 +79,14 @@ Create an AI-native interactive textbook platform for teaching Physical AI & Hum
 specs/001-physical-ai-textbook/
 ├── spec.md              # ✅ Feature specification
 ├── plan.md              # ✅ This file (/sp.plan output)
-├── research.md          # ⏳ Phase 0 output (technology decisions)
-├── data-model.md        # ⏳ Phase 1 output (database schemas)
-├── quickstart.md        # ⏳ Phase 1 output (setup instructions)
-├── contracts/           # ⏳ Phase 1 output (API specifications)
+├── research.md          # ✅ Phase 0 output (technology decisions)
+├── data-model.md        # ✅ Phase 1 output (database schemas)
+├── quickstart.md        # ✅ Phase 1 output (setup instructions)
+├── contracts/           # ✅ Phase 1 output (API specifications)
 │   ├── chatbot-api.yaml
 │   ├── auth-api.yaml
 │   └── personalization-api.yaml
-└── tasks.md             # ⏳ Phase 2 output (/sp.tasks - NOT created by /sp.plan)
+└── tasks.md             # ✅ Phase 2 output (/sp.tasks)
 ```
 
 ### Source Code (repository root)

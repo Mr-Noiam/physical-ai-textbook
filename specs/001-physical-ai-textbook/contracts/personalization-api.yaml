@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Physical AI Textbook - Personalization & Translation API
+  description: Content personalization and Urdu translation services
+  version: 1.0.0
+  contact:
+    name: Panaversity Hackathon Team
+
+servers:
+  - url: https://api.physical-ai-textbook.com/api/v1
+    description: Production
+  - url: http://localhost:8000/api/v1
+    description: Development
+
+paths:
+  /personalize:
+    post:
+      summary: Personalize chapter content
+      description: Adapt chapter content based on user's skill level (beginner/intermediate/advanced)
+      tags: [Personalization]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [chapter_path, user_id, original_content]
+              properties:
+                chapter_path:
+                  type: string
+                  description: Relative path to chapter file
+                  example: "module-1-ros2/week2-nodes.md"
+                user_id:
+                  type: string
+                  format: uuid
+                  description: User ID to determine skill level
+                  example: "123e4567-e89b-12d3-a456-426614174000"
+                original_content:
+                  type: string
+                  description: Original markdown content of the chapter
+                  example: "# ROS 2 Nodes\n\nA ROS 2 node is..."
+      responses:
+        '200':
+          description: Personalized content returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  personalized_content:
+                    type: string
+                    description: Adapted markdown content based on user skill level
+                    example: "# ROS 2 Nodes (Beginner-Friendly)\n\nA ROS 2 node is a building block..."
+                  cached:
+                    type: boolean
+                    description: Whether content was retrieved from cache
+                    example: false
+        '401':
+          description: Unauthorized (missing or invalid JWT token)
+        '404':
+          description: User not found
+
+  /translate:
+    post:
+      summary: Translate chapter to Urdu
+      description: Translate chapter content to Urdu while preserving code examples in English
+      tags: [Translation]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [chapter_path, content]
+              properties:
+                chapter_path:
+                  type: string
+                  description: Relative path to chapter file
+                  example: "module-1-ros2/week2-nodes.md"
+                content:
+                  type: string
+                  description: Original markdown content in English
+                  example: "# ROS 2 Nodes\n\nA ROS 2 node is..."
+                target_language:
+                  type: string
+                  enum: [urdu]
+                  default: urdu
+                  description: Target language (currently only Urdu supported)
+                  example: "urdu"
+      responses:
+        '200':
+          description: Translated content returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  translated_content:
+                    type: string
+                    description: Urdu translated markdown content (code examples remain in English)
+                    example: "# ROS 2 نوڈز\n\nایک ROS 2 نوڈ ایک..."
+                  cached:
+                    type: boolean
+                    description: Whether translation was retrieved from cache
+                    example: true
+        '401':
+          description: Unauthorized (missing or invalid JWT token)
+        '500':
+          description: Translation service error
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from /auth/signup or /auth/signin
