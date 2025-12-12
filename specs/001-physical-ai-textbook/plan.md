@@ -33,7 +33,7 @@ Create an AI-native interactive textbook platform for teaching Physical AI & Hum
 - E2E: Playwright (optional, time permitting)
 
 **Target Platform**:
-- **Frontend**: GitHub Pages (static hosting), Netlify (static hosting), Vercel (static hosting), Firebase Hosting (static hosting), AWS Amplify (static hosting), Cloudflare Pages (static hosting), Vercel (static hosting), Firebase Hosting (static hosting), AWS Amplify (static hosting), Cloudflare Pages (static hosting), Netlify (static hosting), Vercel (static hosting), Firebase Hosting (static hosting), AWS Amplify (static hosting), Cloudflare Pages (static hosting)
+- **Frontend**: GitHub Pages (static hosting), Vercel (static hosting)
 - **Backend**: Railway.app or Render.com (Free tier with FastAPI)
 - **Browsers**: Modern browsers (Chrome, Firefox, Safari, Edge)
 
