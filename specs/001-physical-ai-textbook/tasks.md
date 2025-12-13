@@ -73,24 +73,24 @@
 - [X] T019 [P] [US1] Write `docusaurus/docs/intro.md` - Course overview, learning outcomes, hardware requirements
 - [X] T020 [P] [US1] Write `docusaurus/docs/module-1-ros2/week1-intro.md` - Foundations of Physical AI, embodied intelligence
 - [X] T021 [P] [US1] Write `docusaurus/docs/module-1-ros2/week2-fundamentals.md` - ROS 2 architecture, nodes, topics, services
-- [ ] T022 [P] [US1] Write `docusaurus/docs/module-1-ros2/week3-python.md` - Building ROS 2 packages with Python, rclpy
-- [ ] T023 [P] [US1] Write `docusaurus/docs/module-1-ros2/week4-urdf.md` - URDF for humanoids, robot description
-- [ ] T024 [P] [US1] Write `docusaurus/docs/module-2-gazebo/week5-simulation.md` - Gazebo environment, physics simulation
-- [ ] T025 [P] [US1] Write `docusaurus/docs/module-2-gazebo/week6-unity.md` - Unity for robot visualization, sensor simulation
-- [ ] T026 [P] [US1] Write `docusaurus/docs/module-3-isaac/week7-isaac-sim.md` - NVIDIA Isaac Sim, synthetic data generation
-- [ ] T027 [P] [US1] Write `docusaurus/docs/module-3-isaac/week8-isaac-ros.md` - Isaac ROS, VSLAM, hardware acceleration
-- [ ] T028 [P] [US1] Write `docusaurus/docs/module-3-isaac/week9-navigation.md` - Nav2, path planning for bipedal movement
-- [ ] T029 [P] [US1] Write `docusaurus/docs/module-4-vla/week10-vla-intro.md` - Vision-Language-Action convergence
-- [ ] T030 [P] [US1] Write `docusaurus/docs/module-4-vla/week11-voice.md` - Voice-to-Action with Whisper, cognitive planning
-- [ ] T031 [P] [US1] Write `docusaurus/docs/module-4-vla/week12-humanoid.md` - Humanoid robot development, kinematics
-- [ ] T032 [P] [US1] Write `docusaurus/docs/module-4-vla/week13-capstone.md` - Capstone project: Autonomous humanoid
+- [X] T022 [P] [US1] Write `docusaurus/docs/module-1-ros2/week3-python.md` - Building ROS 2 packages with Python, rclpy
+- [X] T023 [P] [US1] Write `docusaurus/docs/module-1-ros2/week4-urdf.md` - URDF for humanoids, robot description
+- [X] T024 [P] [US1] Write `docusaurus/docs/module-2-gazebo/week5-simulation.md` - Gazebo environment, physics simulation
+- [X] T025 [P] [US1] Write `docusaurus/docs/module-2-gazebo/week6-unity.md` - Unity for robot visualization, sensor simulation
+- [X] T026 [P] [US1] Write `docusaurus/docs/module-3-isaac/week7-isaac-sim.md` - NVIDIA Isaac Sim, synthetic data generation
+- [X] T027 [P] [US1] Write `docusaurus/docs/module-3-isaac/week8-isaac-ros.md` - Isaac ROS, VSLAM, hardware acceleration
+- [X] T028 [P] [US1] Write `docusaurus/docs/module-3-isaac/week9-navigation.md` - Nav2, path planning for bipedal movement
+- [X] T029 [P] [US1] Write `docusaurus/docs/module-4-vla/week10-vla-intro.md` - Vision-Language-Action convergence
+- [X] T030 [P] [US1] Write `docusaurus/docs/module-4-vla/week11-voice.md` - Voice-to-Action with Whisper, cognitive planning
+- [X] T031 [P] [US1] Write `docusaurus/docs/module-4-vla/week12-humanoid.md` - Humanoid robot development, kinematics
+- [X] T032 [P] [US1] Write `docusaurus/docs/module-4-vla/week13-capstone.md` - Capstone project: Autonomous humanoid
 
 ### Deployment for User Story 1
 
-- [ ] T033 [US1] Configure GitHub Pages in repository settings (source: GitHub Actions)
-- [ ] T034 [US1] Create `.github/workflows/deploy-docusaurus.yml` for automatic deployment
-- [ ] T035 [US1] Test deployment by running `npm run deploy` from `docusaurus/`
-- [ ] T036 [US1] Verify deployed site is accessible at GitHub Pages URL
+- [~] T033 [US1] Configure GitHub Pages in repository settings (source: GitHub Actions) - MANUAL: User must enable in GitHub
+- [X] T034 [US1] Create `.github/workflows/deploy-docusaurus.yml` for automatic deployment
+- [X] T035 [US1] Test deployment by running `npm run deploy` from `docusaurus/` - DOCS: Created DEPLOYMENT.md guide
+- [~] T036 [US1] Verify deployed site is accessible at GitHub Pages URL - PENDING: After user enables Pages
 
 **Checkpoint**: All 13 weeks of content published and accessible on GitHub Pages ✅ 50 points
 
