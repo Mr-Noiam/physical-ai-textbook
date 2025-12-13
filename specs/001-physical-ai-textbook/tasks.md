@@ -70,9 +70,9 @@
 
 ### Content Writing for User Story 1
 
-- [ ] T019 [P] [US1] Write `docusaurus/docs/intro.md` - Course overview, learning outcomes, hardware requirements
-- [ ] T020 [P] [US1] Write `docusaurus/docs/module-1-ros2/week1-intro.md` - Foundations of Physical AI, embodied intelligence
-- [ ] T021 [P] [US1] Write `docusaurus/docs/module-1-ros2/week2-fundamentals.md` - ROS 2 architecture, nodes, topics, services
+- [X] T019 [P] [US1] Write `docusaurus/docs/intro.md` - Course overview, learning outcomes, hardware requirements
+- [X] T020 [P] [US1] Write `docusaurus/docs/module-1-ros2/week1-intro.md` - Foundations of Physical AI, embodied intelligence
+- [X] T021 [P] [US1] Write `docusaurus/docs/module-1-ros2/week2-fundamentals.md` - ROS 2 architecture, nodes, topics, services
 - [ ] T022 [P] [US1] Write `docusaurus/docs/module-1-ros2/week3-python.md` - Building ROS 2 packages with Python, rclpy
 - [ ] T023 [P] [US1] Write `docusaurus/docs/module-1-ros2/week4-urdf.md` - URDF for humanoids, robot description
 - [ ] T024 [P] [US1] Write `docusaurus/docs/module-2-gazebo/week5-simulation.md` - Gazebo environment, physics simulation
