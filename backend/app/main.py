@@ -48,9 +48,13 @@ async def health_check():
     }
 
 
-# Future endpoint routers will be added here
-# from app.api.v1 import chatbot, auth, personalize, translate
-# app.include_router(chatbot.router, prefix="/api/v1", tags=["chatbot"])
+# API routers
+from app.api.v1 import chatbot
+
+app.include_router(chatbot.router, tags=["chatbot"])
+
+# Future routers:
+# from app.api.v1 import auth, personalize, translate
 # app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
 # app.include_router(personalize.router, prefix="/api/v1", tags=["personalize"])
 # app.include_router(translate.router, prefix="/api/v1", tags=["translate"])
