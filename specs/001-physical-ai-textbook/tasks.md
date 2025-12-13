@@ -32,11 +32,11 @@
 
 **⚠️ CRITICAL**: No content work can begin until this phase is complete
 
-- [ ] T005 [SETUP] Initialize Docusaurus project in `docusaurus/` directory using `npx create-docusaurus@latest`
-- [ ] T006 [SETUP] Configure `docusaurus/docusaurus.config.js` with site title "Physical AI & Humanoid Robotics", GitHub Pages deployment settings
-- [ ] T007 [SETUP] Create module directories in `docusaurus/docs/`: `module-1-ros2/`, `module-2-gazebo/`, `module-3-isaac/`, `module-4-vla/`
-- [ ] T008 [SETUP] Configure `docusaurus/sidebars.js` with 4 module categories
-- [ ] T009 [SETUP] Test Docusaurus build locally with `npm start`
+- [X] T005 [SETUP] Initialize Docusaurus project in `docusaurus/` directory using `npx create-docusaurus@latest`
+- [X] T006 [SETUP] Configure `docusaurus/docusaurus.config.js` with site title "Physical AI & Humanoid Robotics", GitHub Pages deployment settings
+- [X] T007 [SETUP] Create module directories in `docusaurus/docs/`: `module-1-ros2/`, `module-2-gazebo/`, `module-3-isaac/`, `module-4-vla/`
+- [X] T008 [SETUP] Configure `docusaurus/sidebars.js` with 4 module categories
+- [X] T009 [SETUP] Test Docusaurus build locally with `npm start`
 
 **Checkpoint**: Docusaurus running locally on port 3000
 
@@ -48,15 +48,15 @@
 
 **⚠️ CRITICAL**: No RAG work can begin until this phase is complete
 
-- [ ] T010 [SETUP] Create Python virtual environment in `backend/` with `python -m venv venv`
-- [ ] T011 [SETUP] Create `backend/requirements.txt` with dependencies: fastapi, uvicorn, openai, qdrant-client, psycopg[binary], sqlalchemy, python-jose, passlib, python-multipart, langchain
-- [ ] T012 [SETUP] Create `backend/app/main.py` with FastAPI app initialization and CORS middleware
-- [ ] T013 [SETUP] Create `backend/app/config.py` for environment variable management
-- [ ] T014 [P] [SETUP] Create database connection in `backend/app/db/neon.py` using SQLAlchemy
-- [ ] T015 [P] [SETUP] Create Qdrant client in `backend/app/db/qdrant.py`
-- [ ] T016 [SETUP] Create database models in `backend/app/db/models.py` (User, ChatMessage, PersonalizationCache, TranslationCache)
-- [ ] T017 [SETUP] Create database setup script `backend/scripts/setup_database.py` to create all tables
-- [ ] T018 [SETUP] Test FastAPI server runs with `uvicorn app.main:app --reload`
+- [X] T010 [SETUP] Create Python virtual environment in `backend/` with `python -m venv venv`
+- [X] T011 [SETUP] Create `backend/requirements.txt` with dependencies: fastapi, uvicorn, openai, qdrant-client, psycopg[binary], sqlalchemy, python-jose, passlib, python-multipart, langchain
+- [X] T012 [SETUP] Create `backend/app/main.py` with FastAPI app initialization and CORS middleware
+- [X] T013 [SETUP] Create `backend/app/config.py` for environment variable management
+- [X] T014 [P] [SETUP] Create database connection in `backend/app/db/neon.py` using SQLAlchemy
+- [X] T015 [P] [SETUP] Create Qdrant client in `backend/app/db/qdrant.py`
+- [X] T016 [SETUP] Create database models in `backend/app/db/models.py` (User, ChatMessage, PersonalizationCache, TranslationCache)
+- [X] T017 [SETUP] Create database setup script `backend/scripts/setup_database.py` to create all tables
+- [X] T018 [SETUP] Test FastAPI server runs with `uvicorn app.main:app --reload`
 
 **Checkpoint**: FastAPI running locally on port 8000 with /docs accessible
 
