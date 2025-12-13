@@ -17,10 +17,10 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 [P] [SETUP] Create root project structure with `docusaurus/` and `backend/` directories
-- [ ] T002 [P] [SETUP] Create `.env.example` file with all required environment variables
-- [ ] T003 [P] [SETUP] Update root `README.md` with project overview and setup instructions
-- [ ] T004 [P] [SETUP] Create `.gitignore` entries for `node_modules/`, `venv/`, `.env`, `__pycache__/`
+- [X] T001 [P] [SETUP] Create root project structure with `docusaurus/` and `backend/` directories
+- [X] T002 [P] [SETUP] Create `.env.example` file with all required environment variables
+- [X] T003 [P] [SETUP] Update root `README.md` with project overview and setup instructions
+- [X] T004 [P] [SETUP] Create `.gitignore` entries for `node_modules/`, `venv/`, `.env`, `__pycache__/`
 
 **Checkpoint**: Basic project structure created
 
