@@ -49,7 +49,7 @@ async def health_check():
 
 
 # API routers
-from app.api.v1 import chatbot
+from app.api.v1 importms chatbot
 
 app.include_router(chatbot.router, tags=["chatbot"])
 

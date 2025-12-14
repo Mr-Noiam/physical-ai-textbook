@@ -104,7 +104,7 @@
 
 ### RAG Backend Implementation
 
-- [ ] T037 [US2] Create `backend/app/rag/embeddings.py` with OpenAI embedding generation function
+- [X] T037 [US2] Create `backend/app/rag/embeddings.py` with OpenAI embedding generation function
 - [ ] T038 [US2] Create `backend/app/rag/ingestion.py` to read markdown files, split into chunks (~500 tokens), generate embeddings
 - [ ] T039 [US2] Create `backend/scripts/ingest_content.py` to batch-process all Docusaurus content into Qdrant
 - [ ] T040 [US2] Create Qdrant collection `book_content` with 1536 dimensions, cosine distance
