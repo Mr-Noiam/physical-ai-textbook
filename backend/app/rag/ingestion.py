@@ -132,10 +132,10 @@ def process_markdown_file(file_path: Path, relative_path: str) -> List[TextChunk
         # Chunk the section text
         text_chunks = chunk_text(section_text, max_tokens=500)
 
-        for chunk_text in text_chunks:
-            if chunk_text.strip():  # Skip empty chunks
+        for text_chunk in text_chunks:
+            if text_chunk.strip():  # Skip empty chunks
                 chunk = TextChunk(
-                    text=chunk_text,
+                    text=text_chunk,
                     source_file=relative_path,
                     section_title=f"{doc_title} - {section_title}",
                     chunk_index=chunk_index
@@ -172,10 +172,10 @@ def read_all_markdown_files(docs_directory: Path) -> List[TextChunk]:
         try:
             chunks = process_markdown_file(md_file, relative_path)
             all_chunks.extend(chunks)
-            print(f"  → Created {len(chunks)} chunks")
+            print(f"  -> Created {len(chunks)} chunks")
 
         except Exception as e:
-            print(f"  ✗ Error processing {relative_path}: {e}")
+            print(f"  ERROR processing {relative_path}: {e}")
 
     print(f"\nTotal chunks created: {len(all_chunks)}")
     return all_chunks

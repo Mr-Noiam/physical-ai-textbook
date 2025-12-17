@@ -7,8 +7,13 @@ from sqlalchemy.orm import sessionmaker
 from app.config import settings
 
 # Create SQLAlchemy engine
+# Use psycopg (version 3) driver by adding +psycopg to postgresql://
+database_url = settings.database_url
+if database_url.startswith("postgresql://"):
+    database_url = database_url.replace("postgresql://", "postgresql+psycopg://", 1)
+
 engine = create_engine(
-    settings.database_url,
+    database_url,
     pool_pre_ping=True,  # Verify connections before using
     echo=settings.environment == "development",  # Log SQL queries in dev
 )

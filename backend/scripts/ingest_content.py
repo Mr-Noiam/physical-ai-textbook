@@ -27,7 +27,7 @@ import uuid
 
 
 COLLECTION_NAME = "book_content"
-BATCH_SIZE = 100  # Process 100 chunks at a time
+BATCH_SIZE = 20  # Process 20 chunks at a time (smaller for free tier)
 
 
 def create_collection_if_not_exists(client):
@@ -89,7 +89,7 @@ def ingest_chunks(client, chunks):
         try:
             embeddings = generate_embeddings_batch(texts)
         except Exception as e:
-            print(f"  ✗ Error generating embeddings: {e}")
+            print(f"  [ERROR] Error generating embeddings: {e}")
             continue
 
         # Prepare points for Qdrant
@@ -109,12 +109,12 @@ def ingest_chunks(client, chunks):
                 collection_name=COLLECTION_NAME,
                 points=points
             )
-            print(f"  ✓ Uploaded {len(points)} points")
+            print(f"  [OK] Uploaded {len(points)} points")
 
         except Exception as e:
-            print(f"  ✗ Error uploading to Qdrant: {e}")
+            print(f"  [ERROR] Error uploading to Qdrant: {e}")
 
-    print(f"\n✓ Ingestion complete! {total_chunks} chunks processed")
+    print(f"\n[OK] Ingestion complete! {total_chunks} chunks processed")
 
 
 def main():
@@ -127,14 +127,14 @@ def main():
     docs_path = Path(__file__).parent.parent.parent / "docusaurus" / "docs"
 
     if not docs_path.exists():
-        print(f"✗ Error: Docs directory not found at {docs_path}")
+        print(f"[ERROR] Docs directory not found at {docs_path}")
         sys.exit(1)
 
     print(f"\nReading markdown files from: {docs_path}")
     chunks = read_all_markdown_files(docs_path)
 
     if not chunks:
-        print("✗ No chunks created. Check markdown files.")
+        print("[ERROR] No chunks created. Check markdown files.")
         sys.exit(1)
 
     # Show statistics
@@ -150,9 +150,9 @@ def main():
     print("\nConnecting to Qdrant...")
     try:
         client = get_qdrant_client()
-        print("✓ Connected to Qdrant")
+        print("[OK] Connected to Qdrant")
     except Exception as e:
-        print(f"✗ Error connecting to Qdrant: {e}")
+        print(f"[ERROR] Error connecting to Qdrant: {e}")
         print("\nMake sure:")
         print("  1. Qdrant is running (or Qdrant Cloud URL is set)")
         print("  2. QDRANT_URL and QDRANT_API_KEY are in .env")
@@ -170,7 +170,7 @@ def main():
     print(f"Collection size: {collection_info.points_count} points")
 
     print("\n" + "=" * 60)
-    print("✓ Ingestion complete!")
+    print("[OK] Ingestion complete!")
     print("=" * 60)
 
 

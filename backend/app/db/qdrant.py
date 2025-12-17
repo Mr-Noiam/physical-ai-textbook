@@ -1,8 +1,10 @@
 """
 Qdrant Cloud vector database client for RAG implementation.
 """
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
+
 from app.config import settings
 
 
@@ -43,3 +45,11 @@ class QdrantService:
 
 # Global Qdrant service instance
 qdrant_service = QdrantService()
+
+
+def get_qdrant_client():
+    """Get the Qdrant client instance."""
+    return qdrant_service.client
+
+
+# DATA STRUCTURES - Complete Content List
