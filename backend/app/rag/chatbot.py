@@ -20,8 +20,8 @@ from app.rag.retrieval import (
 client = OpenAI(api_key=settings.openai_api_key)
 
 # Model configuration
-CHAT_MODEL = settings.openai_model
-MAX_TOKENS = 800
+CHAT_MODEL = settings.openai_model  # Now using gpt-4o-mini for speed
+MAX_TOKENS = 500  # Reduced for faster responses (still comprehensive)
 TEMPERATURE = 0.7
 
 

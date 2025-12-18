@@ -11,7 +11,7 @@ from app.rag.embeddings import generate_embedding
 
 
 COLLECTION_NAME = "book_content"
-DEFAULT_TOP_K = 5  # Return top 5 most relevant chunks
+DEFAULT_TOP_K = 3  # Return top 3 most relevant chunks (faster, still accurate)
 
 
 class SearchResult:
