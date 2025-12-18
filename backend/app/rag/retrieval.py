@@ -65,7 +65,7 @@ def search_similar_chunks(query: str, top_k: int = DEFAULT_TOP_K) -> List[Search
             collection_name=COLLECTION_NAME,
             query_vector=query_embedding,
             limit=top_k,
-            score_threshold=0.7  # Only return results with >70% similarity
+            score_threshold=0.6  # Only return results with >60% similarity (lowered for better recall)
         )
 
         # 4. Convert to SearchResult objects

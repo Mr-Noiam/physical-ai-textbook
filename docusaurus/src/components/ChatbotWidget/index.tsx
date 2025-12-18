@@ -14,10 +14,8 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './styles.module.css';
-
-// API configuration
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -33,6 +31,9 @@ interface Source {
 }
 
 export default function ChatbotWidget(): JSX.Element {
+  const { siteConfig } = useDocusaurusContext();
+  const API_BASE_URL = (siteConfig.customFields?.apiBaseUrl as string) || 'http://localhost:8000';
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -192,11 +193,26 @@ export default function ChatbotWidget(): JSX.Element {
               <div className={styles.welcomeMessage}>
                 <p>👋 Hi! I'm your AI teaching assistant.</p>
                 <p>Ask me anything about the textbook content:</p>
-                <ul>
-                  <li>What is a ROS 2 node?</li>
-                  <li>How do I create a URDF file?</li>
-                  <li>Explain Isaac Sim synthetic data</li>
-                </ul>
+                <div className={styles.suggestionButtons}>
+                  <button
+                    className={styles.suggestionButton}
+                    onClick={() => sendMessage("What is a ROS 2 node?")}
+                  >
+                    What is a ROS 2 node?
+                  </button>
+                  <button
+                    className={styles.suggestionButton}
+                    onClick={() => sendMessage("How do I create a URDF file?")}
+                  >
+                    How do I create a URDF file?
+                  </button>
+                  <button
+                    className={styles.suggestionButton}
+                    onClick={() => sendMessage("Explain Isaac Sim synthetic data")}
+                  >
+                    Explain Isaac Sim synthetic data
+                  </button>
+                </div>
                 <p>You can also select text and ask about it!</p>
               </div>
             ) : (

@@ -195,6 +195,37 @@
   font-style: italic;
 }
 
+/* Suggestion buttons */
+.suggestionButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.suggestionButton {
+  padding: 10px 16px;
+  border: 2px solid var(--ifm-color-primary);
+  border-radius: 8px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-primary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.suggestionButton:hover {
+  background: var(--ifm-color-primary);
+  color: white;
+  transform: translateX(4px);
+}
+
+.suggestionButton:active {
+  transform: translateX(2px);
+}
+
 /* Message bubbles */
 .message {
   display: flex;

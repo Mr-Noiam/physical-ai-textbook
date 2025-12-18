@@ -746,11 +746,11 @@ ros2 launch humanoid_assistant humanoid_assistant.launch.py use_sim_time:=false
 
 | Component | Target Latency | Optimization |
 |-----------|---------------|--------------|
-| Voice recognition | <2s | Use Whisper base model |
-| Object detection | <500ms | CLIP ViT-B/32, GPU |
-| Navigation planning | <1s | Nav2 GPU costmaps |
-| IK solving | <100ms | Cached solutions |
-| Total task cycle | <10s | Parallel execution |
+| Voice recognition | &lt;2s | Use Whisper base model |
+| Object detection | &lt;500ms | CLIP ViT-B/32, GPU |
+| Navigation planning | &lt;1s | Nav2 GPU costmaps |
+| IK solving | &lt;100ms | Cached solutions |
+| Total task cycle | &lt;10s | Parallel execution |
 
 ### GPU Utilization
 

@@ -114,7 +114,7 @@ Building an autonomous humanoid requires integrating multiple layers:
 **Requirements**:
 - **Perception**: 30+ FPS for vision processing
 - **Control**: 100+ Hz for stable motor control
-- **Planning**: <100ms for reactive behaviors
+- **Planning**: &lt;100ms for reactive behaviors
 
 **Solutions**:
 - **Hardware acceleration**: GPUs, TPUs, specialized chips

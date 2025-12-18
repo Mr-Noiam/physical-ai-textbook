@@ -11,7 +11,7 @@ from datetime import datetime
 
 from app.rag.chatbot import generate_answer, get_conversation_response
 from app.db.models import ChatMessage, User
-from app.db.neon import get_db_session
+from app.db.neon import get_db
 from sqlalchemy.orm import Session
 
 
@@ -72,7 +72,7 @@ class AskQuestionResponse(BaseModel):
 @router.post("/ask", response_model=AskQuestionResponse)
 async def ask_question(
     request: AskQuestionRequest,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db)
 ):
     """
     Ask a question to the RAG chatbot.
@@ -165,7 +165,7 @@ async def ask_question(
 async def get_conversation_history(
     user_id: int,
     limit: int = 20,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db)
 ):
     """
     Get conversation history for a user.
@@ -210,7 +210,7 @@ async def get_conversation_history(
 @router.delete("/history/{user_id}")
 async def clear_conversation_history(
     user_id: int,
-    db: Session = Depends(get_db_session)
+    db: Session = Depends(get_db)
 ):
     """
     Clear conversation history for a user.

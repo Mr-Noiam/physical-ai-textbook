@@ -1,8 +1,10 @@
 """
 FastAPI application entry point for Physical AI & Humanoid Robotics textbook backend.
 """
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
 from app.config import settings
 
 # Create FastAPI app
@@ -30,26 +32,50 @@ async def root():
     return {
         "message": "Physical AI & Humanoid Robotics API",
         "status": "healthy",
-        "version": "1.0.0"
+        "version": "1.0.0",
     }
 
 
 @app.get("/health")
 async def health_check():
     """Detailed health check endpoint."""
+    from sqlalchemy import text
+    from app.db.neon import engine
+    from app.db.qdrant import qdrant_service
+
+    # Check database connection
+    db_status = "unknown"
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        db_status = "operational"
+    except Exception as e:
+        db_status = f"error: {str(e)[:50]}"
+
+    # Check Qdrant connection
+    qdrant_status = "unknown"
+    try:
+        collections = qdrant_service.client.get_collections()
+        if qdrant_service.collection_exists():
+            qdrant_status = "operational (collection exists)"
+        else:
+            qdrant_status = "connected (collection not created)"
+    except Exception as e:
+        qdrant_status = f"error: {str(e)[:50]}"
+
     return {
         "status": "healthy",
         "environment": settings.environment,
         "services": {
             "api": "operational",
-            "database": "pending",  # Will update after DB connection
-            "qdrant": "pending",    # Will update after Qdrant connection
-        }
+            "database": db_status,
+            "qdrant": qdrant_status,
+        },
     }
 
 
 # API routers
-from app.api.v1 importms chatbot
+from app.api.v1 import chatbot
 
 app.include_router(chatbot.router, tags=["chatbot"])
 

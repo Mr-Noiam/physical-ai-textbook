@@ -5,16 +5,22 @@ Combines retrieval and generation to answer questions about the textbook.
 Uses OpenAI GPT-4 to generate answers based on retrieved context.
 """
 
-import os
-from typing import List, Dict, Optional
-from openai import OpenAI
-from app.rag.retrieval import search_similar_chunks, format_context_for_prompt, get_unique_sources
+from typing import Dict, List, Optional
 
-# Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+from openai import OpenAI
+
+from app.config import settings
+from app.rag.retrieval import (
+    format_context_for_prompt,
+    get_unique_sources,
+    search_similar_chunks,
+)
+
+# Initialize OpenAI client using settings
+client = OpenAI(api_key=settings.openai_api_key)
 
 # Model configuration
-CHAT_MODEL = "gpt-4"  # or "gpt-3.5-turbo" for faster/cheaper responses
+CHAT_MODEL = settings.openai_model
 MAX_TOKENS = 800
 TEMPERATURE = 0.7
 
@@ -32,7 +38,9 @@ class ChatbotResponse:
         return {
             "answer": self.answer,
             "sources": self.sources,
-            "context_preview": self.context_used[:200] + "..." if len(self.context_used) > 200 else self.context_used
+            "context_preview": self.context_used[:200] + "..."
+            if len(self.context_used) > 200
+            else self.context_used,
         }
 
 
@@ -58,7 +66,9 @@ Guidelines:
 Tone: Friendly, knowledgeable, patient - like a helpful TA in office hours."""
 
 
-def generate_answer(question: str, selected_text: Optional[str] = None, top_k: int = 5) -> ChatbotResponse:
+def generate_answer(
+    question: str, selected_text: Optional[str] = None, top_k: int = 5
+) -> ChatbotResponse:
     """
     Generate an answer to the user's question using RAG.
 
@@ -87,7 +97,9 @@ def generate_answer(question: str, selected_text: Optional[str] = None, top_k: i
         # 1. Retrieve relevant chunks
         if selected_text:
             # If user selected text, search for similar content to provide more context
-            search_query = f"{question} {selected_text[:200]}"  # Combine question with selection
+            search_query = (
+                f"{question} {selected_text[:200]}"  # Combine question with selection
+            )
         else:
             search_query = question
 
@@ -112,8 +124,8 @@ Question: {question}
 Textbook Content:
 {context}
 
-Please provide a clear, educational answer based on this content. If the content doesn't fully answer the question, explain what information is available and what might be missing."""
-            }
+Please provide a clear, educational answer based on this content. If the content doesn't fully answer the question, explain what information is available and what might be missing.""",
+            },
         ]
 
         # 4. Generate answer with GPT-4
@@ -121,7 +133,7 @@ Please provide a clear, educational answer based on this content. If the content
             model=CHAT_MODEL,
             messages=messages,
             max_tokens=MAX_TOKENS,
-            temperature=TEMPERATURE
+            temperature=TEMPERATURE,
         )
 
         answer = response.choices[0].message.content.strip()
@@ -130,11 +142,7 @@ Please provide a clear, educational answer based on this content. If the content
         sources = get_unique_sources(search_results)
 
         # 6. Create response object
-        return ChatbotResponse(
-            answer=answer,
-            sources=sources,
-            context_used=context
-        )
+        return ChatbotResponse(answer=answer, sources=sources, context_used=context)
 
     except Exception as e:
         print(f"Error generating answer: {e}")
@@ -144,7 +152,7 @@ Please provide a clear, educational answer based on this content. If the content
 def get_conversation_response(
     question: str,
     conversation_history: Optional[List[Dict]] = None,
-    selected_text: Optional[str] = None
+    selected_text: Optional[str] = None,
 ) -> ChatbotResponse:
     """
     Generate answer with conversation history support.
@@ -159,10 +167,13 @@ def get_conversation_response(
     """
     if conversation_history and len(conversation_history) > 0:
         # Build context-aware query using previous messages
-        recent_context = " ".join([
-            msg["content"] for msg in conversation_history[-4:]  # Last 2 exchanges
-            if msg["role"] == "user"
-        ])
+        recent_context = " ".join(
+            [
+                msg["content"]
+                for msg in conversation_history[-4:]  # Last 2 exchanges
+                if msg["role"] == "user"
+            ]
+        )
         enhanced_query = f"{recent_context} {question}"
 
         return generate_answer(enhanced_query, selected_text=selected_text)
@@ -176,13 +187,13 @@ if __name__ == "__main__":
     test_questions = [
         "What is a ROS 2 node and how do I create one?",
         "Explain the difference between topics and services",
-        "How do I use Isaac Sim for synthetic data generation?"
+        "How do I use Isaac Sim for synthetic data generation?",
     ]
 
     for question in test_questions:
         print(f"\n{'=' * 70}")
         print(f"Q: {question}")
-        print('=' * 70)
+        print("=" * 70)
 
         try:
             response = generate_answer(question, top_k=3)

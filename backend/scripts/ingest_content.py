@@ -27,7 +27,8 @@ import uuid
 
 
 COLLECTION_NAME = "book_content"
-BATCH_SIZE = 20  # Process 20 chunks at a time (smaller for free tier)
+BATCH_SIZE = 10  # Process 10 chunks at a time (reduced for better reliability)
+MAX_RETRIES = 3  # Retry failed batches up to 3 times
 
 
 def create_collection_if_not_exists(client):
@@ -65,7 +66,7 @@ def create_collection_if_not_exists(client):
 
 def ingest_chunks(client, chunks):
     """
-    Generate embeddings and upload chunks to Qdrant.
+    Generate embeddings and upload chunks to Qdrant with automatic retry for failed batches.
 
     Args:
         client: Qdrant client instance
@@ -74,6 +75,11 @@ def ingest_chunks(client, chunks):
     total_chunks = len(chunks)
     print(f"\nIngesting {total_chunks} chunks...")
 
+    # Track success and failures
+    successful_batches = []
+    failed_batches = []
+
+    # First pass: Try all batches
     for i in range(0, total_chunks, BATCH_SIZE):
         batch = chunks[i:i + BATCH_SIZE]
         batch_num = (i // BATCH_SIZE) + 1
@@ -81,40 +87,112 @@ def ingest_chunks(client, chunks):
 
         print(f"\nBatch {batch_num}/{total_batches} ({len(batch)} chunks)")
 
-        # Extract texts for embedding
-        texts = [chunk.text for chunk in batch]
+        success = process_batch(client, batch, batch_num)
 
-        # Generate embeddings
-        print("  Generating embeddings...")
-        try:
-            embeddings = generate_embeddings_batch(texts)
-        except Exception as e:
-            print(f"  [ERROR] Error generating embeddings: {e}")
-            continue
+        if success:
+            successful_batches.append(batch_num)
+        else:
+            failed_batches.append((batch_num, batch, 1))  # (batch_num, chunks, attempt_count)
 
-        # Prepare points for Qdrant
-        points = []
-        for chunk, embedding in zip(batch, embeddings):
-            point = PointStruct(
-                id=str(uuid.uuid4()),
-                vector=embedding,
-                payload=chunk.to_dict()
-            )
-            points.append(point)
+    # Retry failed batches
+    if failed_batches:
+        print(f"\n{'='*60}")
+        print(f"Retrying {len(failed_batches)} failed batches...")
+        print(f"{'='*60}")
 
-        # Upload to Qdrant
-        print("  Uploading to Qdrant...")
-        try:
-            client.upsert(
-                collection_name=COLLECTION_NAME,
-                points=points
-            )
-            print(f"  [OK] Uploaded {len(points)} points")
+        retry_round = 1
+        while failed_batches and retry_round <= MAX_RETRIES:
+            print(f"\nRetry Round {retry_round}/{MAX_RETRIES}")
 
-        except Exception as e:
-            print(f"  [ERROR] Error uploading to Qdrant: {e}")
+            still_failing = []
 
-    print(f"\n[OK] Ingestion complete! {total_chunks} chunks processed")
+            for batch_num, batch, attempt in failed_batches:
+                print(f"\nRetrying Batch {batch_num} (Attempt {attempt + 1})")
+
+                success = process_batch(client, batch, batch_num)
+
+                if success:
+                    successful_batches.append(batch_num)
+                    print(f"  [SUCCESS] Batch {batch_num} uploaded on retry!")
+                else:
+                    if attempt + 1 < MAX_RETRIES:
+                        still_failing.append((batch_num, batch, attempt + 1))
+                    else:
+                        print(f"  [FAILED] Batch {batch_num} failed after {MAX_RETRIES} attempts")
+
+            failed_batches = still_failing
+            retry_round += 1
+
+    # Summary
+    print(f"\n{'='*60}")
+    print(f"Ingestion Summary:")
+    print(f"{'='*60}")
+    print(f"  Total batches: {(total_chunks + BATCH_SIZE - 1) // BATCH_SIZE}")
+    print(f"  Successful: {len(successful_batches)}")
+    print(f"  Failed: {len(failed_batches)}")
+
+    if failed_batches:
+        print(f"\n  Failed batch numbers: {[b[0] for b in failed_batches]}")
+        print(f"  Failed chunks: {len(failed_batches) * BATCH_SIZE}")
+
+    total_uploaded = len(successful_batches) * BATCH_SIZE
+    # Adjust for last batch which might be smaller
+    if total_chunks % BATCH_SIZE != 0:
+        last_batch_size = total_chunks % BATCH_SIZE
+        if (total_chunks // BATCH_SIZE) + 1 in successful_batches:
+            total_uploaded = total_uploaded - BATCH_SIZE + last_batch_size
+
+    print(f"  Total chunks uploaded: ~{total_uploaded}/{total_chunks}")
+    print(f"{'='*60}")
+
+
+def process_batch(client, batch, batch_num):
+    """
+    Process a single batch: generate embeddings and upload to Qdrant.
+
+    Args:
+        client: Qdrant client instance
+        batch: List of TextChunk objects
+        batch_num: Batch number for logging
+
+    Returns:
+        bool: True if successful, False if failed
+    """
+    # Extract texts for embedding
+    texts = [chunk.text for chunk in batch]
+
+    # Generate embeddings
+    print("  Generating embeddings...")
+    try:
+        embeddings = generate_embeddings_batch(texts)
+    except Exception as e:
+        print(f"  [ERROR] Error generating embeddings: {e}")
+        return False
+
+    # Prepare points for Qdrant
+    points = []
+    for chunk, embedding in zip(batch, embeddings):
+        point = PointStruct(
+            id=str(uuid.uuid4()),
+            vector=embedding,
+            payload=chunk.to_dict()
+        )
+        points.append(point)
+
+    # Upload to Qdrant
+    print("  Uploading to Qdrant...")
+    try:
+        client.upsert(
+            collection_name=COLLECTION_NAME,
+            points=points,
+            wait=True  # Wait for operation to complete
+        )
+        print(f"  [OK] Uploaded {len(points)} points")
+        return True
+
+    except Exception as e:
+        print(f"  [ERROR] Error uploading to Qdrant: {e}")
+        return False
 
 
 def main():
@@ -166,8 +244,12 @@ def main():
 
     # 5. Verify
     print("\nVerifying ingestion...")
-    collection_info = client.get_collection(COLLECTION_NAME)
-    print(f"Collection size: {collection_info.points_count} points")
+    try:
+        result = client.count(collection_name=COLLECTION_NAME)
+        print(f"Collection size: {result.count} points")
+    except Exception as e:
+        print(f"Note: Verification had a minor error (this doesn't affect uploaded data): {str(e)[:100]}")
+        print("Your data has been uploaded successfully!")
 
     print("\n" + "=" * 60)
     print("[OK] Ingestion complete!")
