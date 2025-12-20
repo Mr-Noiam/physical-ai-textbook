@@ -20,15 +20,15 @@ const config: Config = {
   },
 
   // Set the production url of your site here
-  url: 'https://parep.github.io',
+  url: 'https://mr-noiam.github.io',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/book_hackathon/',
+  baseUrl: '/physical-ai-textbook/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'parep', // Usually your GitHub org/user name.
-  projectName: 'book_hackathon', // Usually your repo name.
+  organizationName: 'Mr-Noiam', // Usually your GitHub org/user name.
+  projectName: 'physical-ai-textbook', // Usually your repo name.
 
   onBrokenLinks: 'throw',
 
@@ -93,7 +93,7 @@ const config: Config = {
           label: 'Textbook',
         },
         {
-          href: 'https://github.com/parep/book_hackathon',
+          href: 'https://github.com/Mr-Noiam/physical-ai-textbook',
           label: 'GitHub',
           position: 'right',
         },
