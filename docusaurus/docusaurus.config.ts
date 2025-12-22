@@ -11,7 +11,7 @@ const config: Config = {
 
   // Custom fields for accessing in components
   customFields: {
-    apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8000',
+    apiBaseUrl: process.env.API_BASE_URL || 'https://physical-ai-textbook-production-d71f.up.railway.app',
   },
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
