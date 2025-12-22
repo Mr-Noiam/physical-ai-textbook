@@ -19,6 +19,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, software?: string, hardware?: string) => Promise<void>;
   logout: () => void;
+  forgotPassword: (email: string) => Promise<string>;
+  resetPassword: (email: string, resetToken: string, newPassword: string) => Promise<void>;
   isLoading: boolean;
   error: string | null;
 }
@@ -152,6 +154,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('auth_token');
   };
 
+  const forgotPassword = async (email: string): Promise<string> => {
+    setError(null);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Failed to generate reset token');
+      }
+
+      const data = await response.json();
+      return data.reset_token; // In production, this wouldn't be returned
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    }
+  };
+
+  const resetPassword = async (email: string, resetToken: string, newPassword: string) => {
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          reset_token: resetToken,
+          new_password: newPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Password reset failed');
+      }
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -160,6 +216,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signup,
         logout,
+        forgotPassword,
+        resetPassword,
         isLoading,
         error,
       }}

@@ -14,30 +14,48 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Element {
-  const { login, signup, isLoading, error } = useAuth();
-  const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const { login, signup, forgotPassword, resetPassword, isLoading, error } = useAuth();
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'reset'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [resetToken, setResetToken] = useState('');
   const [softwareBackground, setSoftwareBackground] = useState('');
   const [hardwareBackground, setHardwareBackground] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSuccessMessage('');
 
     try {
       if (mode === 'login') {
         await login(email, password);
-      } else {
+        onClose();
+      } else if (mode === 'signup') {
         await signup(email, password, softwareBackground, hardwareBackground);
+        onClose();
+      } else if (mode === 'forgot') {
+        const token = await forgotPassword(email);
+        setResetToken(token);
+        setSuccessMessage('Reset token generated! Copy it and click "I have a reset token"');
+      } else if (mode === 'reset') {
+        await resetPassword(email, resetToken, newPassword);
+        setSuccessMessage('Password reset successfully! You can now login.');
+        setMode('login');
       }
-      onClose();
-      // Reset form
-      setEmail('');
-      setPassword('');
-      setSoftwareBackground('');
-      setHardwareBackground('');
+
+      // Reset form on success (except for forgot mode)
+      if (mode !== 'forgot') {
+        setEmail('');
+        setPassword('');
+        setNewPassword('');
+        setResetToken('');
+        setSoftwareBackground('');
+        setHardwareBackground('');
+      }
     } catch (err) {
       // Error is handled in AuthContext
     }
@@ -50,7 +68,9 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
           ✕
         </button>
 
-        <h2>{mode === 'login' ? 'Login' : 'Sign Up'}</h2>
+        <h2>
+          {mode === 'login' ? 'Login' : mode === 'signup' ? 'Sign Up' : mode === 'forgot' ? 'Forgot Password' : 'Reset Password'}
+        </h2>
 
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.formGroup}>
@@ -65,18 +85,63 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
             />
           </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              placeholder="Minimum 8 characters"
-            />
-          </div>
+          {mode === 'login' && (
+            <div className={styles.formGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                placeholder="Minimum 8 characters"
+              />
+            </div>
+          )}
+
+          {mode === 'signup' && (
+            <div className={styles.formGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                placeholder="Minimum 8 characters"
+              />
+            </div>
+          )}
+
+          {mode === 'reset' && (
+            <>
+              <div className={styles.formGroup}>
+                <label htmlFor="resetToken">Reset Token</label>
+                <input
+                  id="resetToken"
+                  type="text"
+                  value={resetToken}
+                  onChange={(e) => setResetToken(e.target.value)}
+                  required
+                  placeholder="Paste reset token here"
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label htmlFor="newPassword">New Password</label>
+                <input
+                  id="newPassword"
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  minLength={8}
+                  placeholder="Minimum 8 characters"
+                />
+              </div>
+            </>
+          )}
 
           {mode === 'signup' && (
             <>
@@ -111,22 +176,48 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
           )}
 
           {error && <div className={styles.error}>{error}</div>}
+          {successMessage && <div className={styles.success}>{successMessage}</div>}
 
           <button type="submit" className={styles.submitButton} disabled={isLoading}>
-            {isLoading ? 'Please wait...' : mode === 'login' ? 'Login' : 'Sign Up'}
+            {isLoading ? 'Please wait...' :
+             mode === 'login' ? 'Login' :
+             mode === 'signup' ? 'Sign Up' :
+             mode === 'forgot' ? 'Get Reset Token' :
+             'Reset Password'}
           </button>
         </form>
 
         <div className={styles.switchMode}>
           {mode === 'login' ? (
-            <p>
-              Don't have an account?{' '}
-              <button onClick={() => setMode('signup')}>Sign up</button>
-            </p>
-          ) : (
+            <>
+              <p>
+                Don't have an account?{' '}
+                <button onClick={() => setMode('signup')}>Sign up</button>
+              </p>
+              <p>
+                Forgot password?{' '}
+                <button onClick={() => setMode('forgot')}>Reset it</button>
+              </p>
+            </>
+          ) : mode === 'signup' ? (
             <p>
               Already have an account?{' '}
               <button onClick={() => setMode('login')}>Login</button>
+            </p>
+          ) : mode === 'forgot' ? (
+            <>
+              <p>
+                <button onClick={() => setMode('reset')}>I have a reset token</button>
+              </p>
+              <p>
+                <button onClick={() => setMode('login')}>Back to login</button>
+              </p>
+            </>
+          ) : (
+            <p>
+              <button onClick={() => setMode('forgot')}>Get a new token</button>
+              {' or '}
+              <button onClick={() => setMode('login')}>Back to login</button>
             </p>
           )}
         </div>

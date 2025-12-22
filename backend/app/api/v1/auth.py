@@ -1,10 +1,11 @@
 """
 Authentication API endpoints.
 
-Provides user signup, login, logout, and profile management.
+Provides user signup, login, logout, password reset, and profile management.
 """
-from datetime import timedelta
+from datetime import timedelta, datetime
 from typing import Optional
+import secrets
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr, Field
@@ -178,3 +179,106 @@ def logout():
         Success message
     """
     return {"message": "Successfully logged out"}
+
+
+class ForgotPasswordRequest(BaseModel):
+    """Forgot password request."""
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    """Reset password request."""
+    email: EmailStr
+    reset_token: str = Field(..., min_length=32)
+    new_password: str = Field(..., min_length=8, max_length=100)
+
+
+@router.post("/forgot-password")
+def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Generate password reset token.
+
+    Note: In production, send this token via email. For now, return it directly.
+
+    Args:
+        request: Email to reset password for
+        db: Database session
+
+    Returns:
+        Reset token (in production, this would be sent via email)
+    """
+    # Find user
+    user = db.query(User).filter(User.email == request.email).first()
+
+    if not user:
+        # Don't reveal if email exists - return success anyway
+        return {"message": "If the email exists, a reset token has been generated"}
+
+    # Generate secure reset token
+    reset_token = secrets.token_urlsafe(32)
+
+    # Set token expiration (1 hour from now)
+    expires_at = datetime.utcnow() + timedelta(hours=1)
+
+    # Save token to user
+    user.reset_token = reset_token
+    user.reset_token_expires = expires_at
+    db.commit()
+
+    # In production, send email here
+    # For now, return token directly for testing
+    return {
+        "message": "Reset token generated",
+        "reset_token": reset_token,  # Remove this in production
+        "note": "In production, this would be sent via email"
+    }
+
+
+@router.post("/reset-password")
+def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
+    """
+    Reset user password using reset token.
+
+    Args:
+        request: Email, reset token, and new password
+        db: Database session
+
+    Returns:
+        Success message
+
+    Raises:
+        HTTPException: If token is invalid or expired
+    """
+    # Find user
+    user = db.query(User).filter(User.email == request.email).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset token"
+        )
+
+    # Verify token
+    if not user.reset_token or user.reset_token != request.reset_token:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset token"
+        )
+
+    # Check if token expired
+    if not user.reset_token_expires or user.reset_token_expires < datetime.utcnow():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Reset token has expired"
+        )
+
+    # Update password
+    user.password_hash = get_password_hash(request.new_password)
+
+    # Clear reset token
+    user.reset_token = None
+    user.reset_token_expires = None
+
+    db.commit()
+
+    return {"message": "Password reset successfully"}
