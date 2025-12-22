@@ -15,6 +15,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { useAuth } from '../../contexts/AuthContext';
+import AuthModal from '../AuthModal';
 import styles from './styles.module.css';
 
 interface Message {
@@ -33,8 +35,10 @@ interface Source {
 export default function ChatbotWidget(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   const API_BASE_URL = (siteConfig.customFields?.apiBaseUrl as string) || 'http://localhost:8000';
+  const { user, token, logout } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -84,11 +88,18 @@ export default function ChatbotWidget(): JSX.Element {
 
     try {
       // Call backend API
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+
+      // Add auth token if user is logged in
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${API_BASE_URL}/api/v1/chatbot/ask`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           question,
           selected_text: selectedContext || null,
@@ -149,6 +160,8 @@ export default function ChatbotWidget(): JSX.Element {
 
   return (
     <>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+
       {/* Floating "Ask about this" button (appears on text selection) */}
       {selectedText && !isOpen && (
         <button
@@ -178,13 +191,30 @@ export default function ChatbotWidget(): JSX.Element {
               <span className={styles.chatIcon}>🤖</span>
               <span>AI Teaching Assistant</span>
             </div>
-            <button
-              className={styles.clearButton}
-              onClick={clearChat}
-              title="Clear conversation"
-            >
-              🗑️
-            </button>
+            <div className={styles.headerButtons}>
+              {user ? (
+                <div className={styles.userMenu}>
+                  <span className={styles.userEmail}>{user.email}</span>
+                  <button onClick={logout} className={styles.logoutButton}>
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className={styles.loginButton}
+                >
+                  Login
+                </button>
+              )}
+              <button
+                className={styles.clearButton}
+                onClick={clearChat}
+                title="Clear conversation"
+              >
+                🗑️
+              </button>
+            </div>
           </div>
 
           {/* Messages */}

@@ -1,0 +1,136 @@
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: var(--ifm-background-color);
+  border-radius: 12px;
+  padding: 32px;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.closeButton {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--ifm-color-emphasis-600);
+  padding: 4px;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: var(--ifm-color-emphasis-800);
+}
+
+.modalContent h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  color: var(--ifm-color-emphasis-900);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.formGroup label {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.formGroup input,
+.formGroup select {
+  padding: 10px 12px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  font-size: 14px;
+  background: var(--ifm-background-color);
+  color: var(--ifm-color-emphasis-900);
+}
+
+.formGroup input:focus,
+.formGroup select:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.error {
+  padding: 12px;
+  background: #fef2f2;
+  color: #991b1b;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.submitButton {
+  padding: 12px 24px;
+  background: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submitButton:hover:not(:disabled) {
+  background: var(--ifm-color-primary-dark);
+}
+
+.submitButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.switchMode {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  text-align: center;
+}
+
+.switchMode p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+.switchMode button {
+  background: none;
+  border: none;
+  color: var(--ifm-color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.switchMode button:hover {
+  color: var(--ifm-color-primary-dark);
+}

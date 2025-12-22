@@ -75,12 +75,12 @@ async def health_check():
 
 
 # API routers
-from app.api.v1 import chatbot
+from app.api.v1 import chatbot, auth
 
 app.include_router(chatbot.router, tags=["chatbot"])
+app.include_router(auth.router, tags=["auth"])
 
 # Future routers:
-# from app.api.v1 import auth, personalize, translate
-# app.include_router(auth.router, prefix="/api/v1", tags=["auth"])
+# from app.api.v1 import personalize, translate
 # app.include_router(personalize.router, prefix="/api/v1", tags=["personalize"])
 # app.include_router(translate.router, prefix="/api/v1", tags=["translate"])

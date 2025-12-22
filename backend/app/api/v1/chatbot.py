@@ -12,6 +12,7 @@ from datetime import datetime
 from app.rag.chatbot import generate_answer, get_conversation_response
 from app.db.models import ChatMessage, User
 from app.db.neon import get_db
+from app.auth.dependencies import get_current_user_optional
 from sqlalchemy.orm import Session
 
 
@@ -25,15 +26,13 @@ class AskQuestionRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=1000, description="User's question")
     selected_text: Optional[str] = Field(None, max_length=5000, description="Text selected by user (optional)")
     conversation_history: Optional[List[Dict]] = Field(None, description="Previous messages in conversation")
-    user_id: Optional[int] = Field(None, description="User ID for saving conversation (optional)")
 
     class Config:
         json_schema_extra = {
             "example": {
                 "question": "What is a ROS 2 node?",
                 "selected_text": None,
-                "conversation_history": None,
-                "user_id": None
+                "conversation_history": None
             }
         }
 
@@ -72,7 +71,8 @@ class AskQuestionResponse(BaseModel):
 @router.post("/ask", response_model=AskQuestionResponse)
 async def ask_question(
     request: AskQuestionRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
 ):
     """
     Ask a question to the RAG chatbot.
@@ -81,11 +81,12 @@ async def ask_question(
     1. Retrieves relevant textbook content using vector search
     2. Generates an answer using GPT-4
     3. Returns the answer with source references
-    4. Optionally saves the conversation to database (if user_id provided)
+    4. Optionally saves the conversation to database (if user is authenticated)
 
     Args:
         request: Question request with optional selected text and conversation history
         db: Database session (injected)
+        current_user: Optional authenticated user (injected)
 
     Returns:
         Answer with sources and optional conversation ID
@@ -115,28 +116,21 @@ async def ask_question(
 
         # Save conversation to database if user is logged in
         conversation_id = None
-        if request.user_id:
+        if current_user:
             try:
-                # Save user message
-                user_message = ChatMessage(
-                    user_id=request.user_id,
-                    role="user",
-                    content=request.question,
+                # Save chat message with both question and answer
+                chat_message = ChatMessage(
+                    user_id=current_user.id,
+                    question=request.question,
+                    answer=chatbot_response.answer,
+                    context=chatbot_response.context_used[:1000],  # Save first 1000 chars of context
                     selected_text=request.selected_text
                 )
-                db.add(user_message)
-                db.flush()  # Get ID without committing
-
-                # Save assistant response
-                assistant_message = ChatMessage(
-                    user_id=request.user_id,
-                    role="assistant",
-                    content=chatbot_response.answer
-                )
-                db.add(assistant_message)
+                db.add(chat_message)
                 db.commit()
+                db.refresh(chat_message)
 
-                conversation_id = user_message.id
+                conversation_id = str(chat_message.id)
 
             except Exception as e:
                 db.rollback()

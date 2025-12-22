@@ -453,3 +453,42 @@
   background: var(--ifm-color-primary-darker);
   color: var(--ifm-color-primary-lightest);
 }
+
+/* Auth UI in header */
+.headerButtons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userMenu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.userEmail {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loginButton,
+.logoutButton {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background 0.2s;
+  font-weight: 500;
+}
+
+.loginButton:hover,
+.logoutButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
