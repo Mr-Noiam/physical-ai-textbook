@@ -31,7 +31,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE_URL = process.env.API_BASE_URL || 'https://physical-ai-textbook-production-d71f.up.railway.app';
+  const API_BASE_URL = 'https://physical-ai-textbook-production-d71f.up.railway.app';
 
   // Load token from localStorage on mount
   useEffect(() => {
