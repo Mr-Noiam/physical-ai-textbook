@@ -1,0 +1,95 @@
+/* Protected Content Styles */
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--ifm-background-color);
+}
+
+.loadingSpinner {
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  margin: 0 auto 20px;
+  border: 4px solid var(--ifm-color-emphasis-300);
+  border-top-color: var(--ifm-color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingSpinner p {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 1.1rem;
+}
+
+.authRequired {
+  position: relative;
+  min-height: 100vh;
+}
+
+.authBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    var(--ifm-color-primary) 0%,
+    var(--ifm-color-primary-dark) 100%
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.authMessage {
+  text-align: center;
+  color: white;
+  padding: 2rem;
+  max-width: 600px;
+}
+
+.authMessage h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.authMessage p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  opacity: 0.95;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .authBackdrop {
+  background: linear-gradient(
+    135deg,
+    var(--ifm-color-primary-darker) 0%,
+    var(--ifm-color-primary-darkest) 100%
+  );
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .authMessage h1 {
+    font-size: 1.8rem;
+  }
+
+  .authMessage p {
+    font-size: 1rem;
+  }
+}

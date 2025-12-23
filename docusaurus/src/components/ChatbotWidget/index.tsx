@@ -76,6 +76,12 @@ export default function ChatbotWidget(): JSX.Element {
   const sendMessage = async (question: string, selectedContext?: string) => {
     if (!question.trim()) return;
 
+    // Check if user is authenticated
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     // Add user message to chat
     const userMessage: Message = {
       role: 'user',
@@ -219,7 +225,18 @@ export default function ChatbotWidget(): JSX.Element {
 
           {/* Messages */}
           <div className={styles.chatMessages}>
-            {messages.length === 0 ? (
+            {!user ? (
+              <div className={styles.welcomeMessage}>
+                <p>🔒 Login Required</p>
+                <p>Please login or signup to use the AI teaching assistant.</p>
+                <button
+                  className={styles.loginButtonLarge}
+                  onClick={() => setIsAuthModalOpen(true)}
+                >
+                  Login / Sign Up
+                </button>
+              </div>
+            ) : messages.length === 0 ? (
               <div className={styles.welcomeMessage}>
                 <p>👋 Hi! I'm your AI teaching assistant.</p>
                 <p>Ask me anything about the textbook content:</p>
