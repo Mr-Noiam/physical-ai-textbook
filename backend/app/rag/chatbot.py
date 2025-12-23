@@ -44,30 +44,68 @@ class ChatbotResponse:
         }
 
 
-def build_system_prompt() -> str:
+def build_system_prompt(
+    software_level: Optional[str] = None,
+    hardware_level: Optional[str] = None
+) -> str:
     """
     Build the system prompt that defines the chatbot's behavior.
+
+    Personalizes the prompt based on user's background levels.
+
+    Args:
+        software_level: User's software/programming experience (beginner/intermediate/advanced)
+        hardware_level: User's hardware/electronics experience (no_experience/hobbyist/professional)
 
     Returns:
         System prompt string
     """
-    return """You are an expert teaching assistant for the "Physical AI & Humanoid Robotics" course.
+    base_prompt = """You are an expert teaching assistant for the "Physical AI & Humanoid Robotics" course.
 
-Your role is to help students understand robotics concepts by answering their questions based on the textbook content.
+Your role is to help students understand robotics concepts by answering their questions based on the textbook content."""
 
+    # Add personalization based on user background
+    personalization = ""
+    if software_level or hardware_level:
+        personalization = "\n\n**Student Background:**\n"
+
+        if software_level == "beginner":
+            personalization += "- Programming: Beginner level - explain code step-by-step, define technical terms, avoid assuming prior knowledge\n"
+        elif software_level == "intermediate":
+            personalization += "- Programming: Intermediate level - can use standard programming concepts, explain advanced patterns when needed\n"
+        elif software_level == "advanced":
+            personalization += "- Programming: Advanced level - can discuss design patterns, optimization, and best practices directly\n"
+
+        if hardware_level == "no_experience":
+            personalization += "- Hardware: No prior experience - explain physical components, sensors, and electronics basics clearly\n"
+        elif hardware_level == "hobbyist":
+            personalization += "- Hardware: Hobbyist level - familiar with basic electronics, can discuss circuits and components at moderate depth\n"
+        elif hardware_level == "professional":
+            personalization += "- Hardware: Professional level - can dive into technical specs, advanced integration, and hardware design\n"
+
+        personalization += "\n**Adjust your explanations accordingly** - match the student's background level while maintaining educational value.\n"
+
+    guidelines = """
 Guidelines:
 1. **Answer based on provided context**: Use the textbook excerpts provided to answer questions
-2. **Be clear and educational**: Explain concepts thoroughly but concisely
-3. **Use examples**: Include code examples or concrete scenarios when relevant
+2. **Be clear and educational**: Explain concepts thoroughly but concisely, matching the student's level
+3. **Use examples**: Include code examples or concrete scenarios when relevant, appropriate for their background
 4. **Cite sources**: Reference which section of the textbook you're using
 5. **Admit uncertainty**: If the context doesn't contain the answer, say so clearly
 6. **Encourage learning**: Suggest related topics the student might explore
+7. **Personalize depth**: Adjust technical depth based on the student's background (if provided)
 
 Tone: Friendly, knowledgeable, patient - like a helpful TA in office hours."""
 
+    return base_prompt + personalization + guidelines
+
 
 def generate_answer(
-    question: str, selected_text: Optional[str] = None, top_k: int = 5
+    question: str,
+    selected_text: Optional[str] = None,
+    top_k: int = 5,
+    software_level: Optional[str] = None,
+    hardware_level: Optional[str] = None
 ) -> ChatbotResponse:
     """
     Generate an answer to the user's question using RAG.
@@ -76,13 +114,15 @@ def generate_answer(
     1. Search for relevant textbook chunks
     2. Format context from search results
     3. Build prompt with question and context
-    4. Call GPT-4 to generate answer
+    4. Call GPT-4 to generate answer (personalized based on user background)
     5. Return answer with sources
 
     Args:
         question: User's question
         selected_text: Optional text selected by user (for "Ask about this" feature)
         top_k: Number of relevant chunks to retrieve
+        software_level: User's software/programming experience level
+        hardware_level: User's hardware/electronics experience level
 
     Returns:
         ChatbotResponse with answer and sources
@@ -112,9 +152,9 @@ def generate_answer(
         if selected_text:
             context = f"[User selected text]\n{selected_text}\n\n{context}"
 
-        # 3. Build messages for GPT-4
+        # 3. Build messages for GPT-4 (with personalization)
         messages = [
-            {"role": "system", "content": build_system_prompt()},
+            {"role": "system", "content": build_system_prompt(software_level, hardware_level)},
             {
                 "role": "user",
                 "content": f"""Based on the following textbook content, please answer this question:
@@ -153,6 +193,8 @@ def get_conversation_response(
     question: str,
     conversation_history: Optional[List[Dict]] = None,
     selected_text: Optional[str] = None,
+    software_level: Optional[str] = None,
+    hardware_level: Optional[str] = None
 ) -> ChatbotResponse:
     """
     Generate answer with conversation history support.
@@ -161,6 +203,8 @@ def get_conversation_response(
         question: Current question
         conversation_history: Previous messages [{"role": "user"|"assistant", "content": "..."}]
         selected_text: Optional selected text
+        software_level: User's software/programming experience level
+        hardware_level: User's hardware/electronics experience level
 
     Returns:
         ChatbotResponse object
@@ -176,9 +220,19 @@ def get_conversation_response(
         )
         enhanced_query = f"{recent_context} {question}"
 
-        return generate_answer(enhanced_query, selected_text=selected_text)
+        return generate_answer(
+            enhanced_query,
+            selected_text=selected_text,
+            software_level=software_level,
+            hardware_level=hardware_level
+        )
     else:
-        return generate_answer(question, selected_text=selected_text)
+        return generate_answer(
+            question,
+            selected_text=selected_text,
+            software_level=software_level,
+            hardware_level=hardware_level
+        )
 
 
 # Example usage

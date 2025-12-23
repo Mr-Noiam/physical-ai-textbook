@@ -19,6 +19,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   signup: (email: string, password: string, software?: string, hardware?: string) => Promise<void>;
   logout: () => void;
+  updateProfile: (software?: string, hardware?: string) => Promise<void>;
   forgotPassword: (email: string) => Promise<string>;
   resetPassword: (email: string, resetToken: string, newPassword: string) => Promise<void>;
   isLoading: boolean;
@@ -154,6 +155,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem('auth_token');
   };
 
+  const updateProfile = async (
+    software_background?: string,
+    hardware_background?: string
+  ) => {
+    if (!token) {
+      throw new Error('Not authenticated');
+    }
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/v1/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          software_background,
+          hardware_background,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || 'Profile update failed');
+      }
+
+      const userData = await response.json();
+      setUser(userData);
+    } catch (err: any) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const forgotPassword = async (email: string): Promise<string> => {
     setError(null);
 
@@ -216,6 +256,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         login,
         signup,
         logout,
+        updateProfile,
         forgotPassword,
         resetPassword,
         isLoading,

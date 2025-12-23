@@ -81,9 +81,14 @@ export default function UserMenu(): JSX.Element {
               </div>
             )}
           </div>
-          <button className={styles.logoutButton} onClick={handleLogout}>
-            🚪 Logout
-          </button>
+          <div className={styles.menuActions}>
+            <a href="/profile" className={styles.profileLink}>
+              ⚙️ Profile Settings
+            </a>
+            <button className={styles.logoutButton} onClick={handleLogout}>
+              🚪 Logout
+            </button>
+          </div>
         </div>
       )}
     </div>

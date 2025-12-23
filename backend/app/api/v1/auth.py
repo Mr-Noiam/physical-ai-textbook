@@ -181,6 +181,49 @@ def logout():
     return {"message": "Successfully logged out"}
 
 
+class UpdateProfileRequest(BaseModel):
+    """Update user profile request."""
+
+    software_background: Optional[str] = Field(None, pattern="^(beginner|intermediate|advanced)$")
+    hardware_background: Optional[str] = Field(None, pattern="^(no_experience|hobbyist|professional)$")
+
+
+@router.put("/profile", response_model=UserResponse)
+def update_profile(
+    request: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """
+    Update current user's profile/personalization settings.
+
+    Args:
+        request: Profile update with background levels
+        current_user: Authenticated user from dependency
+        db: Database session
+
+    Returns:
+        Updated user profile
+    """
+    # Update fields if provided
+    if request.software_background is not None:
+        current_user.software_background = request.software_background
+
+    if request.hardware_background is not None:
+        current_user.hardware_background = request.hardware_background
+
+    db.commit()
+    db.refresh(current_user)
+
+    return UserResponse(
+        id=str(current_user.id),
+        email=current_user.email,
+        software_background=current_user.software_background,
+        hardware_background=current_user.hardware_background,
+        created_at=current_user.created_at.isoformat() if current_user.created_at else "",
+    )
+
+
 class ForgotPasswordRequest(BaseModel):
     """Forgot password request."""
     email: EmailStr

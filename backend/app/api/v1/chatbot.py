@@ -95,17 +95,25 @@ async def ask_question(
         HTTPException: If answer generation fails
     """
     try:
-        # Generate answer using RAG
+        # Extract user background for personalization
+        software_level = current_user.software_background if current_user else None
+        hardware_level = current_user.hardware_background if current_user else None
+
+        # Generate answer using RAG (with personalization)
         if request.conversation_history:
             chatbot_response = get_conversation_response(
                 question=request.question,
                 conversation_history=request.conversation_history,
-                selected_text=request.selected_text
+                selected_text=request.selected_text,
+                software_level=software_level,
+                hardware_level=hardware_level
             )
         else:
             chatbot_response = generate_answer(
                 question=request.question,
-                selected_text=request.selected_text
+                selected_text=request.selected_text,
+                software_level=software_level,
+                hardware_level=hardware_level
             )
 
         # Convert sources to Pydantic models

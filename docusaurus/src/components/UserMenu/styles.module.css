@@ -121,6 +121,32 @@
   color: var(--ifm-color-emphasis-900);
 }
 
+.menuActions {
+  display: flex;
+  flex-direction: column;
+}
+
+.profileLink {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  color: var(--ifm-color-primary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.profileLink:hover {
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
 .logoutButton {
   width: 100%;
   padding: 0.75rem 1rem;
