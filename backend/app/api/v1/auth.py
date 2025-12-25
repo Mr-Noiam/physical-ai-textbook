@@ -248,8 +248,7 @@ async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(
     Returns:
         Success message (doesn't reveal if email exists)
     """
-    # Import email service
-    from app.services.email import send_password_reset_email
+    import os
 
     # Find user
     user = db.query(User).filter(User.email == request.email).first()
@@ -273,8 +272,26 @@ async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(
     db.commit()
 
     # Send password reset email
+    # Try Resend first (works on Railway), fallback to SMTP (works locally)
+    email_sent = False
+
     try:
-        await send_password_reset_email(user.email, reset_token)
+        # Try Resend API first (Railway-compatible)
+        if os.getenv("RESEND_API_KEY"):
+            from app.services.email_resend import send_password_reset_email_resend
+            email_sent = await send_password_reset_email_resend(user.email, reset_token)
+
+        # Fallback to SMTP if Resend not configured
+        if not email_sent and os.getenv("SMTP_USER"):
+            from app.services.email import send_password_reset_email
+            email_sent = await send_password_reset_email(user.email, reset_token)
+
+        if email_sent:
+            print(f"Password reset email sent successfully to {user.email}")
+        else:
+            print(f"WARNING: Email not sent - no email service configured")
+
+        # Always return success to not reveal if email exists
         return {
             "message": "If an account exists with this email, you will receive a password reset link shortly.",
             "success": True
@@ -284,8 +301,7 @@ async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(
         # Still return success to not reveal if email exists
         return {
             "message": "If an account exists with this email, you will receive a password reset link shortly.",
-            "success": True,
-            "note": "Email service may be unavailable. Please contact support if you don't receive an email."
+            "success": True
         }
 
 

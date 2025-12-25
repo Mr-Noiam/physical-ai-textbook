@@ -41,6 +41,14 @@ class Settings(BaseSettings):
     # Environment
     environment: str = Field(default="development", env="PYTHON_ENV")
 
+    # Email Configuration (Optional - for password reset)
+    smtp_host: str = Field(default="smtp.gmail.com", env="SMTP_HOST")
+    smtp_port: int = Field(default=587, env="SMTP_PORT")
+    smtp_user: str = Field(default="", env="SMTP_USER")
+    smtp_password: str = Field(default="", env="SMTP_PASSWORD")
+    from_email: str = Field(default="", env="FROM_EMAIL")
+    from_name: str = Field(default="Physical AI Textbook", env="FROM_NAME")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
