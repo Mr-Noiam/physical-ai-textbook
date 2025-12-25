@@ -237,25 +237,29 @@ class ResetPasswordRequest(BaseModel):
 
 
 @router.post("/forgot-password")
-def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
+async def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     """
-    Generate password reset token.
-
-    Note: In production, send this token via email. For now, return it directly.
+    Generate password reset token and send email.
 
     Args:
         request: Email to reset password for
         db: Database session
 
     Returns:
-        Reset token (in production, this would be sent via email)
+        Success message (doesn't reveal if email exists)
     """
+    # Import email service
+    from app.services.email import send_password_reset_email
+
     # Find user
     user = db.query(User).filter(User.email == request.email).first()
 
     if not user:
-        # Don't reveal if email exists - return success anyway
-        return {"message": "If the email exists, a reset token has been generated"}
+        # Don't reveal if email exists - return success anyway for security
+        return {
+            "message": "If an account exists with this email, you will receive a password reset link shortly.",
+            "success": True
+        }
 
     # Generate secure reset token
     reset_token = secrets.token_urlsafe(32)
@@ -268,13 +272,21 @@ def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db
     user.reset_token_expires = expires_at
     db.commit()
 
-    # In production, send email here
-    # For now, return token directly for testing
-    return {
-        "message": "Reset token generated",
-        "reset_token": reset_token,  # Remove this in production
-        "note": "In production, this would be sent via email"
-    }
+    # Send password reset email
+    try:
+        await send_password_reset_email(user.email, reset_token)
+        return {
+            "message": "If an account exists with this email, you will receive a password reset link shortly.",
+            "success": True
+        }
+    except Exception as e:
+        print(f"Failed to send reset email: {e}")
+        # Still return success to not reveal if email exists
+        return {
+            "message": "If an account exists with this email, you will receive a password reset link shortly.",
+            "success": True,
+            "note": "Email service may be unavailable. Please contact support if you don't receive an email."
+        }
 
 
 @router.post("/reset-password")

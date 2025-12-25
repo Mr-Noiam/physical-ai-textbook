@@ -14,12 +14,10 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Element {
-  const { login, signup, forgotPassword, resetPassword, isLoading, error } = useAuth();
-  const [mode, setMode] = useState<'login' | 'signup' | 'forgot' | 'reset'>('login');
+  const { login, signup, forgotPassword, isLoading, error } = useAuth();
+  const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [resetToken, setResetToken] = useState('');
   const [softwareBackground, setSoftwareBackground] = useState('');
   const [hardwareBackground, setHardwareBackground] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -38,21 +36,14 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
         await signup(email, password, softwareBackground, hardwareBackground);
         onClose();
       } else if (mode === 'forgot') {
-        const token = await forgotPassword(email);
-        setResetToken(token);
-        setSuccessMessage('Reset token generated! Copy it and click "I have a reset token"');
-      } else if (mode === 'reset') {
-        await resetPassword(email, resetToken, newPassword);
-        setSuccessMessage('Password reset successfully! You can now login.');
-        setMode('login');
+        await forgotPassword(email);
+        setSuccessMessage('📧 Check your email! If an account exists with this email, you will receive a password reset link shortly.');
       }
 
       // Reset form on success (except for forgot mode)
       if (mode !== 'forgot') {
         setEmail('');
         setPassword('');
-        setNewPassword('');
-        setResetToken('');
         setSoftwareBackground('');
         setHardwareBackground('');
       }
@@ -69,7 +60,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
         </button>
 
         <h2>
-          {mode === 'login' ? 'Login' : mode === 'signup' ? 'Sign Up' : mode === 'forgot' ? 'Forgot Password' : 'Reset Password'}
+          {mode === 'login' ? 'Login' : mode === 'signup' ? 'Sign Up' : 'Forgot Password'}
         </h2>
 
         <form onSubmit={handleSubmit} className={styles.form}>
@@ -115,34 +106,6 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
             </div>
           )}
 
-          {mode === 'reset' && (
-            <>
-              <div className={styles.formGroup}>
-                <label htmlFor="resetToken">Reset Token</label>
-                <input
-                  id="resetToken"
-                  type="text"
-                  value={resetToken}
-                  onChange={(e) => setResetToken(e.target.value)}
-                  required
-                  placeholder="Paste reset token here"
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label htmlFor="newPassword">New Password</label>
-                <input
-                  id="newPassword"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  minLength={8}
-                  placeholder="Minimum 8 characters"
-                />
-              </div>
-            </>
-          )}
-
           {mode === 'signup' && (
             <>
               <div className={styles.formGroup}>
@@ -182,8 +145,7 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
             {isLoading ? 'Please wait...' :
              mode === 'login' ? 'Login' :
              mode === 'signup' ? 'Sign Up' :
-             mode === 'forgot' ? 'Get Reset Token' :
-             'Reset Password'}
+             'Send Reset Email'}
           </button>
         </form>
 
@@ -204,19 +166,8 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps): JSX.Elem
               Already have an account?{' '}
               <button onClick={() => setMode('login')}>Login</button>
             </p>
-          ) : mode === 'forgot' ? (
-            <>
-              <p>
-                <button onClick={() => setMode('reset')}>I have a reset token</button>
-              </p>
-              <p>
-                <button onClick={() => setMode('login')}>Back to login</button>
-              </p>
-            </>
           ) : (
             <p>
-              <button onClick={() => setMode('forgot')}>Get a new token</button>
-              {' or '}
               <button onClick={() => setMode('login')}>Back to login</button>
             </p>
           )}

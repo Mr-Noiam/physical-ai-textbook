@@ -20,7 +20,7 @@ interface AuthContextType {
   signup: (email: string, password: string, software?: string, hardware?: string) => Promise<void>;
   logout: () => void;
   updateProfile: (software?: string, hardware?: string) => Promise<void>;
-  forgotPassword: (email: string) => Promise<string>;
+  forgotPassword: (email: string) => Promise<void>;
   resetPassword: (email: string, resetToken: string, newPassword: string) => Promise<void>;
   isLoading: boolean;
   error: string | null;
@@ -194,7 +194,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const forgotPassword = async (email: string): Promise<string> => {
+  const forgotPassword = async (email: string): Promise<void> => {
     setError(null);
 
     try {
@@ -208,11 +208,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.detail || 'Failed to generate reset token');
+        throw new Error(data.detail || 'Failed to send password reset email');
       }
 
-      const data = await response.json();
-      return data.reset_token; // In production, this wouldn't be returned
+      // Email sent successfully - no return value needed
     } catch (err: any) {
       setError(err.message);
       throw err;

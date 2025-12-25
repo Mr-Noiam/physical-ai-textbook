@@ -6,6 +6,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+import Link from '@docusaurus/Link';
 import { useAuth } from '../../contexts/AuthContext';
 import AuthModal from '../AuthModal';
 import styles from './styles.module.css';
@@ -82,9 +83,9 @@ export default function UserMenu(): JSX.Element {
             )}
           </div>
           <div className={styles.menuActions}>
-            <a href="/profile" className={styles.profileLink}>
+            <Link to="/profile" className={styles.profileLink}>
               ⚙️ Profile Settings
-            </a>
+            </Link>
             <button className={styles.logoutButton} onClick={handleLogout}>
               🚪 Logout
             </button>
