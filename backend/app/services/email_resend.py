@@ -60,15 +60,15 @@ async def send_email_resend(
             )
 
             if response.status_code == 200:
-                print(f"✅ Email sent successfully to {to_email} via Resend")
+                print(f"[SUCCESS] Email sent successfully to {to_email} via Resend")
                 return True
             else:
                 error_data = response.json()
-                print(f"❌ Resend API error: {error_data}")
+                print(f"[ERROR] Resend API error: {error_data}")
                 return False
 
     except Exception as e:
-        print(f"❌ Failed to send email via Resend: {e}")
+        print(f"[ERROR] Failed to send email via Resend: {e}")
         return False
 
 
