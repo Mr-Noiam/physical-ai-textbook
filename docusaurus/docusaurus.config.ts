@@ -32,12 +32,23 @@ const config: Config = {
 
   onBrokenLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
+  // Internationalization configuration
+  // Support for English (default) and Urdu
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'ur'],
+    localeConfigs: {
+      en: {
+        label: 'English',
+        direction: 'ltr',
+        htmlLang: 'en-US',
+      },
+      ur: {
+        label: 'اردو (Urdu)',
+        direction: 'rtl',
+        htmlLang: 'ur-PK',
+      },
+    },
   },
 
   presets: [
@@ -91,6 +102,10 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Textbook',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
         },
         {
           href: 'https://github.com/Mr-Noiam/physical-ai-textbook',
