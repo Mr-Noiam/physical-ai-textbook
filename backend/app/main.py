@@ -75,13 +75,13 @@ async def health_check():
 
 
 # API routers
-from app.api.v1 import chatbot, auth, debug
+from app.api.v1 import chatbot, auth, debug, translate
 
 app.include_router(chatbot.router, tags=["chatbot"])
 app.include_router(auth.router, tags=["auth"])
 app.include_router(debug.router, tags=["debug"])  # TEMPORARY - for testing SMTP config
+app.include_router(translate.router, tags=["translate"])
 
 # Future routers:
-# from app.api.v1 import personalize, translate
+# from app.api.v1 import personalize
 # app.include_router(personalize.router, prefix="/api/v1", tags=["personalize"])
-# app.include_router(translate.router, prefix="/api/v1", tags=["translate"])

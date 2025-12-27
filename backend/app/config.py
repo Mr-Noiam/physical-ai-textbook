@@ -16,6 +16,14 @@ class Settings(BaseSettings):
         env="OPENAI_EMBEDDING_MODEL"
     )
 
+    # Gemini Configuration (Free tier: 1M tokens)
+    gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
+    translation_provider: str = Field(
+        default="gemini",
+        env="TRANSLATION_PROVIDER",
+        description="Translation provider: 'gemini' (free) or 'openai' (paid)"
+    )
+
     # Database Configuration
     database_url: str = Field(..., env="DATABASE_URL")
 
@@ -42,6 +50,7 @@ class Settings(BaseSettings):
     environment: str = Field(default="development", env="PYTHON_ENV")
 
     # Email Configuration (Optional - for password reset)
+    resend_api_key: str = Field(default="", env="RESEND_API_KEY")
     smtp_host: str = Field(default="smtp.gmail.com", env="SMTP_HOST")
     smtp_port: int = Field(default=587, env="SMTP_PORT")
     smtp_user: str = Field(default="", env="SMTP_USER")
