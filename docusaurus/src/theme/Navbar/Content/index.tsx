@@ -17,6 +17,7 @@ import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
 import UserMenu from '@site/src/components/UserMenu';
+import LanguageSelector from '@site/src/components/LanguageSelector';
 
 import styles from './styles.module.css';
 
@@ -72,6 +73,7 @@ export default function NavbarContent(): JSX.Element {
       right={
         <>
           <NavbarItems items={rightItems} />
+          <LanguageSelector />
           <NavbarColorModeToggle className={styles.colorModeToggle} />
           {!searchBarItem && (
             <NavbarSearch>

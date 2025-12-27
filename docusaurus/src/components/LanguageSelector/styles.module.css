@@ -1,0 +1,216 @@
+/**
+ * Language Selector Styles
+ */
+
+.languageSelector {
+  position: relative;
+  display: inline-block;
+  margin-left: 12px;
+}
+
+.selectorButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--ifm-color-emphasis-200);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ifm-font-color-base);
+  transition: all 0.2s ease;
+}
+
+.selectorButton:hover {
+  background: var(--ifm-color-emphasis-300);
+  border-color: var(--ifm-color-primary);
+}
+
+.selectorButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.langCode {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.arrow {
+  font-size: 10px;
+  opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+
+.selectorButton:hover .arrow {
+  transform: translateY(1px);
+}
+
+.spinner {
+  font-size: 16px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Dropdown */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 280px;
+  max-height: 500px;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdownHeader {
+  padding: 12px 16px;
+  background: var(--ifm-color-primary-lightest);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.badge {
+  background: var(--ifm-color-primary);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.languageList {
+  max-height: 380px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.languageItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--ifm-font-color-base);
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.languageItem:hover {
+  background: var(--ifm-color-emphasis-200);
+}
+
+.languageItem.active {
+  background: var(--ifm-color-primary-lightest);
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+.langName {
+  flex: 1;
+  font-weight: 500;
+}
+
+.originalBadge {
+  background: var(--ifm-color-success-contrast-background);
+  color: var(--ifm-color-success);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.activeBadge {
+  color: var(--ifm-color-primary);
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.dropdownFooter {
+  padding: 10px 16px;
+  background: var(--ifm-color-emphasis-100);
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  text-align: center;
+  font-size: 12px;
+  color: var(--ifm-color-emphasis-700);
+}
+
+/* Scrollbar styling */
+.languageList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.languageList::-webkit-scrollbar-track {
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 10px;
+}
+
+.languageList::-webkit-scrollbar-thumb {
+  background: var(--ifm-color-emphasis-400);
+  border-radius: 10px;
+}
+
+.languageList::-webkit-scrollbar-thumb:hover {
+  background: var(--ifm-color-emphasis-600);
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .selectorButton {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-emphasis-200);
+}
+
+[data-theme='dark'] .dropdown {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .dropdown {
+    right: -12px;
+    min-width: 260px;
+  }
+
+  .languageList {
+    max-height: 300px;
+  }
+}
