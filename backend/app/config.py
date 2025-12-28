@@ -18,7 +18,6 @@ class Settings(BaseSettings):
 
     # Gemini Configuration (Free tier: 1M tokens)
     gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
-        default="gemini",
     )
 
     # Database Configuration
@@ -32,7 +31,6 @@ class Settings(BaseSettings):
         env="QDRANT_COLLECTION_NAME"
     )
 
-    # Authentication
     auth_secret: str = Field(..., env="AUTH_SECRET")
     auth_url: str = Field(default="http://localhost:3000", env="AUTH_URL")
 
@@ -46,7 +44,6 @@ class Settings(BaseSettings):
     # Environment
     environment: str = Field(default="development", env="PYTHON_ENV")
 
-    # Email Configuration (Optional - for password reset)
     resend_api_key: str = Field(default="", env="RESEND_API_KEY")
     smtp_host: str = Field(default="smtp.gmail.com", env="SMTP_HOST")
     smtp_port: int = Field(default=587, env="SMTP_PORT")

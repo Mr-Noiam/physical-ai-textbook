@@ -1,7 +1,6 @@
 /**
  * Custom Navbar Content
  *
- * Extends the default Navbar to include UserMenu
  */
 
 import React from 'react';
@@ -16,7 +15,6 @@ import SearchBar from '@theme/SearchBar';
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
-import UserMenu from '@site/src/components/UserMenu';
 
 import styles from './styles.module.css';
 
@@ -46,7 +44,6 @@ function NavbarContentLayout({
       <div className="navbar__items">{left}</div>
       <div className="navbar__items navbar__items--right">
         {right}
-        <UserMenu />
       </div>
     </div>
   );

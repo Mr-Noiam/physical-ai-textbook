@@ -2,20 +2,19 @@
  * Root Component
  *
  * Wraps the entire Docusaurus app.
- * Used to inject global components like the ChatbotWidget and AuthProvider.
+ * Used to inject global components like the ChatbotWidget.
  *
  * See: https://docusaurus.io/docs/swizzling#wrapper-your-site-with-root
  */
 
 import React from 'react';
 import ChatbotWidget from '@site/src/components/ChatbotWidget';
-import { AuthProvider } from '@site/src/contexts/AuthContext';
 
 export default function Root({ children }): JSX.Element {
   return (
-    <AuthProvider>
+    <>
       {children}
       <ChatbotWidget />
-    </AuthProvider>
+    </>
   );
 }

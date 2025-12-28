@@ -75,10 +75,9 @@ async def health_check():
 
 
 # API routers
-from app.api.v1 import chatbot, auth, debug
+from app.api.v1 import chatbot, debug
 
 app.include_router(chatbot.router, tags=["chatbot"])
-app.include_router(auth.router, tags=["auth"])
 app.include_router(debug.router, tags=["debug"])  # TEMPORARY - for testing SMTP config
 
 # Future routers:

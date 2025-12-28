@@ -19,10 +19,7 @@ langchain-openai==0.0.3
 # Google Gemini (Free tier: 1M tokens) - New SDK
 google-genai>=0.2.0
 
-# Authentication & Security
-python-jose[cryptography]==3.3.0
-passlib==1.7.4
-bcrypt==4.0.1
+# Environment & Security
 python-dotenv==1.0.0
 
 # Utilities

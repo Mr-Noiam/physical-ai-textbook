@@ -21,9 +21,6 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String(255), unique=True, nullable=False, index=True)
-    password_hash = Column(Text, nullable=False)
-    reset_token = Column(String(255), nullable=True)
-    reset_token_expires = Column(DateTime(timezone=True), nullable=True)
     software_background = Column(
         Enum("beginner", "intermediate", "advanced", name="software_level"),
         nullable=True,
