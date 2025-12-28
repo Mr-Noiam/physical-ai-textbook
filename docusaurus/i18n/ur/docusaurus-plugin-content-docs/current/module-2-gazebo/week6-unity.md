@@ -4,23 +4,23 @@
 
 اس ہفتے، ہم **Unity Robotics Hub** کو دریافت کریں گے، جو روبوٹکس میں فوٹو ریئلسٹک رینڈرنگ، طبیعیات کی سمولیشن، اور مصنوعی ڈیٹا کی تخلیق فراہم کرتا ہے۔ Unity کمپیوٹر وژن اور VLA ماڈلز کے لیے بصری طور پر درست تربیتی ڈیٹا بنانے میں بہترین ہے۔
 
-## Why Unity for Robotics?
+## روبوٹکس کے لیے Unity کیوں؟
 
-**Advantages over Gazebo**:
+**Gazebo پر فوائد**:
 
-- **Photorealism**: High-quality graphics for sim-to-real transfer
-- **Synthetic data**: Generate labeled datasets (bounding boxes, segmentation masks)
-- **Performance**: GPU-accelerated physics and rendering
-- **Domain randomization**: Easy to vary lighting, textures, object poses
-- **Asset store**: Thousands of 3D models and environments
+- **فوٹو ریئلزم**: سم سے حقیقت کی منتقلی کے لیے اعلیٰ معیار کا گرافکس
+- **مصنوعی ڈیٹا**: لیبل شدہ ڈیٹا سیٹ تیار کریں (باؤنڈنگ باکسز، تقسیم کے ماسک)
+- **کارکردگی**: GPU سے تیز شدہ طبیعیات اور رینڈرنگ
+- **ڈومین رینڈمائزیشن**: روشنی، ٹیکسچر، آبجیکٹ کی پوزیشن میں تبدیلی آسان
+- **ایسٹ اسٹور**: ہزاروں 3D ماڈلز اور ماحول
 
-**Use cases**:
-- Training vision models
-- Human-robot interaction visualization
-- VR/AR teleoperation
-- Marketing and demos
+**استعمال کے معاملات**:
+- وژن ماڈلز کی تربیت
+- انسان-روبوٹ تعامل کی تصویر سازی
+- VR/AR ٹیلی آپریشن
+- مارکیٹنگ اور ڈیمو
 
-## Unity Robotics Hub Architecture
+## Unity Robotics Hub فن تعمیر
 
 ```
 ┌─────────────────┐         ┌──────────────────┐
@@ -35,56 +35,56 @@
   Robot Model                   ROS 2 Network
 ```
 
-## Installation
+## تنصیب
 
-### Unity Hub and Editor
+### Unity Hub اور Editor
 
 ```bash
-# Download Unity Hub
+# Unity Hub ڈاؤن لوڈ کریں
 wget https://public-cdn.cloud.unity3d.com/hub/prod/UnityHubSetup.AppImage
 
-# Install Unity 2022.3 LTS
+# Unity 2022.3 LTS انسٹال کریں
 # Unity Hub > Installs > Add > 2022.3 LTS
 ```
 
-### Unity Robotics Packages
+### Unity Robotics پیکجز
 
-In Unity, open Package Manager:
+Unity میں، Package Manager کھولیں:
 
 1. Window > Package Manager
-2. Add package from git URL:
+2. git URL سے پیکیج شامل کریں:
    - `https://github.com/Unity-Technologies/ROS-TCP-Connector.git?path=/com.unity.robotics.ros-tcp-connector`
    - `https://github.com/Unity-Technologies/URDF-Importer.git?path=/com.unity.robotics.urdf-importer`
 
 ### ROS 2 TCP Endpoint
 
 ```bash
-# Clone ROS-TCP-Endpoint
+# ROS-TCP-Endpoint کلون کریں
 cd ~/ros2_ws/src
 git clone https://github.com/Unity-Technologies/ROS-TCP-Endpoint
 
-# Build
+# بنائیں
 cd ~/ros2_ws
 colcon build --packages-select ros_tcp_endpoint
 
-# Source
+# سورس کریں
 source install/setup.bash
 ```
 
-## Importing Humanoid URDF
+## ہیومینائیڈ URDF درآمد کرنا
 
-### 1. Prepare URDF
+### 1. URDF تیار کریں
 
-Unity URDF Importer has requirements:
+Unity URDF Importer کی ضروریات ہیں:
 
 ```xml
 <?xml version="1.0"?>
 <robot name="humanoid">
-  <!-- Ensure all meshes use absolute paths or package:// URIs -->
+  <!-- یقینی بنائیں کہ تمام meshes مطلق راستے یا package:// URIs استعمال کریں -->
   <link name="torso">
     <visual>
       <geometry>
-        <!-- Supported: .obj, .stl, .dae -->
+        <!-- تعاون یافتہ: .obj, .stl, .dae -->
         <mesh filename="package://humanoid_description/meshes/torso.obj"/>
       </geometry>
     </visual>
@@ -92,23 +92,23 @@ Unity URDF Importer has requirements:
 </robot>
 ```
 
-### 2. Import to Unity
+### 2. Unity میں درآمد کریں
 
 1. Assets > Import Robot from URDF
-2. Select your URDF file
-3. Configure import settings:
+2. اپنی URDF فائل منتخب کریں
+3. درآمد کی ترتیبات کو ترتیب دیں:
    - Axis Type: Y-Axis
-   - Mesh Decomposer: VHACD (for collisions)
-4. Import
+   - Mesh Decomposer: VHACD (ٹکراؤ کے لیے)
+4. درآمد کریں
 
-Unity creates:
-- GameObject hierarchy matching URDF
-- ArticulationBody components for joints
-- Colliders and visual meshes
+Unity تخلیق کرتا ہے:
+- GameObject کی ہائیرارکی جو URDF سے میل کھاتی ہے
+- جوائنٹس کے لیے ArticulationBody اجزاء
+- Colliders اور بصری meshes
 
-### 3. Configure ArticulationBodies
+### 3. ArticulationBodies کو ترتیب دیں
 
-Unity uses **ArticulationBody** (successor to Rigidbody):
+Unity **ArticulationBody** استعمال کرتا ہے (Rigidbody کا جانشین):
 
 ```csharp
 using UnityEngine;
@@ -119,14 +119,14 @@ public class JointController : MonoBehaviour
 
     void Start()
     {
-        // Get all articulation bodies (joints)
+        // تمام articulation bodies (joints) حاصل کریں
         joints = GetComponentsInChildren<ArticulationBody>();
 
         foreach (var joint in joints)
         {
             if (joint.jointType == ArticulationJointType.RevoluteJoint)
             {
-                // Set drive properties
+                // ڈرائیو کی خصوصیات مقرر کریں
                 var drive = joint.xDrive;
                 drive.stiffness = 10000;
                 drive.damping = 500;
@@ -149,9 +149,9 @@ public class JointController : MonoBehaviour
 }
 ```
 
-## ROS 2 - Unity Communication
+## ROS 2 - Unity مواصلات
 
-### Unity Side: Subscribe to Joint Commands
+### Unity سائیڈ: جوائنٹ کمانڈز کو سبسکرائب کریں
 
 ```csharp
 using UnityEngine;
@@ -165,7 +165,7 @@ public class JointStateSubscriber : MonoBehaviour
 
     void Start()
     {
-        // Connect to ROS
+        // ROS سے منسلک ہوں
         ros = ROSConnection.GetOrCreateInstance();
         ros.RegisterSubscriber<JointStateMsg>("joint_commands", UpdateJoints);
 
@@ -188,12 +188,13 @@ public class JointStateSubscriber : MonoBehaviour
 }
 ```
 
-### ROS Side: Publish Joint Commands
+### ROS سائیڈ: جوائنٹ کمانڈز شائع کریں
 
 ```python
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
+import math
 
 class UnityJointPublisher(Node):
     def __init__(self):
@@ -213,20 +214,20 @@ class UnityJointPublisher(Node):
         self.phase += 0.1
 ```
 
-### Start ROS-TCP Endpoint
+### ROS-TCP Endpoint شروع کریں
 
 ```bash
 ros2 run ros_tcp_endpoint default_server_endpoint --ros-args -p ROS_IP:=0.0.0.0
 ```
 
-In Unity:
+Unity میں:
 - Robotics > ROS Settings
 - ROS IP Address: localhost
 - ROS Port: 10000
 
-## Camera and Sensors
+## کیمرہ اور سینسرز
 
-### RGB Camera
+### RGB کیمرہ
 
 ```csharp
 using UnityEngine;
@@ -278,70 +279,23 @@ public class CameraPublisher : MonoBehaviour
 }
 ```
 
-### Depth Camera
+## مصنوعی ڈیٹا کی تخلیق
 
-```csharp
-public class DepthCameraPublisher : MonoBehaviour
-{
-    private Camera depthCam;
+### Perception کیمرہ (لیبل شدہ ڈیٹا کے لیے)
 
-    void Start()
-    {
-        depthCam = GetComponent<Camera>();
-        depthCam.depthTextureMode = DepthTextureMode.Depth;
+Unity Perception پیکیج فراہم کرتا ہے:
 
-        // Shader for depth visualization
-        depthCam.SetReplacementShader(Shader.Find("Custom/DepthShader"), "");
-    }
-
-    // Publish depth as Float32 array
-    void PublishDepth()
-    {
-        // Convert depth buffer to ROS PointCloud2
-        // Implementation depends on use case
-    }
-}
-```
-
-## Synthetic Data Generation
-
-### Perception Camera (for labeled data)
-
-Unity Perception package provides:
-
-- Bounding boxes (2D/3D)
+- باؤنڈنگ باکسز (2D/3D)
 - Instance segmentation
 - Semantic segmentation
 - Keypoint annotation
 
-Install:
+انسٹال کریں:
 ```
 Window > Package Manager > Unity Registry > Perception
 ```
 
-Example labeler:
-
-```csharp
-using UnityEngine;
-using UnityEngine.Perception.GroundTruth;
-
-public class DatasetGenerator : MonoBehaviour
-{
-    void Start()
-    {
-        var perceptionCamera = GetComponent<PerceptionCamera>();
-
-        // Add labelers
-        var boundingBox2DLabeler = new BoundingBox2DLabeler();
-        perceptionCamera.AddLabeler(boundingBox2DLabeler);
-
-        var semanticSegmentationLabeler = new SemanticSegmentationLabeler();
-        perceptionCamera.AddLabeler(semanticSegmentationLabeler);
-    }
-}
-```
-
-### Domain Randomization
+### ڈومین رینڈمائزیشن
 
 ```csharp
 using UnityEngine;
@@ -384,19 +338,19 @@ public class DomainRandomizer : MonoBehaviour
 }
 ```
 
-## Complete Unity-ROS 2 Example
+## مکمل Unity-ROS 2 مثال
 
-### Scene Setup
+### Scene سیٹ اپ
 
-1. Create empty scene
-2. Add Plane (ground)
-3. Import humanoid URDF
-4. Add camera to robot head
-5. Add directional light
+1. خالی scene بنائیں
+2. Plane (زمین) شامل کریں
+3. ہیومینائیڈ URDF درآمد کریں
+4. روبوٹ کے سر میں کیمرہ شامل کریں
+5. Directional light شامل کریں
 
 ### Unity Scripts
 
-Attach to robot root:
+روبوٹ root سے منسلک کریں:
 
 ```csharp
 using UnityEngine;
@@ -406,19 +360,18 @@ public class HumanoidController : MonoBehaviour
 {
     void Start()
     {
-        // Initialize ROS connection
+        // ROS کنکشن شروع کریں
         var ros = ROSConnection.GetOrCreateInstance();
         ros.ConnectOnStart = true;
 
-        // Add components
+        // اجزاء شامل کریں
         gameObject.AddComponent<JointStateSubscriber>();
         gameObject.AddComponent<CameraPublisher>();
-        gameObject.AddComponent<IMUPublisher>();
     }
 }
 ```
 
-### ROS Launch File
+### ROS Launch فائل
 
 ```python
 from launch import LaunchDescription
@@ -448,19 +401,19 @@ def generate_launch_description():
     ])
 ```
 
-## Performance Tips
+## کارکردگی کے نکات
 
-### 1. Reduce Quality for Simulation
+### 1. سمولیشن کے لیے معیار کم کریں
 
 ```csharp
 void Start()
 {
-    QualitySettings.SetQualityLevel(2);  // Medium quality
+    QualitySettings.SetQualityLevel(2);  // درمیانی معیار
     Application.targetFrameRate = 60;
 }
 ```
 
-### 2. Use Object Pooling
+### 2. Object Pooling استعمال کریں
 
 ```csharp
 public class ObjectPool : MonoBehaviour
@@ -489,23 +442,23 @@ public class ObjectPool : MonoBehaviour
 
 ### 3. Batch Rendering
 
-Use Unity's GPU instancing for multiple identical objects.
+ایک جیسے متعدد اشیاء کے لیے Unity کی GPU instancing استعمال کریں۔
 
-## Summary
+## خلاصہ
 
-This week you learned:
+اس ہفتے آپ نے سیکھا:
 
-- Unity Robotics Hub architecture
-- Importing URDF to Unity
-- ArticulationBody physics
-- ROS 2 - Unity TCP communication
-- Publishing camera and sensor data
-- Synthetic data generation with Perception
-- Domain randomization for sim-to-real
-- Performance optimization
+- Unity Robotics Hub فن تعمیر
+- URDF کو Unity میں درآمد کرنا
+- ArticulationBody طبیعیات
+- ROS 2 - Unity TCP مواصلات
+- کیمرہ اور سینسر ڈیٹا شائع کرنا
+- Perception کے ساتھ مصنوعی ڈیٹا کی تخلیق
+- سم سے حقیقت کے لیے ڈومین رینڈمائزیشن
+- کارکردگی کی اصلاح
 
-## What's Next?
+## اگلا کیا ہے؟
 
-**Week 7: NVIDIA Isaac Sim** - Explore the most advanced robot simulator with RTX rendering, PhysX, and integrated AI tools.
+**ہفتہ 7: NVIDIA Isaac Sim** - RTX رینڈرنگ، PhysX، اور مربوط AI ٹولز کے ساتھ سب سے جدید روبوٹ سمیولیٹر دریافت کریں۔
 
-**Next**: [Week 7: Isaac Sim →](../module-3-isaac/week7-isaac-sim.md)
+**اگلا**: [ہفتہ 7: Isaac Sim →](../module-3-isaac/week7-isaac-sim.md)
