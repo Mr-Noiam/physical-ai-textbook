@@ -15,8 +15,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
-import { useAuth } from '../../contexts/AuthContext';
-import AuthModal from '../AuthModal';
 import styles from './styles.module.css';
 
 interface Message {
@@ -35,10 +33,8 @@ interface Source {
 export default function ChatbotWidget(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   const API_BASE_URL = (siteConfig.customFields?.apiBaseUrl as string) || 'http://localhost:8000';
-  const { user, token, logout } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -75,12 +71,6 @@ export default function ChatbotWidget(): JSX.Element {
 
   const sendMessage = async (question: string, selectedContext?: string) => {
     if (!question.trim()) return;
-
-    // Check if user is authenticated
-    if (!user) {
-      setIsAuthModalOpen(true);
-      return;
-    }
 
     // Add user message to chat
     const userMessage: Message = {
@@ -166,8 +156,6 @@ export default function ChatbotWidget(): JSX.Element {
 
   return (
     <>
-      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-
       {/* Floating "Ask about this" button (appears on text selection) */}
       {selectedText && !isOpen && (
         <button
