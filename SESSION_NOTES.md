@@ -7,12 +7,12 @@
 **Problem**: Password reset emails were not sending even though Resend API key was configured.
 
 **Root Cause**:
-- Using `FROM_EMAIL=onboarding@resend.dev` (Resend's test domain)
+- Using `FROM_EMAIL=...` (Resend's test domain)
 - Test domain only allows sending to your registered email (noiamnoiam3@gmail.com)
 - To send to any recipient, need to use a verified domain
 
 **Solution**:
-- Updated `.env` to use verified domain: `FROM_EMAIL=noreply@automizegenai.com`
+- Updated `.env` to use verified domain: `FROM_EMAIL=...`
 - Domain `automizegenai.com` is verified in Resend dashboard
 - Fixed Unicode encoding issues in email service (removed emoji characters for Windows compatibility)
 
@@ -30,14 +30,14 @@
 
 **Action Required for Railway**:
 1. Go to Railway Dashboard → Your Project → Variables
-2. Update or add: `FROM_EMAIL=noreply@automizegenai.com`
+2. Update or add: `FROM_EMAIL=...`
 3. Remove SMTP variables (SMTP ports blocked on Railway):
    - SMTP_HOST
    - SMTP_PORT
    - SMTP_USER
    - SMTP_PASSWORD
 4. Keep these variables:
-   - RESEND_API_KEY=re_MhAwNysu_PVUFMfsdxLAtvapNFqZkgChu
+   - RESEND_API_KEY=...
    - FROM_EMAIL=noreply@automizegenai.com
    - FROM_NAME=Physical AI Textbook
 
