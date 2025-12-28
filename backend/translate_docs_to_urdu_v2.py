@@ -1,11 +1,9 @@
 """
-Pre-translate all documentation to Urdu and save as markdown files.
+Pre-translate all documentation to Urdu - Optimized Version
 
-This creates Urdu versions of all docs that can be served statically,
-instead of translating on-demand (which is slow and can fail).
+This version translates content in larger chunks for better performance.
 """
 
-import os
 import sys
 import time
 from pathlib import Path
@@ -17,7 +15,7 @@ if sys.platform == 'win32':
         sys.stdout.reconfigure(encoding='utf-8')
         sys.stderr.reconfigure(encoding='utf-8')
     except:
-        pass  # Older Python versions might not have reconfigure()
+        pass
 
 # API Configuration
 API_BASE_URL = "http://localhost:8000"
@@ -40,34 +38,27 @@ def translate_text(text: str, target_language: str = "ur") -> str:
             "target_language": target_language,
             "source_language": "en",
             "use_cache": True
-        }, timeout=30)
+        }, timeout=120)  # Increased timeout for larger chunks
 
         if response.status_code == 200:
             data = response.json()
             return data['translated_content']
         else:
             print(f"    ERROR: Translation API returned {response.status_code}")
-            print(f"    {response.text[:200]}")
             return text  # Return original if translation fails
 
+    except requests.exceptions.Timeout:
+        print(f"    ERROR: Translation timed out (text too long)")
+        return text
     except requests.exceptions.RequestException as e:
         print(f"    ERROR: {str(e)[:100]}")
-        return text  # Return original if request fails
+        return text
 
-def translate_markdown_file(input_file: Path, output_file: Path):
+def translate_markdown_file_optimized(input_file: Path, output_file: Path):
     """
     Translate a markdown file from English to Urdu.
 
-    Preserves:
-    - Frontmatter (YAML at top)
-    - Code blocks
-    - Links
-    - Special markdown syntax
-
-    Translates:
-    - Headings
-    - Paragraphs
-    - List items
+    Uses paragraph-based batching for better performance.
     """
     print(f"\nTranslating: {input_file.name}")
 
@@ -84,67 +75,75 @@ def translate_markdown_file(input_file: Path, output_file: Path):
         frontmatter = ""
         main_content = content
 
-    # Split content into lines
+    # Process content
     lines = main_content.split('\n')
     translated_lines = []
 
     in_code_block = False
-    translated_count = 0
-    skipped_count = 0
+    text_buffer = []  # Buffer to collect text lines
+    chunk_count = 0
+
+    def flush_buffer():
+        """Translate accumulated text buffer"""
+        nonlocal chunk_count
+        if not text_buffer:
+            return
+
+        # Join lines with newlines
+        chunk = '\n'.join(text_buffer)
+
+        # Translate the whole chunk
+        print(f"    Translating chunk {chunk_count + 1} ({len(chunk)} chars)...")
+        translated_chunk = translate_text(chunk)
+
+        # Split back into lines
+        translated_chunk_lines = translated_chunk.split('\n')
+        translated_lines.extend(translated_chunk_lines)
+
+        text_buffer.clear()
+        chunk_count += 1
+
+        # Small delay between chunks
+        time.sleep(0.3)
 
     for line in lines:
         # Check for code block markers
         if line.strip().startswith('```'):
+            # Flush any pending text before code block
+            flush_buffer()
             in_code_block = not in_code_block
-            translated_lines.append(line)  # Keep code block markers as-is
+            translated_lines.append(line)
             continue
 
         # Skip translation inside code blocks
         if in_code_block:
+            flush_buffer()  # Flush before code
             translated_lines.append(line)
-            skipped_count += 1
             continue
 
-        # Skip empty lines
+        # Skip empty lines (but preserve them)
         if not line.strip():
+            flush_buffer()  # Flush before empty line
             translated_lines.append(line)
             continue
 
-        # Skip lines that are just markdown syntax (like ---, ***, etc.)
-        if all(c in '-*_=' for c in line.strip()):
+        # Skip lines that are just markdown syntax
+        if all(c in '-*_= ' for c in line.strip()):
+            flush_buffer()
             translated_lines.append(line)
             continue
 
-        # Translate content lines
-        try:
-            # Extract the text to translate (preserve markdown formatting)
-            stripped = line.strip()
+        # Accumulate text lines into buffer
+        text_buffer.append(line)
 
-            # Skip very short lines or lines with just punctuation
-            if len(stripped) < 3 or all(c in '.,!?;:-()[]{}' for c in stripped):
-                translated_lines.append(line)
-                continue
+        # Flush buffer after ~15 lines or ~3000 chars to avoid API limits
+        # (422 errors occur with chunks larger than ~10000 chars)
+        buffer_size = sum(len(l) for l in text_buffer)
+        if len(text_buffer) >= 15 or buffer_size > 3000:
+            flush_buffer()
 
-            # Translate
-            translated_text = translate_text(stripped)
-
-            # Preserve original indentation
-            indent = len(line) - len(line.lstrip())
-            translated_line = ' ' * indent + translated_text
-
-            translated_lines.append(translated_line)
-            translated_count += 1
-
-            # Show progress
-            if translated_count % 5 == 0:
-                print(f"    Translated {translated_count} lines...")
-
-            # Rate limiting (avoid overwhelming API)
-            time.sleep(0.2)
-
-        except Exception as e:
-            print(f"    ERROR translating line: {str(e)[:50]}")
-            translated_lines.append(line)  # Keep original on error
+    # Flush any remaining text
+    flush_buffer()
 
     # Combine everything
     urdu_content = frontmatter + '\n' + '\n'.join(translated_lines)
@@ -157,12 +156,12 @@ def translate_markdown_file(input_file: Path, output_file: Path):
         f.write(urdu_content)
 
     print(f"    Saved: {output_file}")
-    print(f"    Stats: {translated_count} translated, {skipped_count} skipped (code blocks)")
+    print(f"    Stats: {chunk_count} chunks translated")
 
 def translate_all_docs():
     """Translate all documentation files to Urdu."""
     print("=" * 70)
-    print("TRANSLATING DOCUMENTATION TO URDU")
+    print("TRANSLATING DOCUMENTATION TO URDU (OPTIMIZED)")
     print("=" * 70)
 
     # Ensure Urdu directory exists
@@ -182,19 +181,28 @@ def translate_all_docs():
         output_file = URDU_DOCS_DIR / rel_path
 
         print(f"\n[{i}/{len(md_files)}]", end=" ")
-        translate_markdown_file(md_file, output_file)
+        translate_markdown_file_optimized(md_file, output_file)
 
     print("\n" + "=" * 70)
     print("TRANSLATION COMPLETE!")
     print("=" * 70)
     print(f"\nTranslated files saved to: {URDU_DOCS_DIR}")
-    print("\nNext steps:")
-    print("1. Review translated files")
-    print("2. Configure Docusaurus i18n for Urdu")
-    print("3. Build and test")
 
 def main():
     """Main entry point."""
+    # Check if backend is running
+    try:
+        response = requests.get(f"{API_BASE_URL}/health", timeout=5)
+        if response.status_code != 200:
+            print("ERROR: Backend not responding properly")
+            sys.exit(1)
+    except requests.exceptions.RequestException:
+        print("ERROR: Backend not running!")
+        print("\nPlease start the backend first:")
+        print("  cd backend")
+        print("  python -m uvicorn app.main:app --reload")
+        sys.exit(1)
+
     # Run translation
     try:
         translate_all_docs()

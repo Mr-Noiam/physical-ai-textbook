@@ -1,0 +1,26 @@
+{
+  "health_check": {
+    "status_code": 200,
+    "passed": true
+  },
+  "languages": {
+    "status_code": 200,
+    "passed": true,
+    "total": 15
+  },
+  "translate": {
+    "status_code": 200,
+    "passed": true,
+    "cached": true
+  },
+  "cache": {
+    "status_code": 200,
+    "passed": true,
+    "cached": true
+  },
+  "multiple": {
+    "status_code": 200,
+    "passed": true,
+    "total": 3
+  }
+}

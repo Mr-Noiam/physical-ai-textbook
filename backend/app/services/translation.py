@@ -35,8 +35,8 @@ if settings.translation_provider == "gemini" and settings.gemini_api_key:
 
         # Initialize with new SDK
         gemini_client = genai.Client(api_key=settings.gemini_api_key)
-        # Use stable model: gemini-1.5-flash (reliable, fast, free tier compatible)
-        gemini_model = "gemini-1.5-flash"
+        # Use stable model: gemini-2.0-flash-exp (latest fast model, free tier compatible)
+        gemini_model = "gemini-2.0-flash-exp"
         print(f"Gemini API initialized with model: {gemini_model}")
     except Exception as e:
         print(f"Warning: Could not initialize Gemini client: {e}")

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urdu Translation Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #10b981;
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .translations {
+            background: white;
+            padding: 0;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .translation-card {
+            padding: 30px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .translation-card:last-child {
+            border-bottom: none;
+        }
+
+        .english {
+            background: #f3f4f6;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .english-label {
+            color: #667eea;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .english-text {
+            color: #333;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .urdu {
+            background: #fef3c7;
+            padding: 20px 25px;
+            border-radius: 10px;
+            border-right: 4px solid #f59e0b;
+            /* RTL support for Urdu */
+            direction: rtl;
+            text-align: right;
+        }
+
+        .urdu-label {
+            color: #f59e0b;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+            /* LTR for label */
+            direction: ltr;
+            text-align: left;
+        }
+
+        .urdu-text {
+            /* Use fonts that support Urdu properly */
+            font-family: 'Jameel Noori Nastaleeq', 'Nafees Web Naskh', 'Noto Nastaliq Urdu', 'Arabic Typesetting', Arial, sans-serif;
+            color: #1f2937;
+            font-size: 24px;
+            line-height: 2;
+            font-weight: normal;
+            /* Ensure proper text rendering */
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .metadata {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .metadata span {
+            background: #f3f4f6;
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+
+        .cached {
+            background: #10b981 !important;
+            color: white;
+        }
+
+        .not-cached {
+            background: #ef4444 !important;
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .explanation {
+            background: #fffbeb;
+            border: 2px solid #fbbf24;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .explanation h3 {
+            color: #f59e0b;
+            margin-bottom: 10px;
+        }
+
+        .explanation p {
+            color: #78350f;
+            line-height: 1.6;
+        }
+    </style>
+    <!-- Include Google Fonts for better Urdu support -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌍 Urdu Translation Viewer</h1>
+            <p>Proper RTL (Right-to-Left) rendering with connected letters</p>
+            <span class="status">✓ Displaying Correctly</span>
+        </div>
+
+        <div class="explanation">
+            <h3>Why does Urdu look broken in the terminal?</h3>
+            <p>
+                <strong>Your terminal doesn't support RTL (right-to-left) text rendering.</strong><br>
+                Urdu uses special Unicode characters that need to be connected and displayed right-to-left.
+                This HTML viewer uses proper CSS and fonts to display Urdu correctly.
+                <br><br>
+                <strong>The translation itself is correct</strong> - it's just a display issue in your terminal!
+            </p>
+        </div>
+
+        <div class="translations">
+
+            <div class="translation-card">
+                <div class="english">
+                    <div class="english-label">English (Original)</div>
+                    <div class="english-text">Hello, welcome to the robotics course!</div>
+                </div>
+
+                <div class="urdu">
+                    <div class="urdu-label">اردو (Urdu Translation)</div>
+                    <div class="urdu-text">ہیلو، روبوٹکس کورس میں خوش آمدید!</div>
+                </div>
+
+                <div class="metadata">
+                    <span>#1</span>
+                    <span>EN → UR</span>
+                    <span class="cached">✓ Cached</span>
+                    <span>2025-12-27T12:06:29</span>
+                </div>
+            </div>
+
+            <div class="translation-card">
+                <div class="english">
+                    <div class="english-label">English (Original)</div>
+                    <div class="english-text">Introduction to Robot Operating System</div>
+                </div>
+
+                <div class="urdu">
+                    <div class="urdu-label">اردو (Urdu Translation)</div>
+                    <div class="urdu-text">روبوٹ آپریٹنگ سسٹم کا تعارف</div>
+                </div>
+
+                <div class="metadata">
+                    <span>#2</span>
+                    <span>EN → UR</span>
+                    <span class="not-cached">⚡ Fresh Translation</span>
+                    <span>2025-12-27T12:06:47</span>
+                </div>
+            </div>
+
+            <div class="translation-card">
+                <div class="english">
+                    <div class="english-label">English (Original)</div>
+                    <div class="english-text">ROS 2 is a flexible framework for writing robot software</div>
+                </div>
+
+                <div class="urdu">
+                    <div class="urdu-label">اردو (Urdu Translation)</div>
+                    <div class="urdu-text">ROS 2 روبوٹ سافٹ ویئر لکھنے کے لیے ایک لچکدار فریم ورک ہے۔</div>
+                </div>
+
+                <div class="metadata">
+                    <span>#3</span>
+                    <span>EN → UR</span>
+                    <span class="not-cached">⚡ Fresh Translation</span>
+                    <span>2025-12-27T12:06:52</span>
+                </div>
+            </div>
+
+            <div class="translation-card">
+                <div class="english">
+                    <div class="english-label">English (Original)</div>
+                    <div class="english-text">Please click here to continue learning</div>
+                </div>
+
+                <div class="urdu">
+                    <div class="urdu-label">اردو (Urdu Translation)</div>
+                    <div class="urdu-text">براہ کرم یہاں کلک کریں تاکہ سیکھنا جاری رکھ سکیں۔</div>
+                </div>
+
+                <div class="metadata">
+                    <span>#4</span>
+                    <span>EN → UR</span>
+                    <span class="not-cached">⚡ Fresh Translation</span>
+                    <span>2025-12-27T12:07:07</span>
+                </div>
+            </div>
+
+            <div class="translation-card">
+                <div class="english">
+                    <div class="english-label">English (Original)</div>
+                    <div class="english-text">This tutorial covers basic robotics concepts</div>
+                </div>
+
+                <div class="urdu">
+                    <div class="urdu-label">اردو (Urdu Translation)</div>
+                    <div class="urdu-text">یہ ٹیوٹوریل بنیادی روبوٹکس کے تصورات کا احاطہ کرتا ہے۔</div>
+                </div>
+
+                <div class="metadata">
+                    <span>#5</span>
+                    <span>EN → UR</span>
+                    <span class="not-cached">⚡ Fresh Translation</span>
+                    <span>2025-12-27T12:07:13</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer">
+            <p>Generated with Gemini/OpenAI Translation API</p>
+            <p>Urdu text is displayed with proper RTL rendering and font support</p>
+        </div>
+    </div>
+</body>
+</html>
