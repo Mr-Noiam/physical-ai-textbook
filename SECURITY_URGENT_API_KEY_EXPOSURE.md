@@ -59,8 +59,8 @@ Your `.env` file was committed to git:
 backend/.env
 
 # It contains:
-GEMINI_API_KEY=AIzaSyBRqBivUAf0fhOYgHB2l2EjUIwbeXq4NHM  ❌ EXPOSED
-RESEND_API_KEY=re_MhAwNysu_PVUFMfsdxLAtvapNFqZkgChu    ❌ EXPOSED
+GEMINI_API_KEY
+RESEND_API_KEY
 ```
 
 ## What Attackers Can Do With These Keys
@@ -115,7 +115,7 @@ OPENAI_API_KEY=your_openai_api_key_here
 **NEVER commit:**
 ```bash
 # backend/.env (actual secrets)
-GEMINI_API_KEY=AIzaSy...  # Real key
+GEMINI_API_KEY=...  # Real key
 ```
 
 ### 2. Update .gitignore
@@ -193,9 +193,8 @@ git show <commit-hash>:backend/.env
 
 **Exposed Keys:**
 ```
-GEMINI_API_KEY=AIzaSyBRqBivUAf0fhOYgHB2l2EjUIwbeXq4NHM  ❌ REVOKE NOW
-RESEND_API_KEY=re_MhAwNysu_PVUFMfsdxLAtvapNFqZkgChu    ❌ REVOKE NOW
-OPENAI_API_KEY=sk-proj-XCNQ9hk6w-...                  ❌ REVOKE NOW
+GEMINI_API_KEY=
+RESEND_API_KEY=
 ```
 
 **After fixing:**
