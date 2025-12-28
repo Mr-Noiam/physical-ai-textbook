@@ -31,6 +31,7 @@ const config: Config = {
   projectName: 'physical-ai-textbook', // Usually your repo name.
 
   onBrokenLinks: 'warn',
+  trailingSlash: false,
 
   // Internationalization configuration
   // Support for English (default) and Urdu
