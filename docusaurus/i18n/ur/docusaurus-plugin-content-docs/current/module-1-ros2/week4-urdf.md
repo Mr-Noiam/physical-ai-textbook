@@ -1,15 +1,15 @@
-# ہفتہ 4: ہیومینائیڈ روبوٹ کی تفصیلات کے لیے URDF
+# Week 4: URDF for Humanoid Robot Descriptions
 
-## تعارف
+## Introduction
 
-اس ہفتے، ہم سیکھیں گے کہ کس طرح **URDF** (Unified Robot Description Format) کا استعمال کرتے ہوئے انسانی شکل کے روبوٹوں کی وضاحت کی جائے۔ URDF ایک XML پر مبنی فارمیٹ ہے جو روبوٹ کی حرکیات، جیومیٹری، اور بصری ظاہری شکل کی وضاحت کرتا ہے۔ آپ ایک مکمل 28-DOF انسانی شکل کا ماڈل بنائیں گے جو سمولیشن اور کنٹرول کے لیے تیار ہوگا۔
+This week, we'll learn to describe humanoid robots using **URDF** (Unified Robot Description Format). URDF is an XML-based format that defines robot kinematics, geometry, and visual appearance. You'll build a complete 28-DOF humanoid model ready for simulation and control.
 
-## URDF کیا ہے؟
+## What is URDF?
 
-**URDF** روبوٹس کو لنکس اور جوائنٹس کے درخت کے طور پر بیان کرتا ہے:
+**URDF** describes robots as a tree of links and joints:
 
-- **لنکس**: سخت جسم (دھڑ، اعضاء، سینسرز)
-- **جوائنٹس**: لنکس کے درمیان کنکشن (گھومنے والے، پرزماٹک، مقررہ)
+- **Links**: Rigid bodies (torso, limbs, sensors)
+- **Joints**: Connections between links (revolute, prismatic, fixed)
 
 ```xml
 <robot name="my_robot">
@@ -30,22 +30,22 @@
 </robot>
 ```
 
-## URDF لنک کی ساخت
+## URDF Link Structure
 
-ایک لنک میں تین اجزاء ہوتے ہیں:
+A link has three components:
 
-### 1. بصری (ظاہری شکل)
+### 1. Visual (Appearance)
 
 ```xml
 <visual>
   <origin xyz="0 0 0" rpy="0 0 0"/>
   <geometry>
     <box size="0.1 0.1 0.2"/>
-    <!-- یا -->
+    <!-- OR -->
     <cylinder radius="0.05" length="0.2"/>
-    <!-- یا -->
+    <!-- OR -->
     <sphere radius="0.05"/>
-    <!-- یا -->
+    <!-- OR -->
     <mesh filename="package://my_robot/meshes/torso.stl" scale="1.0 1.0 1.0"/>
   </geometry>
   <material name="blue">
@@ -54,19 +54,19 @@
 </visual>
 ```
 
-### 2. ٹکراؤ (طبیعیات)
+### 2. Collision (Physics)
 
 ```xml
 <collision>
   <origin xyz="0 0 0" rpy="0 0 0"/>
   <geometry>
-    <!-- کارکردگی کے لیے بصری سے آسان جیومیٹری -->
+    <!-- Simpler geometry than visual for performance -->
     <box size="0.1 0.1 0.2"/>
   </geometry>
 </collision>
 ```
 
-### 3. جمودی (حرکیات)
+### 3. Inertial (Dynamics)
 
 ```xml
 <inertial>
@@ -77,25 +77,25 @@
 </inertial>
 ```
 
-عام شکلوں کے لیے جمود کا حساب لگائیں:
+Calculate inertia for common shapes:
 
-**باکس** (m, w, h, d):
+**Box** (m, w, h, d):
 ```
 ixx = (m/12) * (h² + d²)
 iyy = (m/12) * (w² + d²)
 izz = (m/12) * (w² + h²)
 ```
 
-**سلنڈر** (m, r, h):
+**Cylinder** (m, r, h):
 ```
 ixx = (m/12) * (3r² + h²)
 iyy = (m/12) * (3r² + h²)
 izz = (m/2) * r²
 ```
 
-## URDF جوائنٹ کی اقسام
+## URDF Joint Types
 
-### 1. گھومنے والا (Revolute)
+### 1. Revolute (Rotational)
 
 ```xml
 <joint name="shoulder_pitch" type="revolute">
@@ -108,7 +108,7 @@ izz = (m/2) * r²
 </joint>
 ```
 
-### 2. مسلسل (لامحدود گردش)
+### 2. Continuous (Unlimited Rotation)
 
 ```xml
 <joint name="wheel_joint" type="continuous">
@@ -119,7 +119,7 @@ izz = (m/2) * r²
 </joint>
 ```
 
-### 3. پرزماٹک (لکیری)
+### 3. Prismatic (Linear)
 
 ```xml
 <joint name="telescoping_leg" type="prismatic">
@@ -130,7 +130,7 @@ izz = (m/2) * r²
 </joint>
 ```
 
-### 4. مقررہ (سخت کنکشن)
+### 4. Fixed (Rigid Connection)
 
 ```xml
 <joint name="camera_mount" type="fixed">
@@ -140,18 +140,18 @@ izz = (m/2) * r²
 </joint>
 ```
 
-## ہیومینائیڈ URDF مثال: اوپری جسم
+## Humanoid URDF Example: Upper Body
 
-آئیے دھڑ اور بازوؤں کو بنائیں:
+Let's build the torso and arms:
 
 ```xml
 <?xml version="1.0"?>
 <robot name="humanoid">
 
-  <!-- بنیادی لنک (حوالہ جاتی فریم) -->
+  <!-- Base link (reference frame) -->
   <link name="base_link"/>
 
-  <!-- دھڑ -->
+  <!-- Torso -->
   <link name="torso">
     <visual>
       <geometry>
@@ -179,7 +179,7 @@ izz = (m/2) * r²
     <origin xyz="0 0 1.0" rpy="0 0 0"/>
   </joint>
 
-  <!-- بائیں کندھے کی اسمبلی -->
+  <!-- Left Shoulder Assembly -->
   <link name="left_shoulder_pitch_link">
     <visual>
       <geometry>
@@ -210,7 +210,7 @@ izz = (m/2) * r²
     <dynamics damping="0.7"/>
   </joint>
 
-  <!-- بائیں اوپری بازو -->
+  <!-- Left Upper Arm -->
   <link name="left_upper_arm">
     <visual>
       <origin xyz="0 0 -0.15" rpy="0 0 0"/>
@@ -242,7 +242,7 @@ izz = (m/2) * r²
     <dynamics damping="0.7"/>
   </joint>
 
-  <!-- بائیں کہنی -->
+  <!-- Left Elbow -->
   <link name="left_forearm">
     <visual>
       <origin xyz="0 0 -0.125" rpy="0 0 0"/>
@@ -277,9 +277,9 @@ izz = (m/2) * r²
 </robot>
 ```
 
-## مکمل 28-DOF ہیومینائیڈ URDF
+## Complete 28-DOF Humanoid URDF
 
-یہاں ایک آسان مکمل جسم ہے (کلیدی حصے):
+Here's a simplified full body (key sections):
 
 ```xml
 <?xml version="1.0"?>
@@ -289,7 +289,7 @@ izz = (m/2) * r²
   <material name="red"><color rgba="1 0 0 1"/></material>
   <material name="blue"><color rgba="0 0 1 1"/></material>
 
-  <!-- دھڑ -->
+  <!-- Torso -->
   <link name="base_link"/>
   <link name="torso">
     <visual>
@@ -310,7 +310,7 @@ izz = (m/2) * r²
     <origin xyz="0 0 1.0"/>
   </joint>
 
-  <!-- سر -->
+  <!-- Head -->
   <link name="head">
     <visual>
       <geometry><sphere radius="0.12"/></geometry>
@@ -332,7 +332,7 @@ izz = (m/2) * r²
     <limit effort="30" velocity="1.5" lower="-0.5" upper="0.5"/>
   </joint>
 
-  <!-- بائیں ٹانگ کی زنجیر: کولہا (3 DOF) + گھٹنا (1 DOF) + ٹخنا (2 DOF) -->
+  <!-- Left Leg Chain: hip (3 DOF) + knee (1 DOF) + ankle (2 DOF) -->
   <link name="left_hip_yaw_link">
     <visual>
       <geometry><cylinder radius="0.04" length="0.06"/></geometry>
@@ -423,10 +423,10 @@ izz = (m/2) * r²
     <limit effort="150" velocity="2.0" lower="-0.8" upper="0.8"/>
   </joint>
 
-  <!-- دائیں ٹانگ: بائیں کا عکس (مختصر کے لیے چھوڑ دیا گیا) -->
-  <!-- دائیں بازو: بائیں کا عکس (مختصر کے لیے چھوڑ دیا گیا) -->
+  <!-- Right leg: mirror of left (omitted for brevity) -->
+  <!-- Right arm: mirror of left (omitted for brevity) -->
 
-  <!-- سینسرز: کیمرہ، IMU، LiDAR -->
+  <!-- Sensors: Camera, IMU, LiDAR -->
   <link name="camera_link">
     <visual>
       <geometry><box size="0.02 0.05 0.02"/></geometry>
@@ -458,32 +458,32 @@ izz = (m/2) * r²
 </robot>
 ```
 
-## Xacro: URDF کے لیے میکرو زبان
+## Xacro: Macro Language for URDF
 
-**Xacro** URDF کو بڑھاتا ہے:
-- متغیرات اور مستقل
-- ریاضیاتی اظہار
-- دوبارہ استعمال کی ساختوں کے لیے میکروز
+**Xacro** extends URDF with:
+- Variables and constants
+- Mathematical expressions
+- Macros for repetitive structures
 
-### بنیادی Xacro خصوصیات
+### Basic Xacro Features
 
 ```xml
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="humanoid">
 
-  <!-- مستقل -->
+  <!-- Constants -->
   <xacro:property name="torso_mass" value="30.0"/>
   <xacro:property name="pi" value="3.14159"/>
 
-  <!-- حسابی اقدار -->
+  <!-- Calculated values -->
   <xacro:property name="leg_length" value="${0.4 + 0.35}"/>
 
-  <!-- مواد -->
+  <!-- Materials -->
   <material name="gray">
     <color rgba="0.5 0.5 0.5 1"/>
   </material>
 
-  <!-- ہم آہنگ اعضاء کے لیے میکرو -->
+  <!-- Macro for symmetric limbs -->
   <xacro:macro name="arm" params="side reflect">
     <link name="${side}_upper_arm">
       <visual>
@@ -509,14 +509,14 @@ izz = (m/2) * r²
     </joint>
   </xacro:macro>
 
-  <!-- دونوں بازوؤں کے لیے فوری طور پر بنائیں -->
+  <!-- Instantiate for both arms -->
   <xacro:arm side="left" reflect="1"/>
   <xacro:arm side="right" reflect="-1"/>
 
 </robot>
 ```
 
-### جمود میکرو
+### Inertia Macro
 
 ```xml
 <xacro:macro name="cylinder_inertia" params="mass radius length">
@@ -529,17 +529,17 @@ izz = (m/2) * r²
   </inertial>
 </xacro:macro>
 
-<!-- استعمال -->
+<!-- Usage -->
 <link name="leg">
   <xacro:cylinder_inertia mass="5.0" radius="0.05" length="0.4"/>
 </link>
 ```
 
-## ROS 2 میں URDF لوڈ کرنا
+## Loading URDF in ROS 2
 
 ### robot_state_publisher
 
-`/tf` میں روبوٹ کی تبدیلیوں کو شائع کرتا ہے:
+Publishes robot transforms to `/tf`:
 
 ```python
 from launch import LaunchDescription
@@ -553,17 +553,17 @@ def generate_launch_description():
         'urdf', 'humanoid.urdf.xacro'
     )
 
-    # xacro کو URDF میں پروسیس کریں
+    # Process xacro to URDF
     robot_description = Command(['xacro ', urdf_file])
 
-    # روبوٹ کی حالت شائع کریں
+    # Publish robot state
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         parameters=[{'robot_description': robot_description}]
     )
 
-    # جوائنٹ کی حالتیں شائع کریں
+    # Publish joint states
     joint_state_publisher = Node(
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui'
@@ -575,24 +575,24 @@ def generate_launch_description():
     ])
 ```
 
-### RViz میں دیکھیں
+### Visualize in RViz
 
 ```bash
-# روبوٹ کی تفصیل شروع کریں
+# Launch robot description
 ros2 launch my_robot display.launch.py
 
-# RViz روبوٹ ماڈل دکھائے گا
-# ڈسپلے شامل کریں: RobotModel, TF
+# RViz will show the robot model
+# Add displays: RobotModel, TF
 ```
 
-## Gazebo انضمام
+## Gazebo Integration
 
-Gazebo کے مخصوص ٹیگز شامل کریں:
+Add Gazebo-specific tags:
 
 ```xml
 <gazebo reference="torso">
   <material>Gazebo/Grey</material>
-  <mu1>0.9</mu1>  <!-- رگڑ -->
+  <mu1>0.9</mu1>  <!-- Friction -->
   <mu2>0.9</mu2>
 </gazebo>
 
@@ -600,7 +600,7 @@ Gazebo کے مخصوص ٹیگز شامل کریں:
   <implicitSpringDamper>true</implicitSpringDamper>
 </gazebo>
 
-<!-- Gazebo پلگ ان -->
+<!-- Gazebo plugins -->
 <gazebo>
   <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
     <robotNamespace>/</robotNamespace>
@@ -608,34 +608,34 @@ Gazebo کے مخصوص ٹیگز شامل کریں:
 </gazebo>
 ```
 
-## بہترین طریقے
+## Best Practices
 
-### 1. کوآرڈینیٹ فریمز
-- Z-محور اوپر (ROS کنونشن)
-- X-محور آگے
-- گردش کے لیے دائیں ہاتھ کا قاعدہ
+### 1. Coordinate Frames
+- Z-axis up (ROS convention)
+- X-axis forward
+- Right-hand rule for rotations
 
-### 2. بڑے پیمانے پر تقسیم
-- کل ماس ہدف روبوٹ سے میل کھانا چاہیے
-- مرکز ثقل توازن پر اثر انداز ہوتا ہے
-- حقیقی جمود کی اقدار استعمال کریں
+### 2. Mass Distribution
+- Total mass should match target robot
+- Center of mass affects balance
+- Use realistic inertia values
 
-### 3. جوائنٹ کی حدود
-- حقیقت پسندانہ پوزیشن کی حدود مقرر کریں
-- ایکچوایٹرز پر مبنی رفتار کی حدود
-- کوشش کی حدود سمولیشن میں نقصان سے بچاتی ہیں
+### 3. Joint Limits
+- Set realistic position limits
+- Velocity limits based on actuators
+- Effort limits prevent damage in simulation
 
-### 4. ٹکراؤ جیومیٹری
-- بصری سے آسان شکلیں استعمال کریں
-- پیچیدہ میش کے لیے محدب ہلز
-- خود ٹکراؤ سے بچیں
+### 4. Collision Geometry
+- Use simpler shapes than visual
+- Convex hulls for complex meshes
+- Avoid self-collisions
 
-### 5. تنظیم
+### 5. Organization
 ```
 my_robot/
 ├── urdf/
-│   ├── humanoid.urdf.xacro       # مرکزی فائل
-│   ├── torso.xacro               # ماڈیولر اجزاء
+│   ├── humanoid.urdf.xacro       # Main file
+│   ├── torso.xacro               # Modular components
 │   ├── arm.xacro
 │   ├── leg.xacro
 │   └── sensors.xacro
@@ -648,40 +648,40 @@ my_robot/
     └── display.launch.py
 ```
 
-## اپنے URDF کی جانچ کرنا
+## Testing Your URDF
 
-### URDF کی صحت چیک کریں
+### Check URDF Validity
 
 ```bash
 check_urdf humanoid.urdf
 ```
 
-آؤٹ پٹ لنک ٹری اور جوائنٹ کی معلومات دکھاتا ہے۔
+Output shows link tree and joint info.
 
-### جوائنٹ کی حدود کو دیکھیں
+### Visualize Joint Limits
 
 ```bash
 urdf_to_graphiz humanoid.urdf
 ```
 
-حرکیاتی درخت دکھانے والی PDF تیار کرتا ہے۔
+Generates PDF showing kinematic tree.
 
-## خلاصہ
+## Summary
 
-اس ہفتے آپ نے سیکھا:
+This week you learned:
 
-- لنکس اور جوائنٹس کے لیے URDF نحو
-- بصری، ٹکراؤ، اور جمودی خصوصیات
-- جوائنٹ کی اقسام: گھومنے والا، مسلسل، پرزماٹک، مقررہ
-- 28-DOF ہیومینائیڈ URDF بنانا
-- کوڈ کے دوبارہ استعمال کے لیے Xacro میکروز
-- robot_state_publisher کے ساتھ URDF لوڈ کرنا
-- RViz میں دیکھنا
-- Gazebo انضمام ٹیگز
-- URDF کی تنظیم کے لیے بہترین طریقے
+- URDF syntax for links and joints
+- Visual, collision, and inertial properties
+- Joint types: revolute, continuous, prismatic, fixed
+- Building a 28-DOF humanoid URDF
+- Xacro macros for code reuse
+- Loading URDF with robot_state_publisher
+- Visualizing in RViz
+- Gazebo integration tags
+- Best practices for URDF organization
 
-## اگلا کیا ہے؟
+## What's Next?
 
-**ہفتہ 5: Gazebo طبیعیات سمولیشن** - اپنے ہیومینائیڈ کو Gazebo میں شروع کریں، طبیعیات شامل کریں، اور سینسرز کو مربوط کریں۔
+**Week 5: Gazebo Physics Simulation** - Launch your humanoid in Gazebo, add physics, and integrate sensors.
 
-**اگلا**: [ہفتہ 5: Gazebo سمولیشن →](../module-2-gazebo/week5-simulation.md)
+**Next**: [Week 5: Gazebo Simulation →](../module-2-gazebo/week5-simulation.md)

@@ -1,13 +1,12 @@
+# Week 2: ROS 2 Architecture - Nodes, Topics, Services
 
-# ہفتہ 2: ROS 2 کا ڈھانچہ - نوڈز، موضوعات، خدمات
+## Introduction
 
-## کا تعارف
+This week, we'll explore ROS 2's core communication patterns and build our first robot nodes. You'll learn how distributed robot systems communicate using the publish-subscribe and request-response paradigms.
 
-اس ہفتے، ہم ROS 2 کے بنیادی مواصلاتی پیٹرن کا جائزہ لیں گے اور اپنے پہلے روبوٹ نوڈز بنائیں گے۔ آپ یہ سیکھیں گے کہ تقسیم شدہ روبوٹ سسٹمز کس طرح publish-subscribe اور request-response پیراڈائمز کا استعمال کرتے ہوئے بات چیت کرتے ہیں۔
+## ROS 2 Computation Graph
 
-## ROS 2 حسابی گراف
-
-ROS 2 کی ایپلیکیشنز کو **حسابی گراف** کے طور پر نوڈز میں منظم کیا جاتا ہے:
+ROS 2 applications are organized as a **computation graph** of nodes:
 
 ```
 ┌─────────────┐         ┌──────────────┐         ┌─────────────┐
@@ -19,18 +18,18 @@ ROS 2 کی ایپلیکیشنز کو **حسابی گراف** کے طور پر ن
        └──────────service: /get_camera_info─────────────┘
 ```
 
-### اہم تصورات
+### Key Concepts
 
-**نوڈ**: ایک عمل جو حساب کتاب انجام دیتا ہے (کیمرہ ڈرائیور، منصوبہ ساز، کنٹرولر)  
-**موضوع**: غیر ہم وقتی اسٹریمنگ ڈیٹا کے لیے نامزد چینل (سینسر کا ڈیٹا، احکامات)  
-**سروس**: ہم وقتی درخواست-جواب تعامل (پیرا میٹر حاصل کریں، عمل کو متحرک کریں)  
-**عمل**: فیڈبیک کے ساتھ طویل مدتی کام (مقصد کی طرف جانا، چیز اٹھانا)
+**Node**: A process that performs computation (camera driver, planner, controller)
+**Topic**: Named channel for asynchronous streaming data (sensor data, commands)
+**Service**: Synchronous request-response interaction (get parameter, trigger action)
+**Action**: Long-running task with feedback (navigate to goal, pick object)
 
-## نوڈز: بنیادی عناصر
+## Nodes: The Building Blocks
 
-### نوڈ کیا ہے؟
+### What is a Node?
 
-ایک **نوڈ** ایک مخصوص مقصد کے لیے تیار کردہ عمل درآمد ہے جو دوسرے نوڈز کے ساتھ بات چیت کرتا ہے:
+A **node** is a single-purpose executable that communicates with other nodes:
 
 ```python
 import rclpy
@@ -48,24 +47,24 @@ def main(args=None):
     rclpy.shutdown()
 ```
 
-**نوڈ کی زندگی کا چکر**:
-1. `rclpy.init()` - ROS 2 سیاق و سباق کو شروع کریں
-2. نوڈ کا نمونہ بنائیں
-3. `rclpy.spin()` - کال بیکس (سبسکرپشنز، ٹائمرز، خدمات) کو پروسیس کریں
-4. `rclpy.shutdown()` - صاف شٹ ڈاؤن
+**Node Lifecycle**:
+1. `rclpy.init()` - Initialize ROS 2 context
+2. Create node instance
+3. `rclpy.spin()` - Process callbacks (subscriptions, timers, services)
+4. `rclpy.shutdown()` - Clean shutdown
 
-### نوڈ کی دریافت
+### Node Discovery
 
-ROS 2 **ڈی ڈی ایس (ڈیٹا تقسیم سروس)** کا استعمال خودکار نوڈ دریافت کے لیے کرتا ہے:
-- نوڈز اپنے موضوعات/سروسز کو شروع ہونے پر اشتہار دیتے ہیں
-- دوسرے نوڈز انہیں خود بخود دریافت کرتے ہیں (کوئی ماسٹر پروسیس کی ضرورت نہیں!)
-- ملٹی مشین سپورٹ باکس سے باہر
+ROS 2 uses **DDS (Data Distribution Service)** for automatic node discovery:
+- Nodes advertise their topics/services on startup
+- Other nodes discover them automatically (no master process needed!)
+- Multi-machine support out-of-the-box
 
-## موضوعات: پب-سب مواصلات
+## Topics: Pub-Sub Communication
 
-### پبلشر کی مثال
+### Publisher Example
 
-IMU کے ڈیٹا کو 100 ہرٹز پر شائع کرنا:
+Publishing IMU data at 100 Hz:
 
 ```python
 from rclpy.node import Node
@@ -85,9 +84,9 @@ class ImuPublisher(Node):
         self.publisher_.publish(msg)
 ```
 
-### سبسکرائبر کی مثال
+### Subscriber Example
 
-IMU ڈیٹا کی پروسیسنگ:
+Processing IMU data:
 
 ```python
 from rclpy.node import Node
@@ -109,9 +108,9 @@ class ImuSubscriber(Node):
         self.get_logger().info(f'Accel: x={accel.x:.2f} m/s²')
 ```
 
-### سروس کا معیار (QoS)
+### Quality of Service (QoS)
 
-ROS 2 پیغام کی ترسیل پر باریک بینی سے کنٹرول کی اجازت دیتا ہے:
+ROS 2 allows fine-grained control over message delivery:
 
 ```python
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSHistoryPolicy
@@ -125,15 +124,15 @@ qos_profile = QoSProfile(
 self.publisher_ = self.create_publisher(Imu, '/imu/data', qos_profile)
 ```
 
-**قابل اعتماد**:
-- `BEST_EFFORT`: تیز، پیغامات چھوڑ سکتا ہے (سینسر کا ڈیٹا)
-- `RELIABLE`: ترسیل کی ضمانت دیتا ہے (احکامات)
+**Reliability**:
+- `BEST_EFFORT`: Fast, may drop messages (sensor data)
+- `RELIABLE`: Guarantees delivery (commands)
 
-## خدمات: درخواست-جواب
+## Services: Request-Response
 
-### سروس سرور
+### Service Server
 
-کیمرے کی کیلیبریشن کی معلومات فراہم کریں:
+Provide camera calibration info:
 
 ```python
 from rclpy.node import Node
@@ -155,9 +154,9 @@ class CameraServer(Node):
         return response
 ```
 
-### سروس کلائنٹ
+### Service Client
 
-کیلیبریشن کی درخواست:
+Request calibration:
 
 ```python
 from sensor_msgs.srv import SetCameraInfo
@@ -177,9 +176,9 @@ class CameraClient(Node):
         return future.result()
 ```
 
-## اقدامات: طویل المدتی کام
+## Actions: Long-Running Tasks
 
-عملات پب-سب (فیڈبیک) + درخواست-جواب (نتیجہ) کو ملا دیتی ہیں:
+Actions combine pub-sub (feedback) + request-response (result):
 
 ```python
 from rclpy.action import ActionServer
@@ -212,9 +211,9 @@ class FibonacciServer(Node):
         return result
 ```
 
-## ROS 2 کمانڈ لائن ٹولز
+## ROS 2 Command-Line Tools
 
-### خود نگریستی
+### Introspection
 
 ```bash
 # List all nodes
@@ -237,7 +236,7 @@ ros2 topic pub /cmd_vel geometry_msgs/msg/Twist \
   "{linear: {x: 1.0}, angular: {z: 0.5}}"
 ```
 
-### خدمات اور اقدامات
+### Services & Actions
 
 ```bash
 # List services
@@ -253,9 +252,9 @@ ros2 action list
 ros2 action send_goal /fibonacci example_interfaces/action/Fibonacci "{order: 5}"
 ```
 
-## پیرامیٹرز: رن ٹائم کنفیگریشن
+## Parameters: Runtime Configuration
 
-نوڈز قابل ترتیب پیرامیٹرز کو ظاہر کر سکتے ہیں:
+Nodes can expose configurable parameters:
 
 ```python
 class ConfigurableNode(Node):
@@ -273,7 +272,7 @@ class ConfigurableNode(Node):
         self.get_logger().info(f'Robot: {name}, Rate: {rate} Hz')
 ```
 
-چلانے کے وقت پیرامیٹرز مرتب کریں:
+Set parameters at runtime:
 
 ```bash
 # Set parameter
@@ -286,9 +285,9 @@ ros2 param get /configurable_node robot_name
 ros2 param list
 ```
 
-## عملی: ایک ہیومینائیڈ جوائنٹ کنٹرولر بنائیں
+## Hands-On: Build a Humanoid Joint Controller
 
-آئیے ایک سادہ مشترکہ پوزیشن کنٹرولر بناتے ہیں:
+Let's build a simple joint position controller:
 
 ```python
 import rclpy
@@ -340,24 +339,24 @@ class JointController(Node):
         self.cmd_pub.publish(cmd)
 ```
 
-## بہترین طریقے
+## Best Practices
 
-### 1. نوڈ ڈیزائن
-- **اکیلی ذمہ داری**: ایک نوڈ = ایک فنکشن
-- **دوبارہ استعمال کے قابل**: عمومی پیرامیٹرز، ہارڈ کوڈڈ اقدار نہیں
-- **مضبوط**: غائب پیغامات کو سنبھالیں، پیغام کی عمر چیک کریں
+### 1. Node Design
+- **Single responsibility**: One node = one function
+- **Reusable**: Generic parameters, not hardcoded values
+- **Robust**: Handle missing messages, check message age
 
-### 2. موضوع کا نام رکھنا
-- `/namespace/topic_name` کے اصول کا استعمال کریں
-- چھوٹے حروف اور انڈر اسکور کے ساتھ: `/camera/image_raw`
-- غیر واضح ناموں سے پرہیز کریں: `/data` (برا) بمقابلہ `/imu/linear_accel` (اچھا)
+### 2. Topic Naming
+- Use `/namespace/topic_name` convention
+- Lowercase with underscores: `/camera/image_raw`
+- Avoid ambiguous names: `/data` (bad) vs `/imu/linear_accel` (good)
 
-### 3. پیغام کی اقسام
-- جب ممکن ہو، معیاری پیغامات کا استعمال کریں (`sensor_msgs`, `geometry_msgs`)
-- حسب ضرورت ہی حسب ضرورت پیغامات کا استعمال کریں
-- حسب ضرورت پیغام کے شعبوں کی وضاحت واضح طور پر کریں
+### 3. Message Types
+- Use standard messages when possible (`sensor_msgs`, `geometry_msgs`)
+- Custom messages only when necessary
+- Document custom message fields clearly
 
-### ۴. غلطی کا انتظام
+### 4. Error Handling
 ```python
 def callback(self, msg):
     try:
@@ -367,20 +366,20 @@ def callback(self, msg):
         self.get_logger().error(f'Processing failed: {e}')
 ```
 
-## خلاصہ
+## Summary
 
-اس ہفتے آپ نے سیکھا:
+This week you learned:
 
-✅ **نوڈز** ایک مقصد کے لیے مخصوص عمل ہیں جو ROS 2 کے ذریعے بات چیت کرتے ہیں  
-✅ **موضوعات** غیر ہم وقتی شائع-سبسکرائب مواصلت کی اجازت دیتے ہیں  
-✅ **سروسز** ہم وقتی درخواست-جواب تعامل فراہم کرتی ہیں  
-✅ **ایکشنز** فیڈبیک کے ساتھ طویل مدتی کاموں کی حمایت کرتی ہیں  
-✅ **پیرا میٹرز** رن ٹائم کنفیگریشن کی اجازت دیتے ہیں  
-✅ **QoS** پیغام کی ترسیل کی ضمانتوں کو کنٹرول کرتا ہے  
-✅ **CLI ٹولز** ڈیبگنگ اور اندرونی جانچ کے لیے
+✅ **Nodes** are single-purpose processes that communicate via ROS 2
+✅ **Topics** enable asynchronous publish-subscribe communication
+✅ **Services** provide synchronous request-response interaction
+✅ **Actions** support long-running tasks with feedback
+✅ **Parameters** allow runtime configuration
+✅ **QoS** controls message delivery guarantees
+✅ **CLI tools** for debugging and introspection
 
-## اگلا کیا ہے؟
+## What's Next?
 
-**ہفتہ 3: Python کے ساتھ ROS 2 پیکجز بنانا** - colcon کے ساتھ مکمل ROS 2 ایپلیکیشنز کی ساخت، تعمیر، اور آغاز کرنا سیکھیں۔
+**Week 3: Building ROS 2 Packages with Python** - Learn to structure, build, and launch complete ROS 2 applications with colcon.
 
-**اگلا**: [ہفتہ 3: Python کے ساتھ تعمیر کرنا →](./week3-python.md)
+**Next**: [Week 3: Building with Python →](./week3-python.md)

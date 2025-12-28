@@ -1,242 +1,507 @@
-# ہفتہ 9: دو پیروں کے نیویگیشن کے لیے Nav2
+# Week 9: Nav2 for Bipedal Navigation
 
-## تعارف
+## Introduction
 
-**Nav2** (Navigation2) ROS 2 کا خودکار نیویگیشن فریم ورک ہے۔ اس ہفتے، آپ SLAM کو Nav2 کے ساتھ مربوط کریں گے تاکہ آپ کا ہیومینائیڈ خودکار طور پر نیویگیٹ کر سکے - راستے کی منصوبہ بندی کرنا، رکاوٹوں سے بچنا، اور ناکامیوں سے بحال ہونا۔
+**Nav2** (Navigation2) is ROS 2's autonomous navigation framework. This week, you'll integrate SLAM with Nav2 to enable your humanoid to navigate autonomously - planning paths, avoiding obstacles, and recovering from failures.
 
-## Nav2 فن تعمیر
+## Nav2 Architecture
 
 ```
-┌─────────────┐
-│   SLAM      │ (نقشہ + Localization)
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│  Nav2 Stack │
-├─────────────┤
-│ - Planner   │ (عالمی راستہ)
-│ - Controller│ (مقامی راستہ)
-│ - Recoveries│ (ناکامی کی بحالی)
-│ - BT        │ (رویہ کا درخت)
-└──────┬──────┘
-       │
-┌──────▼──────┐
-│   Robot     │ (حرکت کے احکامات)
-└─────────────┘
+┌─────────┐    ┌──────────┐    ┌─────────────┐
+│  SLAM   │───>│ Costmaps │───>│Path Planner │
+│ (cuVSLAM)│    │(obstacles)│    │  (A*, DWB)  │
+└─────────┘    └──────────┘    └─────────────┘
+                                       │
+                                       ▼
+                               ┌───────────────┐
+                               │  Controller   │
+                               │ (DWB, TEB)    │
+                               └───────────────┘
+                                       │
+                                       ▼
+                               ┌───────────────┐
+                               │cmd_vel (Twist)│
+                               └───────────────┘
 ```
 
-## تنصیب
+**Components**:
+- **Planner Server**: Global path (A*, Theta*, SmacPlanner)
+- **Controller Server**: Local trajectory (DWB, TEB, MPPI)
+- **Costmap 2D**: Obstacle representation
+- **Behavior Server**: Recovery behaviors
+- **BT Navigator**: Behavior tree coordination
+
+## Installation
 
 ```bash
-# Nav2 انسٹال کریں
+# Install Nav2
 sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
 
-# TurtleBot3 ماڈل سیٹ کریں (بطور مثال)
-echo "export TURTLEBOT3_MODEL=waffle_pi" >> ~/.bashrc
-source ~/.bashrc
+# Test
+ros2 pkg list | grep nav2
 ```
 
-## Nav2 شروع کرنا
+## Costmaps Configuration
 
-### بنیادی لانچ
+Create `config/nav2_params.yaml`:
 
-```bash
-# SLAM کے ساتھ Nav2
-ros2 launch nav2_bringup navigation_launch.py \
-  use_sim_time:=False
+```yaml
+costmap_2d:
+  ros__parameters:
+    update_frequency: 5.0
+    publish_frequency: 2.0
+    global_frame: map
+    robot_base_frame: base_link
+    rolling_window: false
+    width: 20
+    height: 20
+    resolution: 0.05
+    robot_radius: 0.3  # Humanoid footprint
 
-# Map سرور (پہلے سے بنے ہوئے نقشے کے ساتھ)
-ros2 run nav2_map_server map_server \
-  --ros-args -p yaml_filename:=my_map.yaml
+    plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+
+    static_layer:
+      plugin: "nav2_costmap_2d::StaticLayer"
+      map_subscribe_transient_local: true
+
+    obstacle_layer:
+      plugin: "nav2_costmap_2d::ObstacleLayer"
+      enabled: true
+      observation_sources: scan
+      scan:
+        topic: /scan
+        max_obstacle_height: 2.0
+        clearing: true
+        marking: true
+        data_type: "LaserScan"
+
+    inflation_layer:
+      plugin: "nav2_costmap_2d::InflationLayer"
+      cost_scaling_factor: 3.0
+      inflation_radius: 0.55
 ```
 
-### پروگرامی نیویگیشن
+## Planner Configuration
 
-```python
-from geometry_msgs.msg import PoseStamped
-from nav2_simple_commander.robot_navigator import BasicNavigator
-import rclpy
-
-rclpy.init()
-
-navigator = BasicNavigator()
-
-# ابتدائی pose سیٹ کریں
-initial_pose = PoseStamped()
-initial_pose.header.frame_id = 'map'
-initial_pose.header.stamp = navigator.get_clock().now().to_msg()
-initial_pose.pose.position.x = 0.0
-initial_pose.pose.position.y = 0.0
-initial_pose.pose.orientation.w = 1.0
-
-navigator.setInitialPose(initial_pose)
-navigator.waitUntilNav2Active()
-
-# ہدف pose
-goal_pose = PoseStamped()
-goal_pose.header.frame_id = 'map'
-goal_pose.header.stamp = navigator.get_clock().now().to_msg()
-goal_pose.pose.position.x = 2.0
-goal_pose.pose.position.y = 1.0
-goal_pose.pose.orientation.w = 1.0
-
-# Navigate!
-navigator.goToPose(goal_pose)
-
-while not navigator.isTaskComplete():
-    feedback = navigator.getFeedback()
-    print(f"باقی فاصلہ: {feedback.distance_remaining:.2f}m")
-
-print('مکمل!')
-navigator.lifecycleShutdown()
-```
-
-## راستہ کی منصوبہ بندی
-
-### عالمی منصوبہ ساز (Dijkstra/A*)
+### NavFn Planner (A*)
 
 ```yaml
 planner_server:
   ros__parameters:
     expected_planner_frequency: 20.0
     planner_plugins: ["GridBased"]
+
     GridBased:
       plugin: "nav2_navfn_planner/NavfnPlanner"
       tolerance: 0.5
-      use_astar: True
-      allow_unknown: True
+      use_astar: true
+      allow_unknown: true
 ```
 
-### مقامی منصوبہ ساز (DWB)
+### Smac Planner (Hybrid A*)
+
+Better for non-holonomic robots:
+
+```yaml
+    SmacHybrid:
+      plugin: "nav2_smac_planner/SmacPlannerHybrid"
+      tolerance: 0.5
+      downsample_costmap: false
+      downsampling_factor: 1
+      allow_unknown: true
+      max_iterations: 1000000
+      max_planning_time: 5.0
+      motion_model_for_search: "REEDS_SHEPP"  # Dubin, Reeds-Shepp
+      angle_quantization_bins: 72
+      analytic_expansion_ratio: 3.5
+      analytic_expansion_max_length: 3.0
+      minimum_turning_radius: 0.4  # Humanoid turning radius
+      reverse_penalty: 2.0
+      change_penalty: 0.05
+      non_straight_penalty: 1.05
+      cost_penalty: 2.0
+```
+
+## Controller Configuration
+
+### DWB Controller
 
 ```yaml
 controller_server:
   ros__parameters:
     controller_frequency: 20.0
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.001
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 0.3
+    progress_checker_plugin: "progress_checker"
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+
+    general_goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+      stateful: true
+
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
+      debug_trajectory_details: true
       min_vel_x: 0.0
-      max_vel_x: 0.5
+      min_vel_y: 0.0
+      max_vel_x: 0.5  # Humanoid max walk speed
+      max_vel_y: 0.0
       max_vel_theta: 1.0
       min_speed_xy: 0.0
       max_speed_xy: 0.5
-      acc_lim_x: 2.5
-      acc_lim_theta: 3.2
-      decel_lim_x: -2.5
-      decel_lim_theta: -3.2
+      min_speed_theta: 0.0
+      acc_lim_x: 0.3
+      acc_lim_y: 0.0
+      acc_lim_theta: 1.0
+      decel_lim_x: -0.3
+      decel_lim_y: 0.0
+      decel_lim_theta: -1.0
+      vx_samples: 20
+      vy_samples: 0
+      vtheta_samples: 40
+      sim_time: 1.7
+      linear_granularity: 0.05
+      angular_granularity: 0.025
+      transform_tolerance: 0.2
+      xy_goal_tolerance: 0.25
+      trans_stopped_velocity: 0.25
+      short_circuit_trajectory_evaluation: true
+      stateful: true
+      critics: ["RotateToGoal", "Oscillation", "BaseObstacle", "GoalAlign", "PathAlign", "PathDist", "GoalDist"]
+
+      BaseObstacle.scale: 0.02
+      PathAlign.scale: 32.0
+      PathAlign.forward_point_distance: 0.1
+      GoalAlign.scale: 24.0
+      GoalAlign.forward_point_distance: 0.1
+      PathDist.scale: 32.0
+      GoalDist.scale: 24.0
+      RotateToGoal.scale: 32.0
+      RotateToGoal.slowing_factor: 5.0
+      RotateToGoal.lookahead_time: -1.0
 ```
 
-## رکاوٹوں سے بچاؤ
+## Behavior Server
 
-### Costmap ترتیب
-
-```yaml
-local_costmap:
-  local_costmap:
-    ros__parameters:
-      global_frame: odom
-      robot_base_frame: base_link
-      update_frequency: 5.0
-      publish_frequency: 2.0
-      width: 3
-      height: 3
-      resolution: 0.05
-      robot_radius: 0.22
-
-      plugins: ["obstacle_layer", "inflation_layer"]
-
-      obstacle_layer:
-        plugin: "nav2_costmap_2d::ObstacleLayer"
-        enabled: True
-        observation_sources: scan
-        scan:
-          topic: /scan
-          max_obstacle_height: 2.0
-          clearing: True
-          marking: True
-
-      inflation_layer:
-        plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.55
-        cost_scaling_factor: 3.0
-```
-
-## بحالی کے طریقے
+Recovery behaviors for failures:
 
 ```yaml
-recoveries_server:
+behavior_server:
   ros__parameters:
-    recovery_plugins: ["spin", "backup", "wait"]
+    costmap_topic: local_costmap/costmap_raw
+    footprint_topic: local_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["spin", "backup", "wait"]
 
     spin:
-      plugin: "nav2_recoveries/Spin"
-      simulate_ahead_time: 2.0
-
+      plugin: "nav2_behaviors::Spin"
     backup:
-      plugin: "nav2_recoveries/BackUp"
-      simulate_ahead_time: 2.0
-
+      plugin: "nav2_behaviors::BackUp"
     wait:
-      plugin: "nav2_recoveries/Wait"
-      simulate_ahead_time: 2.0
+      plugin: "nav2_behaviors::Wait"
+
+    global_frame: map
+    robot_base_frame: base_link
+    transform_tolerance: 0.1
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
 ```
 
-## Behavior Trees
+## Launch Nav2
 
-```xml
-<root main_tree_to_execute="MainTree">
-  <BehaviorTree ID="MainTree">
-    <RecoveryNode number_of_retries="6">
-      <Sequence>
-        <RateController hz="1.0">
-          <ComputePathToPose goal="{goal}" path="{path}"/>
-        </RateController>
-        <FollowPath path="{path}"/>
-      </Sequence>
-      <ReactiveFallback>
-        <Spin spin_dist="1.57"/>
-        <Wait wait_duration="5"/>
-        <BackUp backup_dist="0.3" backup_speed="0.05"/>
-      </ReactiveFallback>
-    </RecoveryNode>
-  </BehaviorTree>
-</root>
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription
+from ament_index_python.packages import get_package_share_directory
+import os
+
+def generate_launch_description():
+    pkg_dir = get_package_share_directory('humanoid_navigation')
+    nav2_params = os.path.join(pkg_dir, 'config', 'nav2_params.yaml')
+
+    return LaunchDescription([
+        # Map server (if using pre-built map)
+        Node(
+            package='nav2_map_server',
+            executable='map_server',
+            parameters=[{'yaml_filename': '/path/to/map.yaml'}]
+        ),
+
+        # Lifecycle manager for map server
+        Node(
+            package='nav2_lifecycle_manager',
+            executable='lifecycle_manager',
+            parameters=[{
+                'autostart': True,
+                'node_names': ['map_server']
+            }]
+        ),
+
+        # AMCL localization (if not using cuVSLAM)
+        # Node(...),
+
+        # Nav2 bringup
+        IncludeLaunchDescription(
+            os.path.join(
+                get_package_share_directory('nav2_bringup'),
+                'launch', 'navigation_launch.py'
+            ),
+            launch_arguments={
+                'params_file': nav2_params,
+                'use_sim_time': 'true'
+            }.items()
+        ),
+    ])
 ```
 
-## کارکردگی کی اصلاح
+Run:
 
-### 1. Costmap ریزولوشن
+```bash
+ros2 launch humanoid_navigation nav2.launch.py
+```
+
+## Sending Navigation Goals
+
+### Command Line
+
+```bash
+# Send goal via RViz: 2D Goal Pose button
+
+# Or via command line:
+ros2 topic pub --once /goal_pose geometry_msgs/PoseStamped \
+  "{header: {frame_id: 'map'}, \
+    pose: {position: {x: 2.0, y: 1.0, z: 0.0}, \
+           orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}"
+```
+
+### Python API
+
+```python
+from geometry_msgs.msg import PoseStamped
+from nav2_simple_commander.robot_navigator import BasicNavigator
+import rclpy
+
+def main():
+    rclpy.init()
+    navigator = BasicNavigator()
+
+    # Wait for Nav2 to activate
+    navigator.waitUntilNav2Active()
+
+    # Create goal pose
+    goal_pose = PoseStamped()
+    goal_pose.header.frame_id = 'map'
+    goal_pose.header.stamp = navigator.get_clock().now().to_msg()
+    goal_pose.pose.position.x = 2.0
+    goal_pose.pose.position.y = 1.0
+    goal_pose.pose.orientation.w = 1.0
+
+    # Navigate to goal
+    navigator.goToPose(goal_pose)
+
+    # Wait for completion
+    while not navigator.isTaskComplete():
+        feedback = navigator.getFeedback()
+        print(f"Distance remaining: {feedback.distance_remaining:.2f} m")
+        rclpy.spin_once(navigator, timeout_sec=0.1)
+
+    result = navigator.getResult()
+    if result == TaskResult.SUCCEEDED:
+        print('Goal reached!')
+    elif result == TaskResult.CANCELED:
+        print('Goal canceled')
+    elif result == TaskResult.FAILED:
+        print('Goal failed')
+
+    navigator.lifecycleShutdown()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Action Client
+
+```python
+from rclpy.action import ActionClient
+from nav2_msgs.action import NavigateToPose
+from geometry_msgs.msg import PoseStamped
+
+class NavigationClient(Node):
+    def __init__(self):
+        super().__init__('navigation_client')
+        self.action_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
+
+    def send_goal(self, x, y, theta):
+        goal_msg = NavigateToPose.Goal()
+        goal_msg.pose.header.frame_id = 'map'
+        goal_msg.pose.pose.position.x = x
+        goal_msg.pose.pose.position.y = y
+
+        # Convert theta to quaternion
+        import math
+        goal_msg.pose.pose.orientation.z = math.sin(theta / 2)
+        goal_msg.pose.pose.orientation.w = math.cos(theta / 2)
+
+        self.action_client.wait_for_server()
+        send_goal_future = self.action_client.send_goal_async(
+            goal_msg,
+            feedback_callback=self.feedback_callback
+        )
+        send_goal_future.add_done_callback(self.goal_response_callback)
+
+    def feedback_callback(self, feedback_msg):
+        feedback = feedback_msg.feedback
+        self.get_logger().info(
+            f'Distance: {feedback.distance_remaining:.2f} m, '
+            f'ETA: {feedback.estimated_time_remaining.sec} s'
+        )
+
+    def goal_response_callback(self, future):
+        goal_handle = future.result()
+        if not goal_handle.accepted:
+            self.get_logger().warn('Goal rejected')
+            return
+
+        get_result_future = goal_handle.get_result_async()
+        get_result_future.add_done_callback(self.result_callback)
+
+    def result_callback(self, future):
+        result = future.result().result
+        self.get_logger().info(f'Result: {result}')
+```
+
+## Waypoint Following
+
+Navigate through multiple points:
+
+```python
+from nav2_simple_commander.robot_navigator import BasicNavigator
+
+navigator = BasicNavigator()
+navigator.waitUntilNav2Active()
+
+# Define waypoints
+waypoints = [
+    create_pose(1.0, 1.0),
+    create_pose(2.0, 0.5),
+    create_pose(3.0, 1.5),
+    create_pose(2.0, 2.0),
+]
+
+navigator.followWaypoints(waypoints)
+
+while not navigator.isTaskComplete():
+    feedback = navigator.getFeedback()
+    print(f'Waypoint {feedback.current_waypoint + 1}/{len(waypoints)}')
+
+navigator.lifecycleShutdown()
+
+def create_pose(x, y, theta=0.0):
+    pose = PoseStamped()
+    pose.header.frame_id = 'map'
+    pose.pose.position.x = x
+    pose.pose.position.y = y
+    pose.pose.orientation.w = 1.0
+    return pose
+```
+
+## Obstacle Avoidance
+
+### Dynamic Obstacles
+
+Nav2 automatically avoids obstacles detected by sensors.
+
+### Keepout Zones
+
+Define no-go areas:
 
 ```yaml
-resolution: 0.05  # 5cm per cell (توازن)
+# keepout_filter.yaml
+filters:
+  - name: "keepout_filter"
+    type: "nav2_costmap_2d::KeepoutFilter"
+    params:
+      enabled: true
+      filter_info_topic: "/costmap_filter_info"
+
+# Define keepout zones in map
 ```
 
-### 2. اپ ڈیٹ کی تعدد
+## Complete Humanoid Navigation Example
 
-```yaml
-update_frequency: 5.0  # پروسیسنگ کو کم کرنے کے لیے کم کریں
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription
+
+def generate_launch_description():
+    return LaunchDescription([
+        # Isaac Sim with cuVSLAM
+        # (run separately)
+
+        # Nav2
+        IncludeLaunchDescription(
+            '/opt/ros/humble/share/nav2_bringup/launch/navigation_launch.py',
+            launch_arguments={
+                'params_file': '/path/to/nav2_params.yaml',
+                'use_sim_time': 'true'
+            }.items()
+        ),
+
+        # RViz with Nav2 plugins
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            arguments=['-d', '/path/to/nav2.rviz']
+        ),
+    ])
 ```
 
-### 3. منصوبہ ساز کی تعدد
+## Tuning Tips
 
-```yaml
-expected_planner_frequency: 1.0  # مستحکم راستوں کے لیے کم کریں
-```
+### Speed up planning:
+- Reduce `expected_planner_frequency`
+- Lower costmap `update_frequency`
 
-## خلاصہ
+### Better accuracy:
+- Increase `sim_time` in DWB
+- More `vx_samples` and `vtheta_samples`
 
-اس ہفتے آپ نے سیکھا:
+### Humanoid-specific:
+- Small `robot_radius` for narrow passages
+- Low `max_vel_x` (0.3-0.5 m/s)
+- High `decel_lim_x` for quick stops
+- Enable `RotateToGoal` critic
 
-- Nav2 فن تعمیر اور اجزاء
-- SLAM کے ساتھ نیویگیشن انضمام
-- عالمی اور مقامی راستہ کی منصوبہ بندی
-- رکاوٹوں سے بچاؤ (Costmaps)
-- بحالی کے طریقے
-- Behavior Trees
-- کارکردگی کی اصلاح
+## Summary
 
-## اگلا کیا ہے؟
+This week you learned:
 
-**ماڈیول 4: VLA اور Humanoid AI** - Vision-Language-Action ماڈلز کے ساتھ اگلی نسل کے ہیومینائیڈز بنائیں!
+- Nav2 architecture and components
+- Costmap configuration for humanoids
+- Path planning with A* and Smac
+- DWB controller for trajectory tracking
+- Recovery behaviors
+- Sending navigation goals via API
+- Waypoint following
+- Complete SLAM + Nav2 integration
 
-**اگلا**: [ماڈیول 4 شروع کریں →](../module-4-vla/week10-vla-intro.md)
+## What's Next?
+
+**Week 10: Vision-Language-Action Models** - Integrate VLMs like CLIP for object-aware navigation and manipulation.
+
+**Next**: [Week 10: VLA Introduction →](../module-4-vla/week10-vla-intro.md)

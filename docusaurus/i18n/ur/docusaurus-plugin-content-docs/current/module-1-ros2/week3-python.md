@@ -1,13 +1,12 @@
+# Week 3: Building ROS 2 Packages with Python
 
-# ہفتہ 3: Python کے ساتھ ROS 2 پیکیجز بنانا
+## Introduction
 
-## کا تعارف
+This week, we'll learn how to structure, build, and deploy professional ROS 2 packages using Python. You'll create a complete package with publishers, subscribers, services, and launch files that orchestrate multiple nodes.
 
-اس ہفتے، ہم سیکھیں گے کہ کس طرح پیشہ ورانہ ROS 2 پیکیجز کو Python کا استعمال کرتے ہوئے تشکیل، تعمیر اور تعینات کیا جائے۔ آپ ایک مکمل پیکیج بنائیں گے جس میں پبلشرز، سبسکرائبرز، سروسز، اور لانچ فائلیں شامل ہوں گی جو متعدد نوڈز کو منظم کرتی ہیں۔
+## ROS 2 Package Structure
 
-## ROS 2 پیکیج کا ڈھانچہ
-
-ایک Python ROS 2 پیکیج کی یہ ساخت ہے:
+A Python ROS 2 package has this structure:
 
 ```
 my_robot_pkg/
@@ -31,9 +30,9 @@ my_robot_pkg/
     └── test_node1.py    # Unit tests
 ```
 
-## ایک پیکیج بنانا
+## Creating a Package
 
-### ros2 pkg create کا استعمال
+### Using ros2 pkg create
 
 ```bash
 # Navigate to your workspace src/
@@ -48,13 +47,13 @@ ros2 pkg create --build-type ament_python \
 cd humanoid_control
 ```
 
-یہ پیدا کرتا ہے:
-- `package.xml` - انحصارات اور میٹا ڈیٹا
-- `setup.py` - نوڈز کے لئے انٹری پوائنٹس
-- `setup.cfg` - پائتھن پیکیج کی تشکیل
-- `humanoid_control/` - پائتھن ماڈیول ڈائریکٹری
+This generates:
+- `package.xml` - Dependencies and metadata
+- `setup.py` - Entry points for nodes
+- `setup.cfg` - Python package configuration
+- `humanoid_control/` - Python module directory
 
-## پیکیج کے میٹا ڈیٹا: package.xml
+## Package Metadata: package.xml
 
 ```xml
 <?xml version="1.0"?>
@@ -84,7 +83,7 @@ cd humanoid_control
 </package>
 ```
 
-## تعمیر کی تشکیل: setup.py
+## Build Configuration: setup.py
 
 ```python
 from setuptools import setup
@@ -125,13 +124,13 @@ setup(
 )
 ```
 
-**اہم سیکشن**:
-- `data_files`: غیر Python فائلیں انسٹال کریں (لانچ، کنفیگ، URDF)
-- `entry_points`: Python اسکرپٹس سے بنائی گئی ایگزیکیٹیبلز
+**Key sections**:
+- `data_files`: Install non-Python files (launch, config, URDF)
+- `entry_points`: Executables created from Python scripts
 
-## مثال نوڈ: مشترکہ حالت پبلشر
+## Example Node: Joint State Publisher
 
-`humanoid_control/joint_controller.py` تخلیق کریں:
+Create `humanoid_control/joint_controller.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -215,9 +214,9 @@ if __name__ == '__main__':
     main()
 ```
 
-## مثال: IMU ڈیٹا پروسیسر
+## Example: IMU Data Processor
 
-`humanoid_control/imu_processor.py` بنائیں:
+Create `humanoid_control/imu_processor.py`:
 
 ```python
 #!/usr/bin/env python3
@@ -296,9 +295,9 @@ if __name__ == '__main__':
     main()
 ```
 
-## کولکن کے ساتھ تعمیر کرنا
+## Building with Colcon
 
-### تعمیر کا عمل
+### Build Process
 
 ```bash
 # From workspace root
@@ -317,7 +316,7 @@ colcon build --cmake-args -DCMAKE_BUILD_TYPE=Debug
 colcon build --parallel-workers 4
 ```
 
-### پیکج کا ماخذ معلوم کریں
+### Source the Package
 
 ```bash
 # Source workspace overlay
@@ -330,9 +329,9 @@ ros2 run humanoid_control joint_controller
 ros2 run humanoid_control joint_controller --ros-args -p publish_rate:=100.0
 ```
 
-## لانچ فائلیں: متعدد نوڈز کو منظم کرنا
+## Launch Files: Orchestrating Multiple Nodes
 
-`launch/humanoid_bringup.launch.py` بنائیں:
+Create `launch/humanoid_bringup.launch.py`:
 
 ```python
 from launch import LaunchDescription
@@ -413,7 +412,7 @@ def generate_launch_description():
     ])
 ```
 
-### نظام شروع کریں
+### Launch the System
 
 ```bash
 # Launch with defaults
@@ -425,9 +424,9 @@ ros2 launch humanoid_control humanoid_bringup.launch.py \
   publish_rate:=100.0
 ```
 
-## کنفیگریشن فائلیں
+## Configuration Files
 
-`config/humanoid_params.yaml` بنائیں:
+Create `config/humanoid_params.yaml`:
 
 ```yaml
 joint_controller:
@@ -452,9 +451,9 @@ imu_processor:
     gravity_compensation: true
 ```
 
-## اپنے پیکج کی جانچ کرنا
+## Testing Your Package
 
-`test/test_joint_controller.py` بنائیں:
+Create `test/test_joint_controller.py`:
 
 ```python
 import pytest
@@ -495,23 +494,23 @@ def test_joint_controller_publishes(node):
     assert len(received_msgs[0].name) == 28
 ```
 
-ٹیسٹ چلائیں:
+Run tests:
 
 ```bash
 colcon test --packages-select humanoid_control
 colcon test-result --verbose
 ```
 
-## ڈیبگنگ کے نکات
+## Debugging Tips
 
-### نوڈ کی حیثیت چیک کریں
+### Check Node Status
 
 ```bash
 ros2 node list
 ros2 node info /joint_controller
 ```
 
-### موضوعات کی نگرانی
+### Monitor Topics
 
 ```bash
 ros2 topic list
@@ -519,7 +518,7 @@ ros2 topic echo /joint_states
 ros2 topic hz /joint_states
 ```
 
-### لاگنگ کی سطحیں
+### Logging Levels
 
 ```python
 self.get_logger().debug('Debug info')
@@ -528,20 +527,20 @@ self.get_logger().warn('Warning')
 self.get_logger().error('Error occurred')
 ```
 
-لاگ کی سطح مقرر کریں:
+Set log level:
 
 ```bash
 ros2 run humanoid_control joint_controller --ros-args --log-level DEBUG
 ```
 
-## بہترین طریقے
+## Best Practices
 
-### پیکج کی تنظیم
-- ہر روبوٹ یا فعالی یونٹ کے لیے ایک پیکج
-- علیحدہ انٹرفیس پیکجز (پیغامات/سروسز)
-- متعلقہ پیکجز کو گروپ کرنے کے لیے میٹا پیکجز کا استعمال کریں
+### Package Organization
+- One package per robot or functional unit
+- Separate interface packages (messages/services)
+- Use metapackages to group related packages
 
-### ورژن کنٹرول
+### Version Control
 ```bash
 # .gitignore
 build/
@@ -551,7 +550,7 @@ log/
 __pycache__/
 ```
 
-### دستاویزات
+### Documentation
 ```python
 """
 Joint Controller Node
@@ -566,21 +565,21 @@ Parameters:
 """
 ```
 
-## خلاصہ
+## Summary
 
-اس ہفتے آپ نے سیکھا:
+This week you learned:
 
-- ROS 2 Python پیکیج کا ڈھانچہ
-- `package.xml` اور `setup.py` کی ترتیب
-- پبلشرز/سبسکرائبرز کے ساتھ نوڈز بنانا
-- `colcon` کے ساتھ تعمیر کرنا
-- کثیر نوڈ سسٹمز کے لیے لانچ فائلیں
-- YAML پیرامیٹر کی ترتیب
-- pytest کے ساتھ جانچ
-- ڈیبگنگ کی تکنیکیں
+- ROS 2 Python package structure
+- `package.xml` and `setup.py` configuration
+- Creating nodes with publishers/subscribers
+- Building with `colcon`
+- Launch files for multi-node systems
+- YAML parameter configuration
+- Testing with pytest
+- Debugging techniques
 
-## اگلا کیا ہے؟
+## What's Next?
 
-**ہفتہ 4: ہیومانوئڈ روبوٹ کی تفصیلات کے لیے URDF** - URDF اور Xacro کا استعمال کرتے ہوئے روبوٹ کی جیومیٹری اور کائنیماٹکس کی وضاحت کرنا سیکھیں۔
+**Week 4: URDF for Humanoid Robot Descriptions** - Learn to describe robot geometry and kinematics using URDF and Xacro.
 
-**اگلا**: [ہفتہ 4: URDF ماڈلنگ →](./week4-urdf.md)
+**Next**: [Week 4: URDF Modeling →](./week4-urdf.md)

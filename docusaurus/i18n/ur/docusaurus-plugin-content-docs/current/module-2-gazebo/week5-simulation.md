@@ -1,51 +1,51 @@
-# ہفتہ 5: Gazebo طبیعیات سمولیشن
+# Week 5: Gazebo Physics Simulation
 
-## تعارف
+## Introduction
 
-اس ہفتے، ہم آپ کے ہیومینائیڈ روبوٹ کو **Gazebo** میں شروع کریں گے، ROS 2 کے لیے سب سے مشہور روبوٹ سمیولیٹر۔ آپ طبیعیات کے انجنز، ورلڈ فائلوں، سینسر پلگ ان، اور Physical AI سسٹمز کی جانچ کے لیے حقیقت پسندانہ سمولیشن ماحول بنانے کے بارے میں سیکھیں گے۔
+This week, we'll launch your humanoid robot in **Gazebo**, the most popular robot simulator for ROS 2. You'll learn about physics engines, world files, sensor plugins, and how to create realistic simulation environments for testing Physical AI systems.
 
-## Gazebo کیا ہے؟
+## What is Gazebo?
 
-**Gazebo** (اب **Gazebo Classic** کہلاتا ہے) ایک 3D روبوٹ سمیولیٹر ہے جو فراہم کرتا ہے:
+**Gazebo** (now called **Gazebo Classic**) is a 3D robot simulator that provides:
 
-- **حقیقت پسند طبیعیات**: ODE, Bullet, Simbody, DART انجن
-- **سینسر سمولیشن**: کیمرہ, LiDAR, IMU, force/torque
-- **GPU تیز رفتاری**: بصری سینسرز اور بڑے مناظر کے لیے
-- **ROS 2 انضمام**: مقامی پیغام کی منتقلی
+- **Realistic physics**: ODE, Bullet, Simbody, DART engines
+- **Sensor simulation**: Camera, LiDAR, IMU, force/torque
+- **GPU acceleration**: For vision sensors and large scenes
+- **ROS 2 integration**: Native message passing
 
-**Gazebo Fortress/Garden** (نئی نسل) SDF فارمیٹ اور Ignition لائبریریاں استعمال کرتا ہے۔
+**Gazebo Fortress/Garden** (new generation) uses SDF format and Ignition libraries.
 
-## SDF بمقابلہ URDF
+## SDF vs URDF
 
-**SDF (Simulation Description Format)** URDF سے زیادہ طاقتور ہے:
+**SDF (Simulation Description Format)** is more powerful than URDF:
 
-| خصوصیت | URDF | SDF |
+| Feature | URDF | SDF |
 |---------|------|-----|
-| **دنیاएं** | نہیں | ہاں |
-| **بند لوپس** | نہیں | ہاں |
-| **متعدد روبوٹ** | محدود | ہاں |
-| **سینسرز** | پلگ ان کے ذریعے | مقامی |
-| **ورژن کنٹرول** | نہیں | ہاں |
+| **Worlds** | No | Yes |
+| **Closed loops** | No | Yes |
+| **Multiple robots** | Limited | Yes |
+| **Sensors** | Via plugins | Native |
+| **Version control** | No | Yes |
 
-URDF کو Gazebo کے ذریعے خودکار طور پر SDF میں تبدیل کیا جا سکتا ہے۔
+URDF can be automatically converted to SDF by Gazebo.
 
-## ورلڈ فائلیں: ماحول بنانا
+## World Files: Creating Environments
 
-ایک Gazebo ورلڈ ماحول کی وضاحت کرتی ہے:
+A Gazebo world defines the environment:
 
 ```xml
 <?xml version="1.0"?>
 <sdf version="1.7">
   <world name="humanoid_world">
 
-    <!-- طبیعیات کا انجن -->
+    <!-- Physics engine -->
     <physics name="default_physics" type="ode">
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
     </physics>
 
-    <!-- روشنی -->
+    <!-- Lighting -->
     <light name="sun" type="directional">
       <cast_shadows>true</cast_shadows>
       <pose>0 0 10 0 0 0</pose>
@@ -60,18 +60,18 @@ URDF کو Gazebo کے ذریعے خودکار طور پر SDF میں تبدیل 
       <direction>-0.5 0.1 -0.9</direction>
     </light>
 
-    <!-- زمینی سطح -->
+    <!-- Ground plane -->
     <include>
       <uri>model://ground_plane</uri>
     </include>
 
-    <!-- Gazebo ماڈل ڈیٹا بیس سے ماڈل شامل کریں -->
+    <!-- Include models from Gazebo model database -->
     <include>
       <uri>model://cafe</uri>
       <pose>3 0 0 0 0 0</pose>
     </include>
 
-    <!-- حسب ضرورت رکاوٹ -->
+    <!-- Custom obstacle -->
     <model name="box_obstacle">
       <static>true</static>
       <pose>2 0 0.5 0 0 0</pose>
@@ -101,11 +101,11 @@ URDF کو Gazebo کے ذریعے خودکار طور پر SDF میں تبدیل 
 </sdf>
 ```
 
-## طبیعیات کے انجن
+## Physics Engines
 
 ### ODE (Open Dynamics Engine)
 
-Gazebo Classic میں ڈیفالٹ۔ عمومی روبوٹکس کے لیے اچھا:
+Default in Gazebo Classic. Good for general robotics:
 
 ```xml
 <physics type="ode">
@@ -130,7 +130,7 @@ Gazebo Classic میں ڈیفالٹ۔ عمومی روبوٹکس کے لیے اچ�
 
 ### Bullet
 
-پیچیدہ رابطوں کے لیے بہتر:
+Better for complex contacts:
 
 ```xml
 <physics type="bullet">
@@ -147,7 +147,7 @@ Gazebo Classic میں ڈیفالٹ۔ عمومی روبوٹکس کے لیے اچ�
 
 ### DART
 
-ہیومینائیڈ حرکیات کے لیے بہترین:
+Best for humanoid dynamics:
 
 ```xml
 <physics type="dart">
@@ -161,9 +161,9 @@ Gazebo Classic میں ڈیفالٹ۔ عمومی روبوٹکس کے لیے اچ�
 </physics>
 ```
 
-## Gazebo میں ہیومینائیڈ شروع کرنا
+## Launching Humanoid in Gazebo
 
-`launch/gazebo_humanoid.launch.py` بنائیں:
+Create `launch/gazebo_humanoid.launch.py`:
 
 ```python
 import os
@@ -177,14 +177,14 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     pkg_dir = get_package_share_directory('humanoid_gazebo')
 
-    # URDF فائل
+    # URDF file
     urdf_file = os.path.join(pkg_dir, 'urdf', 'humanoid.urdf.xacro')
     robot_description = Command(['xacro ', urdf_file])
 
-    # ورلڈ فائل
+    # World file
     world_file = os.path.join(pkg_dir, 'worlds', 'humanoid_world.world')
 
-    # Gazebo لانچ
+    # Gazebo launch
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([
             os.path.join(get_package_share_directory('gazebo_ros'),
@@ -193,7 +193,7 @@ def generate_launch_description():
         launch_arguments={'world': world_file, 'verbose': 'true'}.items()
     )
 
-    # روبوٹ Spawn کریں
+    # Spawn robot
     spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -205,7 +205,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # روبوٹ کی حالت شائع کرنے والا
+    # Robot state publisher
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -220,17 +220,17 @@ def generate_launch_description():
     ])
 ```
 
-شروع کریں:
+Launch:
 
 ```bash
 ros2 launch humanoid_gazebo gazebo_humanoid.launch.py
 ```
 
-## سینسر پلگ ان
+## Sensor Plugins
 
-### کیمرہ پلگ ان
+### Camera Plugin
 
-URDF میں شامل کریں:
+Add to URDF:
 
 ```xml
 <gazebo reference="camera_link">
@@ -261,7 +261,7 @@ URDF میں شامل کریں:
 </gazebo>
 ```
 
-کیمرہ سبسکرائب کریں:
+Subscribe to camera:
 
 ```python
 from sensor_msgs.msg import Image
@@ -286,7 +286,7 @@ class CameraSubscriber(Node):
         cv2.waitKey(1)
 ```
 
-### گہرائی کا کیمرہ (RGB-D)
+### Depth Camera (RGB-D)
 
 ```xml
 <gazebo reference="camera_link">
@@ -318,7 +318,7 @@ class CameraSubscriber(Node):
 </gazebo>
 ```
 
-### IMU پلگ ان
+### IMU Plugin
 
 ```xml
 <gazebo reference="imu_link">
@@ -378,7 +378,7 @@ class CameraSubscriber(Node):
 </gazebo>
 ```
 
-### LiDAR پلگ ان
+### LiDAR Plugin
 
 ```xml
 <gazebo reference="lidar_link">
@@ -418,9 +418,9 @@ class CameraSubscriber(Node):
 </gazebo>
 ```
 
-## جوائنٹ کنٹرول پلگ ان
+## Joint Control Plugins
 
-### جوائنٹ حالت شائع کرنے والا
+### Joint State Publisher
 
 ```xml
 <gazebo>
@@ -435,7 +435,7 @@ class CameraSubscriber(Node):
 </gazebo>
 ```
 
-### پوزیشن کنٹرول
+### Position Control
 
 ```xml
 <gazebo>
@@ -450,7 +450,7 @@ class CameraSubscriber(Node):
 </gazebo>
 ```
 
-کمانڈز بھیجیں:
+Send commands:
 
 ```python
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -476,9 +476,9 @@ class JointCommander(Node):
         self.publisher.publish(msg)
 ```
 
-## رابطہ سینسرز
+## Contact Sensors
 
-توازن کے لیے پاؤں کے رابطوں کا پتہ لگائیں:
+Detect foot contacts for balance:
 
 ```xml
 <gazebo reference="left_foot">
@@ -500,9 +500,9 @@ class JointCommander(Node):
 </gazebo>
 ```
 
-## مکمل سمولیشن مثال
+## Complete Simulation Example
 
-یہاں ایک مکمل لانچ سیٹ اپ ہے:
+Here's a full launch setup:
 
 ```python
 from launch import LaunchDescription
@@ -515,17 +515,17 @@ import os
 def generate_launch_description():
     pkg_dir = get_package_share_directory('humanoid_gazebo')
 
-    # آرگومنٹس
+    # Arguments
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     gui = LaunchConfiguration('gui', default='true')
     headless = LaunchConfiguration('headless', default='false')
 
-    # فائلیں
+    # Files
     urdf_file = os.path.join(pkg_dir, 'urdf', 'humanoid.urdf.xacro')
     world_file = os.path.join(pkg_dir, 'worlds', 'indoor.world')
     rviz_config = os.path.join(pkg_dir, 'rviz', 'simulation.rviz')
 
-    # روبوٹ کی تفصیل
+    # Robot description
     robot_description = Command([
         'xacro ', urdf_file,
         ' use_sim_time:=', use_sim_time
@@ -544,7 +544,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # روبوٹ Spawn کریں
+    # Spawn robot
     spawn = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
@@ -555,7 +555,7 @@ def generate_launch_description():
         ]
     )
 
-    # روبوٹ کی حالت شائع کرنے والا
+    # Robot state publisher
     robot_state_pub = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -584,52 +584,52 @@ def generate_launch_description():
     ])
 ```
 
-## کارکردگی کی اصلاح
+## Performance Optimization
 
-### 1. طبیعیات کے قدم کا سائز کم کریں
+### 1. Reduce Physics Step Size
 
 ```xml
 <physics>
-  <max_step_size>0.002</max_step_size>  <!-- 0.001 سے بڑھائیں -->
+  <max_step_size>0.002</max_step_size>  <!-- Increase from 0.001 -->
   <real_time_factor>1.0</real_time_factor>
 </physics>
 ```
 
-### 2. ٹکراؤ کی Meshes کو آسان بنائیں
+### 2. Simplify Collision Meshes
 
-پیچیدہ meshes کے بجائے primitive shapes استعمال کریں۔
+Use primitive shapes instead of complex meshes.
 
-### 3. GPU تیز رفتاری
+### 3. GPU Acceleration
 
-کیمرہ سینسرز کے لیے:
+For camera sensors:
 
 ```xml
 <camera>
   <image>
-    <width>320</width>  <!-- کم ریزولوشن -->
+    <width>320</width>  <!-- Lower resolution -->
     <height>240</height>
   </image>
 </camera>
 ```
 
-### 4. غیر استعمال شدہ سینسرز کو غیر فعال کریں
+### 4. Disable Unused Sensors
 
-جن سینسرز کی آپ کو ضرورت نہیں انہیں کمنٹ آؤٹ کریں۔
+Comment out sensors you don't need.
 
-## خلاصہ
+## Summary
 
-اس ہفتے آپ نے سیکھا:
+This week you learned:
 
-- Gazebo فن تعمیر اور طبیعیات کے انجن
-- SDF ورلڈ فائل فارمیٹ
-- ROS 2 کے ساتھ Gazebo میں روبوٹس شروع کرنا
-- کیمرہ، گہرائی، IMU، اور LiDAR سینسر پلگ ان
-- جوائنٹ کنٹرول اور رابطہ سینسرز
-- کارکردگی کی اصلاح کی تکنیکیں
-- مکمل سمولیشن لانچ فائلیں
+- Gazebo architecture and physics engines
+- SDF world file format
+- Launching robots in Gazebo with ROS 2
+- Camera, depth, IMU, and LiDAR sensor plugins
+- Joint control and contact sensors
+- Performance optimization techniques
+- Complete simulation launch files
 
-## اگلا کیا ہے؟
+## What's Next?
 
-**ہفتہ 6: روبوٹ کی تصویر سازی کے لیے Unity** - فوٹو ریئلسٹک رینڈرنگ اور مصنوعی ڈیٹا کی تخلیق کے لیے Unity Robotics Hub دریافت کریں۔
+**Week 6: Unity for Robot Visualization** - Explore Unity Robotics Hub for photorealistic rendering and synthetic data generation.
 
-**اگلا**: [ہفتہ 6: Unity انضمام →](./week6-unity.md)
+**Next**: [Week 6: Unity Integration →](./week6-unity.md)

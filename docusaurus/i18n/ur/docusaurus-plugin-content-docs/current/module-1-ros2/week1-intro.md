@@ -1,48 +1,47 @@
+# Week 1: Foundations of Physical AI
 
-# ہفتہ 1: جسمانی AI کی بنیادیں
+## Introduction to Embodied Intelligence
 
-## جسمانی ذہانت کا تعارف
+Welcome to Week 1! This week, we'll explore the foundational concepts of **Physical AI**—artificial intelligence systems that interact with and learn from the physical world through embodied platforms like robots.
 
-خوش آمدید ہفتہ 1! اس ہفتے، ہم **فزیکل AI** کے بنیادی تصورات کا جائزہ لیں گے—مصنوعی ذہانت کے نظام جو جسمانی پلیٹ فارم جیسے روبوٹ کے ذریعے جسمانی دنیا کے ساتھ تعامل کرتے ہیں اور اس سے سیکھتے ہیں۔
+### What is Physical AI?
 
-### جسمانی AI کیا ہے؟
+**Physical AI** refers to AI systems that:
+1. **Perceive** the physical world through sensors (cameras, LiDAR, IMUs)
+2. **Reason** about spatial relationships, physics, and causality
+3. **Act** in the real world through actuators (motors, grippers)
+4. **Learn** from physical interactions and feedback
 
-**فزیکل AI** سے مراد AI نظام ہیں جو:
-1. **محسوس** کرتے ہیں جسمانی دنیا کو سینسرز (کیمرے، LiDAR، IMUs) کے ذریعے
-2. **استدلال** کرتے ہیں مکانی تعلقات، طبیعیات، اور سببیت کے بارے میں
-3. **عمل** کرتے ہیں حقیقی دنیا میں ایکچوئٹرز (موٹرز، گرفت کرنے والے) کے ذریعے
-4. **سیکھتے** ہیں جسمانی تعاملات اور فیڈبیک سے
+Unlike purely digital AI (like ChatGPT), Physical AI must handle:
+- **Real-time constraints**: Decisions must be made in milliseconds
+- **Uncertainty**: Sensors are noisy, the world is unpredictable
+- **Safety**: Mistakes can cause physical damage
+- **Embodiment**: The AI's "body" (robot morphology) affects what it can do
 
-خالص ڈیجیٹل AI (جیسے ChatGPT) کے برعکس، Physical AI کو درج ذیل چیلنجز کا سامنا کرنا پڑتا ہے:
-- **حقیقی وقت کی پابندیاں**: فیصلے ملی سیکنڈز میں کیے جانے چاہئیں
-- **غیر یقینی**: سینسر شور مچاتے ہیں، دنیا غیر متوقع ہے
-- **محفوظی**: غلطیاں جسمانی نقصان کا باعث بن سکتی ہیں
-- **جسمانی شکل**: AI کا "جسم" (روبوٹ کی شکل) اس کی قابلیتوں پر اثر انداز ہوتا ہے
+### Why Humanoid Robots?
 
-### انسان نما روبوٹ کیوں؟
+Humanoid robots offer unique advantages:
 
-ہیومینائڈ روبوٹ منفرد فوائد فراہم کرتے ہیں:
+**1. Human-Designed Environments**
+- Our world is built for humans (stairs, doors, furniture)
+- Humanoid form factor can navigate these spaces naturally
 
-**1. انسانی ڈیزائن کردہ ماحول**
-- ہماری دنیا انسانوں کے لیے بنائی گئی ہے (سیڑھیاں، دروازے، فرنیچر)
-- ہیومینائیڈ شکل کا عنصر ان جگہوں پر قدرتی طور پر نیویگیٹ کر سکتا ہے
+**2. Intuitive Interaction**
+- People understand humanoid body language and gestures
+- Easier to predict behavior and collaborate
 
-**2. بصیرتی تعامل**
-- لوگ انسانی شکل کی جسمانی زبان اور اشاروں کو سمجھتے ہیں
-- رویے کی پیش گوئی کرنا اور تعاون کرنا آسان ہے
+**3. Versatility**
+- Bipedal locomotion enables complex navigation
+- Dexterous manipulation with arms and hands
+- Multimodal interaction (vision, speech, touch)
 
-**3. ہمہ گیری**
-- دوپائی حرکت پیچیدہ نیویگیشن کی اجازت دیتی ہے
-- بازوؤں اور ہاتھوں کے ساتھ مہارت سے چالاکی
-- کثیر الجہتی تعامل (نظر، گفتگو، چھونا)
+**4. Research Platform**
+- Test theories of human cognition and motor control
+- Benchmark for embodied AI capabilities
 
-**۴. تحقیقاتی پلیٹ فارم**
-- انسانی ادراک اور حرکتی کنٹرول کے نظریات کی جانچ کریں
-- جسمانی AI کی صلاحیتوں کے لیے بینچ مارک
+## The Physical AI Stack
 
-## جسمانی AI اسٹیک
-
-ایک خود مختار انسانی شکل بنانے کے لیے متعدد سطحوں کو یکجا کرنا ضروری ہے:
+Building an autonomous humanoid requires integrating multiple layers:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -60,145 +59,145 @@
 └─────────────────────────────────────────┘
 ```
 
-### پرت کی تفصیل
+### Layer Breakdown
 
-**ہارڈویئر کی تہہ**:
-- **ایکچوئیٹرز**: موٹرز (سرور، برش لیس، اسٹیپر)
-- **سینسرز**: کیمرہ، لائیڈار، آئی ایم یو، فورس/ٹارک سینسرز
-- **کمپیوٹ**: سنگل بورڈ کمپیوٹرز (جیٹسن)، جی پی یوز
+**Hardware Layer**:
+- **Actuators**: Motors (servo, brushless, stepper)
+- **Sensors**: Camera, LiDAR, IMU, force/torque sensors
+- **Compute**: Single-board computers (Jetson), GPUs
 
-**مڈل ویئر (ROS 2)**:
-- تقسیم شدہ روبوٹ سسٹمز کے لیے مواصلاتی بنیادی ڈھانچہ
-- معیاری پیغام کے فارمیٹس
-- ڈیبگنگ، بصری سازی، اور سمولیشن کے لیے ٹولز
+**Middleware (ROS 2)**:
+- Communication infrastructure for distributed robot systems
+- Standardized message formats
+- Tools for debugging, visualization, simulation
 
-**سیمولیشن**:
-- ہارڈ ویئر پر تعینات کرنے سے پہلے الگورڈمز کو محفوظ طریقے سے جانچیں
-- مصنوعی تربیتی ڈیٹا تیار کریں
-- تیز رفتار پروٹو ٹائپنگ
+**Simulation**:
+- Test algorithms safely before deploying to hardware
+- Generate synthetic training data
+- Rapid prototyping
 
-**ادراک**:
-- مقامی سازی اور نقشہ سازی کے لیے بصری SLAM
-- اشیاء کی شناخت اور تقسیم
-- گہرائی کا تخمینہ اور 3D تعمیر نو
+**Perception**:
+- Visual SLAM for localization and mapping
+- Object detection and segmentation
+- Depth estimation and 3D reconstruction
 
-**منصوبہ بندی اور نیویگیشن**:
-- راستے کی منصوبہ بندی (A*, RRT)
-- رکاوٹوں سے بچاؤ
-- ہیرا پھیری کے لیے حرکت کی منصوبہ بندی
+**Planning & Navigation**:
+- Path planning (A*, RRT)
+- Obstacle avoidance
+- Motion planning for manipulation
 
-**اعلیٰ سطح کی AI**:
-- بصری-زبان ماڈل (CLIP، LLaVA)
-- استدلال کے لیے بڑے زبان ماڈل
-- پالیسیوں کے لیے تقویتی سیکھنا
+**High-Level AI**:
+- Vision-language models (CLIP, LLaVA)
+- Large language models for reasoning
+- Reinforcement learning for policies
 
-## جسمانی AI میں اہم چیلنجز
+## Key Challenges in Physical AI
 
-### 1. سمولیشن سے حقیقت کا فرق
+### 1. Sim-to-Real Gap
 
-**مسئلہ**: سمیلیشن میں تربیت یافتہ روبوٹ اکثر حقیقی دنیا میں ناکام ہو جاتے ہیں۔
+**Problem**: Robots trained in simulation often fail in the real world.
 
-**کیوں؟**
-- سمیولیٹرز طبیعیات (رگڑ، مطابقت) کی صحیح ماڈلنگ نہیں کرتے
-- بصری ظاہری شکل مختلف ہوتی ہے (روشنی، ساختیں)
-- سینسر شور کی درست ماڈلنگ نہیں کی گئی
+**Why?**
+- Simulators don't perfectly model physics (friction, compliance)
+- Visual appearance differs (lighting, textures)
+- Sensor noise not accurately modeled
 
-**حل**:
-- **ڈومین رینڈمائزیشن**: تربیت کے دوران سمولیشن کے پیرامیٹرز میں تبدیلی کریں
-- **سسٹم کی شناخت**: حقیقی دنیا کے طبیعیات کے پیرامیٹرز کی پیمائش کریں
-- **سم سے حقیقی منتقلی سیکھنا**: حقیقی دنیا میں بہتر بنائیں
+**Solutions**:
+- **Domain randomization**: Vary simulation parameters during training
+- **System identification**: Measure real-world physics parameters
+- **Sim-to-real transfer learning**: Fine-tune in the real world
 
-### 2. حقیقی وقت کی کارکردگی
+### 2. Real-Time Performance
 
-**مسئلہ**: AI ماڈلز (خاص طور پر ڈیپ لرننگ) سست ہو سکتے ہیں۔
+**Problem**: AI models (especially deep learning) can be slow.
 
-**ضروریات**:
-- **حس**: بصری پروسیسنگ کے لیے 30+ FPS
-- **کنٹرول**: مستحکم موٹر کنٹرول کے لیے 100+ Hz
-- **منصوبہ بندی**: ردعمل کے رویوں کے لیے &lt;100ms
+**Requirements**:
+- **Perception**: 30+ FPS for vision processing
+- **Control**: 100+ Hz for stable motor control
+- **Planning**: &lt;100ms for reactive behaviors
 
-**حل**:
-- **ہارڈ ویئر کی تیز رفتاری**: GPUs، TPUs، خصوصی چپس
-- **ماڈل کی اصلاح**: مقدار بندی، چھانٹنا، تقطیر
-- **درجہ بندی کنٹرول**: تیز کم سطح کے لوپس، سست اعلی سطح کی منصوبہ بندی
+**Solutions**:
+- **Hardware acceleration**: GPUs, TPUs, specialized chips
+- **Model optimization**: Quantization, pruning, distillation
+- **Hierarchical control**: Fast low-level loops, slower high-level planning
 
-### ۳. حفاظت اور مضبوطی
+### 3. Safety & Robustness
 
-**مسئلہ**: جسمانی نظام اگر خراب ہو جائیں تو نقصان پہنچا سکتے ہیں۔
+**Problem**: Physical systems can cause harm if they malfunction.
 
-**ضروریات**:
-- **خرابی کی تشخیص**: سینسر کی صحت کی نگرانی کریں اور بے قاعدگیاں دریافت کریں
-- **خوشگوار تنزلی**: محفوظ متبادل رویے
-- **ایمرجنسی اسٹاپ**: ہارڈویئر کِل سوئچز
+**Requirements**:
+- **Fault detection**: Monitor sensor health and detect anomalies
+- **Graceful degradation**: Safe fallback behaviors
+- **Emergency stops**: Hardware kill switches
 
-**حل**:
-- **اضافی نظام**: اہم افعال کے لئے متعدد سینسر
-- **باقاعدہ تصدیق**: حفاظتی خصوصیات کو ریاضیاتی طور پر ثابت کریں
-- **انسانی نگرانی**: ٹیلی آپریشن بیک اپ
+**Solutions**:
+- **Redundancy**: Multiple sensors for critical functions
+- **Formal verification**: Prove safety properties mathematically
+- **Human oversight**: Teleoperation backup
 
-### ۴. ڈیٹا کی مؤثریت
+### 4. Data Efficiency
 
-**مسئلہ**: حقیقی دنیا کے روبوٹ کے ڈیٹا جمع کرنا مہنگا اور وقت طلب ہے۔
+**Problem**: Collecting real-world robot data is expensive and time-consuming.
 
-**چیلنجز**:
-- ڈیپ لرننگ کے لیے لاکھوں مثالوں کی ضرورت ہوتی ہے
-- ہر روبوٹ کی تعامل میں سیکنڈز سے منٹ لگتے ہیں
-- ہارڈویئر کی خرابی اور حفاظتی خدشات
+**Challenges**:
+- Deep learning requires millions of examples
+- Each robot interaction takes seconds to minutes
+- Hardware wear and safety concerns
 
-**حل**:
-- **سیمولیشن**: مصنوعی ڈیٹا پر پہلے سے تربیت
-- **منتقلی سیکھنا**: پہلے سے تربیت یافتہ ماڈلز کا فائدہ اٹھائیں (ImageNet, CLIP)
-- **کچھ نمونوں سے سیکھنا**: محدود مظاہروں سے سیکھیں
-- **خود نگرانی سیکھنا**: بے لیبل تعامل کے ڈیٹا سے سیکھیں
+**Solutions**:
+- **Simulation**: Pre-train on synthetic data
+- **Transfer learning**: Leverage pre-trained models (ImageNet, CLIP)
+- **Few-shot learning**: Learn from limited demonstrations
+- **Self-supervised learning**: Learn from unlabeled interaction data
 
-## ROS 2 کا کردار
+## The Role of ROS 2
 
-**ROS 2** (روبوٹ آپریٹنگ سسٹم 2) روبوٹکس کے لیے ایک معیاری مڈل ویئر ہے۔ اس کو روبوٹ سافٹ ویئر کے لیے "آپریٹنگ سسٹم" کے طور پر سمجھیں۔
+**ROS 2** (Robot Operating System 2) is the de facto standard middleware for robotics. Think of it as the "operating system" for robot software.
 
-### ROS 2 کیوں؟
+### Why ROS 2?
 
-**1. ماڈیولرٹی**
-- پیچیدہ نظاموں کو دوبارہ استعمال کے قابل اجزاء (نوڈز) میں تقسیم کریں
-- ہر نوڈ ایک کام کو اچھی طرح انجام دیتا ہے (کیمرہ ڈرائیور، منصوبہ ساز، کنٹرولر)
+**1. Modularity**
+- Break complex systems into reusable components (nodes)
+- Each node does one thing well (camera driver, planner, controller)
 
-**2. زبان سے آزاد**
-- نوڈز کو Python، C++، یا دیگر زبانوں میں لکھیں
-- نوڈز معیاری پیغامات کے ذریعے بات چیت کرتے ہیں
+**2. Language-Agnostic**
+- Write nodes in Python, C++, or other languages
+- Nodes communicate via standardized messages
 
-**3. تقسیم شدہ کمپیوٹنگ**
-- نوڈز مختلف کمپیوٹروں پر چل سکتے ہیں
-- سنگل بورڈ کمپیوٹروں سے لے کر GPU کلسٹرز تک پیمانہ بڑھائیں
+**3. Distributed Computing**
+- Nodes can run on different computers
+- Scale from single-board computers to GPU clusters
 
-**4. ماحولیاتی نظام**
-- ہزاروں اوپن سورس پیکجز
-- عام ہارڈ ویئر کے لیے ڈرائیورز
-- SLAM، نیویگیشن، اور ہیرا پھیری کے لیے الگورڈمز
+**4. Ecosystem**
+- Thousands of open-source packages
+- Drivers for common hardware
+- Algorithms for SLAM, navigation, manipulation
 
-**5. صنعت کی اپنائیت**
-- بوسٹن ڈائنامکس، NASA، اور آٹوموٹو کمپنیوں کے ذریعہ استعمال کیا جاتا ہے
-- فعال کمیونٹی اور تجارتی حمایت
+**5. Industry Adoption**
+- Used by Boston Dynamics, NASA, automotive companies
+- Active community and commercial support
 
-### ROS 2 بمقابلہ ROS 1
+### ROS 2 vs ROS 1
 
-ROS 2، ROS 1 میں بہتری لاتا ہے:
+ROS 2 improves on ROS 1:
 
-| خصوصیت | ROS 1 | ROS 2 |
+| Feature | ROS 1 | ROS 2 |
 |---------|-------|-------|
-| **حقیقی وقت** | نہیں | ہاں (DDS کے ساتھ) |
-| **سیکورٹی** | کم از کم | بلٹ ان انکرپشن |
-| **کئی روبوٹ** | مشکل | مقامی حمایت |
-| **ونڈوز/macOS** | محدود | مکمل حمایت |
-| **زندگی کا چکر** | نہیں | منظم نوڈ زندگی کا چکر |
+| **Real-time** | No | Yes (with DDS) |
+| **Security** | Minimal | Built-in encryption |
+| **Multi-robot** | Difficult | Native support |
+| **Windows/macOS** | Limited | Full support |
+| **Lifecycle** | No | Managed node lifecycle |
 
-ہم **ROS 2 Humble** (LTS ریلیز، جو 2027 تک سپورٹ کی جائے گی) کا استعمال کریں گے۔
+We'll use **ROS 2 Humble** (LTS release, supported until 2027).
 
-## ہیومینائیڈ روبوٹ کی ساخت
+## Humanoid Robot Anatomy
 
-آئیے ایک انسانی شکل کے روبوٹ کی عمومی ساخت کو سمجھتے ہیں:
+Let's understand the typical anatomy of a humanoid robot:
 
-### آزادی کے درجات (DOF)
+### Degrees of Freedom (DOF)
 
-انسان نما روبوٹ میں عام طور پر **20-40 ڈگری آف فریڈم (DOF)** ہوتے ہیں۔
+Humanoids typically have **20-40 DOF**:
 
 ```
 Head: 3 DOF (pan, tilt, roll)
@@ -219,63 +218,63 @@ Legs (×2): 6 DOF each = 12 DOF
 ├── Ankle: 2 DOF (pitch, roll)
 ```
 
-**کل**: ~30 DOF (ہاتھوں کو چھوڑ کر)
+**Total**: ~30 DOF (excluding hands)
 
-### سینسر سوئٹ
+### Sensor Suite
 
-انسانی شکل کے روبوٹ میں عام سینسرز:
+Common sensors on humanoids:
 
-**نظریہ**:
-- RGB کیمرے (گہرائی کے لیے سٹیریو)
-- گہرائی کے کیمرے (RealSense، ZED)
-- 360° کیمرے برائے ہمہ جہتی بصارت
+**Vision**:
+- RGB cameras (stereo for depth)
+- Depth cameras (RealSense, ZED)
+- 360° cameras for omnidirectional vision
 
-**پروپریو سیپشن** (اپنی حالت کا احساس):
-- جوائنٹ انکوڈرز (مقام، رفتار)
-- پیروں اور جوڑوں میں قوت/موڑ کے سینسر
-- IMU (انرشیل میجرمنٹ یونٹ) برائے سمت
+**Proprioception** (sensing own state):
+- Joint encoders (position, velocity)
+- Force/torque sensors in feet and joints
+- IMU (Inertial Measurement Unit) for orientation
 
-**ایکسٹروسیپشن** (ماحول کا احساس):
-- 3D نقشہ سازی کے لیے LiDAR
-- ٹکر سے بچنے کے لیے قریب کی سینسر
-- آڈیو ان پٹ کے لیے مائیکروفون
+**Exteroception** (sensing environment):
+- LiDAR for 3D mapping
+- Proximity sensors for collision avoidance
+- Microphones for audio input
 
-## مثال: NVIDIA آئزک سم ہیومینائیڈ
+## Example: NVIDIA Isaac Sim Humanoid
 
-آئیے NVIDIA Isaac Sim میں ایک حوالہ انسانی شکل کا ماڈل دیکھتے ہیں:
+Let's look at a reference humanoid in NVIDIA Isaac Sim:
 
-**تفصیلات**:
-- **اونچائی**: 1.7m
-- **وزن**: 60kg
-- **DOF**: 28 (صرف جسم)
-- **کمپیوٹ**: NVIDIA Jetson AGX Orin
-- **کیمرے**: 2× اسٹیرئو جوڑے (آگے + پیچھے)
+**Specifications**:
+- **Height**: 1.7m
+- **Weight**: 60kg
+- **DOF**: 28 (body only)
+- **Compute**: NVIDIA Jetson AGX Orin
+- **Cameras**: 2× stereo pairs (front + back)
 - **LiDAR**: 1× 360° LiDAR
-- **عملیاتی**: برش لیس موٹرز کے ساتھ ہارمونک ڈرائیوز
+- **Actuation**: Brushless motors with harmonic drives
 
-**صلاحیتیں**:
-- چلنے کی رفتار: 1.5 میٹر فی سیکنڈ
-- کام کرنے کا وقت: 2 گھنٹے (بیٹری)
-- وزن اٹھانے کی صلاحیت: 10 کلوگرام (بازو)
-- توازن کی بحالی: 30° تک کی بے قاعدگیاں
+**Capabilities**:
+- Walking speed: 1.5 m/s
+- Runtime: 2 hours (battery)
+- Payload: 10kg (arms)
+- Balance recovery: Up to 30° perturbations
 
-ہم اس روبوٹ کی نقل تیار کریں گے پورے نصاب کے دوران!
+We'll simulate this robot throughout the course!
 
-## اس ہفتے کے سیکھنے کے مقاصد
+## This Week's Learning Objectives
 
-ہفتہ 1 کے اختتام تک، آپ:
+By the end of Week 1, you will:
 
-✅ **سمجھیں** کہ Physical AI اور digital AI کے منفرد چیلنجز کیا ہیں  
-✅ **وضاحت کریں** کہ انسانی شکل کے روبوٹ Physical AI تحقیق کے لیے کیوں اہم ہیں  
-✅ **شناخت کریں** کہ Physical AI stack کی اہم پرتیں کون سی ہیں  
-✅ **بیان کریں** کہ ROS 2 کا روبوٹ سافٹ ویئر آرکیٹیکچر میں کیا کردار ہے  
-✅ **پہچانیں** کہ انسانی شکل کے روبوٹ کی ساخت اور سینسر کا سیٹ کیا ہے
+✅ **Understand** the unique challenges of Physical AI vs digital AI
+✅ **Explain** why humanoid robots are important for Physical AI research
+✅ **Identify** the key layers of the Physical AI stack
+✅ **Describe** the role of ROS 2 in robot software architecture
+✅ **Recognize** the anatomy and sensor suite of humanoid robots
 
-## عملی پیش نظارہ: ROS 2 کی تنصیب
+## Hands-On Preview: ROS 2 Installation
 
-جب کہ ہم اگلے ہفتے ROS 2 میں گہرائی میں جائیں گے، آئیے تنصیب کے ساتھ شروع کرتے ہیں۔
+While we'll dive deep into ROS 2 next week, let's get started with installation.
 
-### ROS 2 Humble (Ubuntu 22.04) کی تنصیب
+### Installing ROS 2 Humble (Ubuntu 22.04)
 
 ```bash
 # Set up sources
@@ -305,7 +304,7 @@ sudo rosdep init
 rosdep update
 ```
 
-### تنصیب کی تصدیق کریں
+### Verify Installation
 
 ```bash
 # Source ROS 2 environment
@@ -315,56 +314,56 @@ source /opt/ros/humble/setup.bash
 ros2 run demo_nodes_cpp talker
 ```
 
-آپ کو پیغامات شائع ہوتے ہوئے نظر آنے چاہئیں!
+You should see messages being published!
 
-**نکتہ**: اپنے `~/.bashrc` میں `source /opt/ros/humble/setup.bash` شامل کریں تاکہ ROS 2 خودکار طور پر لوڈ ہو جائے۔
+**Tip**: Add `source /opt/ros/humble/setup.bash` to your `~/.bashrc` to auto-load ROS 2.
 
-## اضافی وسائل
+## Additional Resources
 
-### تجویز کردہ مطالعہ
+### Recommended Reading
 
-1. **"طبیعی ذہانت" ڈیپ مائنڈ کی جانب سے** (2024)  
-   - جسمانی AI کے چیلنجز اور مواقع کا جائزہ
+1. **"Physical Intelligence" by DeepMind** (2024)
+   - Overview of embodied AI challenges and opportunities
 
-2. **"ROS 2 ڈیزائن"** - سرکاری ROS 2 دستاویزات  
+2. **"ROS 2 Design"** - Official ROS 2 documentation
    - [https://design.ros2.org/](https://design.ros2.org/)
 
-3. **"ہارڈویئر لاٹری" از سارہ ہوکر** (2021)  
-   - کس طرح ہارڈویئر کی حدود AI تحقیق کو شکل دیتی ہیں
+3. **"The Hardware Lottery" by Sara Hooker** (2021)
+   - How hardware constraints shape AI research
 
-### ویڈیوز
+### Videos
 
-- **بوسٹن ڈائنامکس اٹلس**: جدید ترین انسانی نمائشیں  
-- **این ویڈیا آئزک سم کا جائزہ**: پلیٹ فارم جو ہم ماڈیول 3 میں استعمال کریں گے  
-- **آر او ایس 2 ٹیوٹوریل سیریز**: سرکاری آر او ایس 2 شروع کرنے کے رہنما
+- **Boston Dynamics Atlas**: State-of-the-art humanoid demonstrations
+- **NVIDIA Isaac Sim Overview**: Platform we'll use in Module 3
+- **ROS 2 Tutorial Series**: Official ROS 2 getting started guides
 
-### کمیونٹیز
+### Communities
 
-- **ROS گفتگو**: [https://discourse.ros.org/](https://discourse.ros.org/)
-- **ہیومینائڈ روبوٹ ریڈڈٹ**: r/robotics, r/ROS
-- **NVIDIA آئزک فورم**: آئزک سم کے سوالات کے لیے
+- **ROS Discourse**: [https://discourse.ros.org/](https://discourse.ros.org/)
+- **Humanoid Robots Reddit**: r/robotics, r/ROS
+- **NVIDIA Isaac Forum**: For Isaac Sim questions
 
-## خلاصہ
+## Summary
 
 This week we covered:
 
-✅ جسمانی AI کی تعریف اور چیلنجز  
-✅ کیوں ہیومانوئڈ روبوٹ جسمانی ذہانت کے لیے اہم ہیں  
-✅ جسمانی AI اسٹیک کی تہہ دار تعمیرات  
-✅ ROS 2 بطور مڈل ویئر بنیاد  
-✅ ہیومانوئڈ روبوٹ کی ساخت اور سینسر سوئٹس  
-✅ ROS 2 کی تنصیب اور تصدیق
+✅ Definition and challenges of Physical AI
+✅ Why humanoid robots are crucial for embodied intelligence
+✅ The layered architecture of the Physical AI stack
+✅ ROS 2 as the middleware foundation
+✅ Humanoid robot anatomy and sensor suites
+✅ ROS 2 installation and verification
 
-## اگلا کیا ہے؟
+## What's Next?
 
-**ہفتہ 2: ROS 2 کے بنیادی اصول** - ہم ROS 2 کی ساخت میں گہرائی سے جائیں گے، نوڈز، موضوعات، خدمات، اور پبلش-سبسکرائب مواصلاتی پیٹرن کے بارے میں سیکھیں گے۔
+**Week 2: ROS 2 Fundamentals** - We'll dive into ROS 2 architecture, learning about nodes, topics, services, and the publish-subscribe communication pattern.
 
-**پیشگی سوال**: *ROS 2 میں موضوع اور سروس میں کیا فرق ہے؟ (ہم اس کا جواب اگلے ہفتے دیں گے!)*
+**Preview question**: *What's the difference between a topic and a service in ROS 2? (We'll answer this next week!)*
 
 ---
 
-**مشق**: Ubuntu 22.04 پر ROS 2 Humble انسٹال کریں اور talker/listener ڈیمو چلائیں۔ آؤٹ پٹ کا اسکرین شاٹ لیں اور سمجھیں کہ پس پردہ کیا ہو رہا ہے۔
+**Practice Exercise**: Install ROS 2 Humble on Ubuntu 22.04 and run the talker/listener demo. Screenshot the output and understand what's happening under the hood.
 
-**بحث**: آپ کے خیال میں انسانی شکل کا عنصر گھریلو کاموں کے لیے پہیوں والے روبوٹ کے مقابلے میں کیوں فائدہ مند ہے؟ اپنے خیالات چیٹ بوٹ کے ذریعے شیئر کریں!
+**Discussion**: Why do you think humanoid form factor is advantageous over wheeled robots for household tasks? Share your thoughts using the chatbot!
 
-**اگلا**: [ہفتہ 2: ROS 2 کی تعمیرات →](./week2-fundamentals.md)
+**Next**: [Week 2: ROS 2 Architecture →](./week2-fundamentals.md)
