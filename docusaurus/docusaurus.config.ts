@@ -33,25 +33,6 @@ const config: Config = {
   onBrokenLinks: 'warn',
   trailingSlash: false,
 
-  // Internationalization configuration
-  // Support for English (default) and Urdu
-  i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'ur'],
-    localeConfigs: {
-      en: {
-        label: 'English',
-        direction: 'ltr',
-        htmlLang: 'en-US',
-      },
-      ur: {
-        label: 'اردو (Urdu)',
-        direction: 'rtl',
-        htmlLang: 'ur-PK',
-      },
-    },
-  },
-
   presets: [
     [
       'classic',
@@ -103,10 +84,6 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Textbook',
-        },
-        {
-          type: 'localeDropdown',
-          position: 'right',
         },
         {
           href: 'https://github.com/Mr-Noiam/physical-ai-textbook',

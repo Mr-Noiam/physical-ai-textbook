@@ -18,10 +18,7 @@ class Settings(BaseSettings):
 
     # Gemini Configuration (Free tier: 1M tokens)
     gemini_api_key: str = Field(default="", env="GEMINI_API_KEY")
-    translation_provider: str = Field(
         default="gemini",
-        env="TRANSLATION_PROVIDER",
-        description="Translation provider: 'gemini' (free) or 'openai' (paid)"
     )
 
     # Database Configuration
