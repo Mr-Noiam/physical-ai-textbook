@@ -21,6 +21,8 @@ google-genai>=0.2.0
 
 # Environment & Security
 python-dotenv==1.0.0
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
 
 # Utilities
 pydantic==2.5.3

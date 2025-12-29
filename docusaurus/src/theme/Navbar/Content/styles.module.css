@@ -1,5 +1,10 @@
 .colorModeToggle {
   margin-right: 0.5rem;
+  cursor: pointer !important;
+}
+
+.colorModeToggle button {
+  cursor: pointer !important;
 }
 
 .authButton {
