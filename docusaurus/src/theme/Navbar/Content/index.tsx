@@ -3,7 +3,7 @@
  *
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {useThemeConfig} from '@docusaurus/theme-common';
 import {
   splitNavbarItems,
@@ -15,6 +15,8 @@ import SearchBar from '@theme/SearchBar';
 import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
+import AuthModal from '@site/src/components/AuthModal';
+import { useSession, signOut } from '@site/src/lib/auth-client';
 
 import styles from './styles.module.css';
 
@@ -51,32 +53,63 @@ function NavbarContentLayout({
 
 export default function NavbarContent(): JSX.Element {
   const mobileSidebar = useNavbarMobileSidebar();
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { data: session } = useSession();
 
   const items = useNavbarItems();
   const [leftItems, rightItems] = splitNavbarItems(items);
 
   const searchBarItem = items.find((item) => item.type === 'search');
 
+  const handleSignOut = async () => {
+    await signOut();
+    window.location.reload();
+  };
+
   return (
-    <NavbarContentLayout
-      left={
-        <>
-          {!mobileSidebar.disabled && <NavbarMobileSidebarToggle />}
-          <NavbarLogo />
-          <NavbarItems items={leftItems} />
-        </>
-      }
-      right={
-        <>
-          <NavbarItems items={rightItems} />
-          <NavbarColorModeToggle className={styles.colorModeToggle} />
-          {!searchBarItem && (
-            <NavbarSearch>
-              <SearchBar />
-            </NavbarSearch>
-          )}
-        </>
-      }
-    />
+    <>
+      <NavbarContentLayout
+        left={
+          <>
+            {!mobileSidebar.disabled && <NavbarMobileSidebarToggle />}
+            <NavbarLogo />
+            <NavbarItems items={leftItems} />
+          </>
+        }
+        right={
+          <>
+            <NavbarItems items={rightItems} />
+            <NavbarColorModeToggle className={styles.colorModeToggle} />
+            {!searchBarItem && (
+              <NavbarSearch>
+                <SearchBar />
+              </NavbarSearch>
+            )}
+            {session?.user ? (
+              <div className={styles.userMenu}>
+                <span className={styles.userName}>{session.user.name || session.user.email}</span>
+                <button
+                  onClick={handleSignOut}
+                  className={styles.authButton}
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className={styles.authButton}
+              >
+                Sign In
+              </button>
+            )}
+          </>
+        }
+      />
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
+    </>
   );
 }

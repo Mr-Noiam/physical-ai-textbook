@@ -32,45 +32,22 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         try {
             if (mode === 'signup') {
-                await signUp.email({
+                await signUp({
                     email,
                     password,
                     name,
-                    callbackURL: "/",
-                }, {
-                    onRequest: (ctx) => {
-                        // Add custom fields to the request
-                        return {
-                            ...ctx,
-                            body: {
-                                ...ctx.body,
-                                software_background: softwareBackground,
-                                hardware_background: hardwareBackground,
-                            },
-                        };
-                    },
-                    onSuccess: () => {
-                        onClose();
-                        window.location.reload(); // Refresh to show logged-in state
-                    },
-                    onError: (ctx) => {
-                        setError(ctx.error.message || 'Signup failed');
-                    },
+                    software_background: softwareBackground,
+                    hardware_background: hardwareBackground,
                 });
+                onClose();
+                window.location.reload(); // Refresh to show logged-in state
             } else {
-                await signIn.email({
+                await signIn({
                     email,
                     password,
-                    callbackURL: "/",
-                }, {
-                    onSuccess: () => {
-                        onClose();
-                        window.location.reload();
-                    },
-                    onError: (ctx) => {
-                        setError(ctx.error.message || 'Sign in failed');
-                    },
                 });
+                onClose();
+                window.location.reload();
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Authentication failed');
