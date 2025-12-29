@@ -21,6 +21,10 @@ class User(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     email = Column(String(255), unique=True, nullable=False, index=True)
+    password_hash = Column(String(255), nullable=True)  # Better Auth manages this
+    name = Column(String(255), nullable=True)
+    email_verified = Column(DateTime(timezone=True), nullable=True)
+    image = Column(String(500), nullable=True)
     software_background = Column(
         Enum("beginner", "intermediate", "advanced", name="software_level"),
         nullable=True,
@@ -35,6 +39,7 @@ class User(Base):
     # Relationships
     chat_messages = relationship("ChatMessage", back_populates="user")
     personalizations = relationship("PersonalizationCache", back_populates="user")
+    sessions = relationship("Session", back_populates="user")
 
 
 class ChatMessage(Base):
@@ -71,3 +76,38 @@ class PersonalizationCache(Base):
     user = relationship("User", back_populates="personalizations")
 
 
+class Session(Base):
+    """Better Auth session model."""
+
+    __tablename__ = "sessions"
+
+    id = Column(String(255), primary_key=True)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    token = Column(String(500), nullable=False, unique=True, index=True)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    ip_address = Column(String(45), nullable=True)
+    user_agent = Column(String(500), nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relationships
+    user = relationship("User", back_populates="sessions")
+
+
+class Account(Base):
+    """Better Auth account model for OAuth providers."""
+
+    __tablename__ = "accounts"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    account_id = Column(String(255), nullable=False)
+    provider_id = Column(String(255), nullable=False)
+    access_token = Column(Text, nullable=True)
+    refresh_token = Column(Text, nullable=True)
+    id_token = Column(Text, nullable=True)
+    expires_at = Column(DateTime(timezone=True), nullable=True)
+    scope = Column(String(500), nullable=True)
+    password = Column(String(255), nullable=True)  # For email/password provider
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
