@@ -3,7 +3,7 @@ Authentication API Endpoints
 
 Provides signup and signin endpoints compatible with Better Auth session format.
 """
-from fastapi import APIRouter, HTTPException, Response, Depends
+from fastapi import APIRouter, HTTPException, Response, Depends, Cookie
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
@@ -218,15 +218,15 @@ async def signout(
 
 @router.get("/session")
 async def get_session(
-    session_token: str = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    session_token: str = Cookie(None, alias="better-auth.session_token")
 ):
     """
     Get current session information.
 
     Args:
-        session_token: Session token from cookie
         db: Database session
+        session_token: Session token from cookie
 
     Returns:
         Session and user information or null
