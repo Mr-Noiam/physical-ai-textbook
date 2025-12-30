@@ -1,0 +1,45 @@
+.personalizedContent {
+    margin: 1rem 0;
+    padding: 1rem;
+    border-left: 4px solid var(--ifm-color-primary);
+    background: var(--ifm-background-surface-color);
+    border-radius: 4px;
+}
+
+.levelBadge {
+    display: inline-block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 12px;
+    background: var(--ifm-color-primary-lightest);
+    color: var(--ifm-color-primary-dark);
+}
+
+.personalizedContent[data-level="beginner"] {
+    border-left-color: #28a745;
+}
+
+.personalizedContent[data-level="beginner"] .levelBadge {
+    background: #d4edda;
+    color: #155724;
+}
+
+.personalizedContent[data-level="intermediate"] {
+    border-left-color: #007bff;
+}
+
+.personalizedContent[data-level="intermediate"] .levelBadge {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.personalizedContent[data-level="advanced"] {
+    border-left-color: #6f42c1;
+}
+
+.personalizedContent[data-level="advanced"] .levelBadge {
+    background: #e7d6f8;
+    color: #3d1a6b;
+}

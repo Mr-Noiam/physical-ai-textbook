@@ -1,0 +1,54 @@
+.banner {
+    margin: 2rem 0;
+    padding: 2rem;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--ifm-color-primary-lightest) 0%, var(--ifm-background-surface-color) 100%);
+    border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.banner[data-type="personalized"] {
+    background: linear-gradient(135deg, #e3f2fd 0%, #fff 100%);
+    border-left: 4px solid var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .banner[data-type="personalized"] {
+    background: linear-gradient(135deg, #1a2332 0%, var(--ifm-background-surface-color) 100%);
+}
+
+.banner h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: var(--ifm-heading-color);
+}
+
+.greeting {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.greeting strong {
+    color: var(--ifm-color-primary);
+}
+
+.badges {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--ifm-color-primary);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+[data-theme='dark'] .badge {
+    background: var(--ifm-color-primary-dark);
+}
