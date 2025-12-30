@@ -117,8 +117,8 @@ async def signup(
         key="better-auth.session_token",
         value=session.token,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="lax",
+        secure=True,  # Required for cross-origin cookies with HTTPS
+        samesite="none",  # Required for cross-origin requests
         max_age=60 * 60 * 24 * 7,  # 7 days
     )
 
@@ -174,8 +174,8 @@ async def signin(
         key="better-auth.session_token",
         value=session.token,
         httponly=True,
-        secure=False,  # Set to True in production with HTTPS
-        samesite="lax",
+        secure=True,  # Required for cross-origin cookies with HTTPS
+        samesite="none",  # Required for cross-origin requests
         max_age=60 * 60 * 24 * 7,  # 7 days
     )
 
