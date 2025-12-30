@@ -262,3 +262,67 @@ async def get_session(
             "hardware_background": user.hardware_background,
         }
     }
+
+
+class UpdateProfileRequest(BaseModel):
+    """Request model for updating user profile"""
+    name: str = Field(..., min_length=1, max_length=100)
+    software_background: str = Field(..., pattern="^(beginner|intermediate|advanced)$")
+    hardware_background: str = Field(..., pattern="^(no_experience|hobbyist|professional)$")
+
+
+@router.put("/update-profile")
+async def update_profile(
+    request: UpdateProfileRequest,
+    db: Session = Depends(get_db),
+    session_token: str = Cookie(None, alias="better-auth.session_token")
+):
+    """
+    Update user profile information.
+
+    Args:
+        request: Profile update data
+        db: Database session
+        session_token: Session token from cookie
+
+    Returns:
+        Updated user information
+
+    Raises:
+        HTTPException: If user is not authenticated
+    """
+    if not session_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    # Find session
+    session = db.query(SessionModel).filter(
+        SessionModel.token == session_token,
+        SessionModel.expires_at > datetime.utcnow()
+    ).first()
+
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid or expired session")
+
+    # Get user
+    user = db.query(User).filter(User.id == session.user_id).first()
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Update user profile
+    user.name = request.name
+    user.software_background = request.software_background
+    user.hardware_background = request.hardware_background
+
+    db.commit()
+    db.refresh(user)
+
+    return {
+        "user": {
+            "id": str(user.id),
+            "email": user.email,
+            "name": user.name,
+            "software_background": user.software_background,
+            "hardware_background": user.hardware_background,
+        }
+    }

@@ -1,0 +1,138 @@
+.profileDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.avatarButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 50px;
+    transition: background-color 0.2s;
+}
+
+.avatarButton:hover {
+    background-color: var(--ifm-color-emphasis-200);
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--ifm-color-primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+.chevron {
+    transition: transform 0.2s;
+    opacity: 0.7;
+}
+
+.chevronOpen {
+    transform: rotate(180deg);
+}
+
+.dropdownMenu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 260px;
+    background: var(--ifm-background-surface-color);
+    border: 1px solid var(--ifm-color-emphasis-300);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+[data-theme='dark'] .dropdownMenu {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.userInfo {
+    padding: 1rem;
+    background: var(--ifm-color-emphasis-100);
+}
+
+.userName {
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: var(--ifm-font-color-base);
+}
+
+.userEmail {
+    font-size: 0.85rem;
+    color: var(--ifm-color-emphasis-700);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.divider {
+    height: 1px;
+    background: var(--ifm-color-emphasis-300);
+}
+
+.skillLevels {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.skillItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.skillIcon {
+    font-size: 1rem;
+}
+
+.skillLabel {
+    color: var(--ifm-color-emphasis-700);
+    text-transform: capitalize;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--ifm-font-color-base);
+    transition: background-color 0.2s;
+}
+
+.menuItem:hover {
+    background: var(--ifm-color-emphasis-200);
+}
+
+.menuItem svg {
+    opacity: 0.7;
+}
+
+.menuItem:last-child {
+    color: var(--ifm-color-danger);
+}
+
+.menuItem:last-child:hover {
+    background: var(--ifm-color-danger-lightest);
+}

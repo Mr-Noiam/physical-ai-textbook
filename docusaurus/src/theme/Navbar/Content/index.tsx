@@ -18,6 +18,9 @@ import NavbarSearch from '@theme/Navbar/Search';
 import AuthModal from '@site/src/components/AuthModal';
 import { useAuth } from '@site/src/contexts/AuthContext';
 
+import ProfileDropdown from '@site/src/components/ProfileDropdown';
+import SettingsModal from '@site/src/components/SettingsModal';
+
 import styles from './styles.module.css';
 
 function useNavbarItems() {
@@ -54,16 +57,13 @@ function NavbarContentLayout({
 export default function NavbarContent(): JSX.Element {
   const mobileSidebar = useNavbarMobileSidebar();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { user, signOut: contextSignOut } = useAuth();
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const { user } = useAuth();
 
   const items = useNavbarItems();
   const [leftItems, rightItems] = splitNavbarItems(items);
 
   const searchBarItem = items.find((item) => item.type === 'search');
-
-  const handleSignOut = async () => {
-    await contextSignOut();
-  };
 
   return (
     <>
@@ -85,15 +85,7 @@ export default function NavbarContent(): JSX.Element {
               </NavbarSearch>
             )}
             {user ? (
-              <div className={styles.userMenu}>
-                <span className={styles.userName}>{user.name || user.email}</span>
-                <button
-                  onClick={handleSignOut}
-                  className={styles.authButton}
-                >
-                  Sign Out
-                </button>
-              </div>
+              <ProfileDropdown onSettingsClick={() => setIsSettingsModalOpen(true)} />
             ) : (
               <button
                 onClick={() => setIsAuthModalOpen(true)}
@@ -108,6 +100,10 @@ export default function NavbarContent(): JSX.Element {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
+      />
+      <SettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
       />
     </>
   );
