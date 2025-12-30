@@ -84,8 +84,9 @@ async def signup(
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Hash password
-    password_hash = pwd_context.hash(request.password)
+    # Hash password (truncate to 72 bytes for bcrypt compatibility)
+    password_bytes = request.password.encode('utf-8')[:72]
+    password_hash = pwd_context.hash(password_bytes)
 
     # Create user
     user = User(
@@ -162,8 +163,9 @@ async def signin(
     if not user or not user.password_hash:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Verify password
-    if not pwd_context.verify(request.password, user.password_hash):
+    # Verify password (truncate to 72 bytes for bcrypt compatibility)
+    password_bytes = request.password.encode('utf-8')[:72]
+    if not pwd_context.verify(password_bytes, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create session
