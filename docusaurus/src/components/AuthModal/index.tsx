@@ -5,7 +5,8 @@
  * Uses Better Auth for authentication.
  */
 import React, { useState } from 'react';
-import { signIn, signUp, useSession } from '../../lib/auth-client';
+import { signIn, signUp } from '../../lib/auth-client';
+import { useAuth } from '../../contexts/AuthContext';
 import styles from './styles.module.css';
 
 interface AuthModalProps {
@@ -14,6 +15,7 @@ interface AuthModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
+    const { refreshSession } = useAuth();
     const [mode, setMode] = useState<'signin' | 'signup'>('signin');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,16 +41,19 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                     software_background: softwareBackground,
                     hardware_background: hardwareBackground,
                 });
-                onClose();
-                window.location.reload(); // Refresh to show logged-in state
             } else {
                 await signIn({
                     email,
                     password,
                 });
-                onClose();
-                window.location.reload();
             }
+            // Refresh session to update UI
+            await refreshSession();
+            onClose();
+            // Clear form
+            setEmail('');
+            setPassword('');
+            setName('');
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Authentication failed');
         } finally {

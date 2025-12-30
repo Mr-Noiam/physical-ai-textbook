@@ -114,12 +114,16 @@ export function useSession() {
     const [data, setData] = useState<{ user: User | null; session: Session | null } | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const refreshSession = async () => {
+        setIsLoading(true);
+        const sessionData = await getSession();
+        setData(sessionData);
+        setIsLoading(false);
+    };
+
     useEffect(() => {
-        getSession().then((sessionData) => {
-            setData(sessionData);
-            setIsLoading(false);
-        });
+        refreshSession();
     }, []);
 
-    return { data, isLoading };
+    return { data, isLoading, refreshSession };
 }

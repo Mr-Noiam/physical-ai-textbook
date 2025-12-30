@@ -16,7 +16,7 @@ import NavbarMobileSidebarToggle from '@theme/Navbar/MobileSidebar/Toggle';
 import NavbarLogo from '@theme/Navbar/Logo';
 import NavbarSearch from '@theme/Navbar/Search';
 import AuthModal from '@site/src/components/AuthModal';
-import { useSession, signOut } from '@site/src/lib/auth-client';
+import { useAuth } from '@site/src/contexts/AuthContext';
 
 import styles from './styles.module.css';
 
@@ -54,7 +54,7 @@ function NavbarContentLayout({
 export default function NavbarContent(): JSX.Element {
   const mobileSidebar = useNavbarMobileSidebar();
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { data: session } = useSession();
+  const { user, signOut: contextSignOut } = useAuth();
 
   const items = useNavbarItems();
   const [leftItems, rightItems] = splitNavbarItems(items);
@@ -62,8 +62,7 @@ export default function NavbarContent(): JSX.Element {
   const searchBarItem = items.find((item) => item.type === 'search');
 
   const handleSignOut = async () => {
-    await signOut();
-    window.location.reload();
+    await contextSignOut();
   };
 
   return (
@@ -85,9 +84,9 @@ export default function NavbarContent(): JSX.Element {
                 <SearchBar />
               </NavbarSearch>
             )}
-            {session?.user ? (
+            {user ? (
               <div className={styles.userMenu}>
-                <span className={styles.userName}>{session.user.name || session.user.email}</span>
+                <span className={styles.userName}>{user.name || user.email}</span>
                 <button
                   onClick={handleSignOut}
                   className={styles.authButton}
