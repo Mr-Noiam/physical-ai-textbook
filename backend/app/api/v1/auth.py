@@ -124,15 +124,9 @@ async def signup(
     # Create session
     session = create_session(user.id, db)
 
-    # Set session cookie
-    response.set_cookie(
-        key="better-auth.session_token",
-        value=session.token,
-        httponly=True,
-        secure=True,  # Required for cross-origin cookies with HTTPS
-        samesite="none",  # Required for cross-origin requests
-        max_age=60 * 60 * 24 * 7,  # 7 days
-    )
+    # Set session cookie with Partitioned attribute for Chrome compatibility
+    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/; Partitioned"
+    response.headers["Set-Cookie"] = cookie_value
 
     return AuthResponse(
         user={
@@ -181,15 +175,9 @@ async def signin(
     # Create session
     session = create_session(user.id, db)
 
-    # Set session cookie
-    response.set_cookie(
-        key="better-auth.session_token",
-        value=session.token,
-        httponly=True,
-        secure=True,  # Required for cross-origin cookies with HTTPS
-        samesite="none",  # Required for cross-origin requests
-        max_age=60 * 60 * 24 * 7,  # 7 days
-    )
+    # Set session cookie with Partitioned attribute for Chrome compatibility
+    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/; Partitioned"
+    response.headers["Set-Cookie"] = cookie_value
 
     return AuthResponse(
         user={
@@ -221,8 +209,9 @@ async def signout(
     Returns:
         Success message
     """
-    # Clear session cookie
-    response.delete_cookie(key="better-auth.session_token")
+    # Clear session cookie with same attributes as when it was set
+    cookie_value = "better-auth.session_token=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/; Partitioned"
+    response.headers["Set-Cookie"] = cookie_value
 
     return {"message": "Signed out successfully"}
 
