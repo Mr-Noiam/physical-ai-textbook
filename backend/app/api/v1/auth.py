@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Response, Depends
 from pydantic import BaseModel, EmailStr, Field
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
-from passlib.context import CryptContext
+import bcrypt
 import secrets
 import uuid
 
@@ -16,8 +16,20 @@ from app.db.neon import get_db
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+def hash_password(password: str) -> str:
+    """Hash a password using bcrypt."""
+    # Truncate to 72 bytes for bcrypt compatibility
+    password_bytes = password.encode('utf-8')[:72]
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password_bytes, salt).decode('utf-8')
+
+
+def verify_password(password: str, hashed: str) -> bool:
+    """Verify a password against its hash."""
+    # Truncate to 72 bytes for bcrypt compatibility
+    password_bytes = password.encode('utf-8')[:72]
+    return bcrypt.checkpw(password_bytes, hashed.encode('utf-8'))
 
 
 class SignupRequest(BaseModel):
@@ -84,10 +96,8 @@ async def signup(
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    # Hash password (truncate to 72 bytes for bcrypt compatibility)
-    # Truncate password to 72 bytes safely
-    password_truncated = request.password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    password_hash = pwd_context.hash(password_truncated)
+    # Hash password
+    password_hash = hash_password(request.password)
 
     # Create user
     user = User(
@@ -164,9 +174,8 @@ async def signin(
     if not user or not user.password_hash:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    # Verify password (truncate to 72 bytes for bcrypt compatibility)
-    password_truncated = request.password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
-    if not pwd_context.verify(password_truncated, user.password_hash):
+    # Verify password
+    if not verify_password(request.password, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create session
