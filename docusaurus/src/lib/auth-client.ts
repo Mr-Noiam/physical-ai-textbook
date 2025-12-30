@@ -11,7 +11,7 @@ import { useState, useEffect } from 'react';
 // For production: Update this to your deployed backend URL
 const API_URL = typeof window !== 'undefined' && window.location.hostname === 'localhost'
     ? "http://localhost:8000"
-    : "http://localhost:8000"; // TODO: Replace with deployed backend URL
+    : "https://physical-ai-textbook-production-d71f.up.railway.app";
 
 interface User {
     id: string;
