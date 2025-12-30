@@ -15,6 +15,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import { useAuth } from '../../contexts/AuthContext';
 import styles from './styles.module.css';
 
 interface Message {
@@ -33,6 +34,7 @@ interface Source {
 export default function ChatbotWidget(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   const API_BASE_URL = (siteConfig.customFields?.apiBaseUrl as string) || 'http://localhost:8000';
+  const { user } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -83,19 +85,13 @@ export default function ChatbotWidget(): JSX.Element {
     setIsLoading(true);
 
     try {
-      // Call backend API
-      const headers: Record<string, string> = {
-        'Content-Type': 'application/json',
-      };
-
-      // Add auth token if user is logged in
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
+      // Call backend API with credentials for authenticated users
       const response = await fetch(`${API_BASE_URL}/api/v1/chatbot/ask`, {
         method: 'POST',
-        headers,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Send cookies for authentication
         body: JSON.stringify({
           question,
           selected_text: selectedContext || null,
@@ -184,23 +180,9 @@ export default function ChatbotWidget(): JSX.Element {
             <div className={styles.chatTitle}>
               <span className={styles.chatIcon}>🤖</span>
               <span>AI Teaching Assistant</span>
+              {user && <span className={styles.userBadge}>{user.name}</span>}
             </div>
             <div className={styles.headerButtons}>
-              {user ? (
-                <div className={styles.userMenu}>
-                  <span className={styles.userEmail}>{user.email}</span>
-                  <button onClick={logout} className={styles.logoutButton}>
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => setIsAuthModalOpen(true)}
-                  className={styles.loginButton}
-                >
-                  Login
-                </button>
-              )}
               <button
                 className={styles.clearButton}
                 onClick={clearChat}
@@ -216,13 +198,7 @@ export default function ChatbotWidget(): JSX.Element {
             {!user ? (
               <div className={styles.welcomeMessage}>
                 <p>🔒 Login Required</p>
-                <p>Please login or signup to use the AI teaching assistant.</p>
-                <button
-                  className={styles.loginButtonLarge}
-                  onClick={() => setIsAuthModalOpen(true)}
-                >
-                  Login / Sign Up
-                </button>
+                <p>Please login or signup using the "Sign In" button in the top navigation bar to use the AI teaching assistant.</p>
               </div>
             ) : messages.length === 0 ? (
               <div className={styles.welcomeMessage}>

@@ -124,8 +124,12 @@ async def signup(
     # Create session
     session = create_session(user.id, db)
 
-    # Set session cookie with Partitioned attribute for Chrome compatibility
-    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/; Partitioned"
+    # Set session cookie for cross-origin authentication
+    # HttpOnly: Prevents JavaScript access (security)
+    # Secure: Only sent over HTTPS
+    # SameSite=None: Allows cross-origin requests (GitHub Pages -> Railway)
+    # Max-Age: Cookie expires in 7 days
+    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/"
     response.headers["Set-Cookie"] = cookie_value
 
     return AuthResponse(
@@ -175,8 +179,12 @@ async def signin(
     # Create session
     session = create_session(user.id, db)
 
-    # Set session cookie with Partitioned attribute for Chrome compatibility
-    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/; Partitioned"
+    # Set session cookie for cross-origin authentication
+    # HttpOnly: Prevents JavaScript access (security)
+    # Secure: Only sent over HTTPS
+    # SameSite=None: Allows cross-origin requests (GitHub Pages -> Railway)
+    # Max-Age: Cookie expires in 7 days
+    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/"
     response.headers["Set-Cookie"] = cookie_value
 
     return AuthResponse(
@@ -210,7 +218,7 @@ async def signout(
         Success message
     """
     # Clear session cookie with same attributes as when it was set
-    cookie_value = "better-auth.session_token=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/; Partitioned"
+    cookie_value = "better-auth.session_token=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/"
     response.headers["Set-Cookie"] = cookie_value
 
     return {"message": "Signed out successfully"}
