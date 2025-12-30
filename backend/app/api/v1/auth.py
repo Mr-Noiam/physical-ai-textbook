@@ -85,8 +85,9 @@ async def signup(
         raise HTTPException(status_code=400, detail="Email already registered")
 
     # Hash password (truncate to 72 bytes for bcrypt compatibility)
-    password_bytes = request.password.encode('utf-8')[:72]
-    password_hash = pwd_context.hash(password_bytes)
+    # Truncate password to 72 bytes safely
+    password_truncated = request.password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    password_hash = pwd_context.hash(password_truncated)
 
     # Create user
     user = User(
@@ -164,8 +165,8 @@ async def signin(
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Verify password (truncate to 72 bytes for bcrypt compatibility)
-    password_bytes = request.password.encode('utf-8')[:72]
-    if not pwd_context.verify(password_bytes, user.password_hash):
+    password_truncated = request.password.encode('utf-8')[:72].decode('utf-8', errors='ignore')
+    if not pwd_context.verify(password_truncated, user.password_hash):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     # Create session
