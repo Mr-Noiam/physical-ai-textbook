@@ -6,11 +6,15 @@ Returns the most relevant chunks for a given question.
 """
 
 from typing import List, Dict
-from app.db.qdrant import get_qdrant_client
+from app.db.qdrant import get_qdrant_client, qdrant_service
 from app.rag.embeddings import generate_embedding
 
 
-COLLECTION_NAME = "book_content"
+# Use collection name from settings instead of hardcoded value
+def get_collection_name():
+    """Get the configured Qdrant collection name."""
+    return qdrant_service.collection_name
+
 DEFAULT_TOP_K = 3  # Return top 3 most relevant chunks (faster, still accurate)
 
 
@@ -61,8 +65,9 @@ def search_similar_chunks(query: str, top_k: int = DEFAULT_TOP_K) -> List[Search
         client = get_qdrant_client()
 
         # 3. Search for similar vectors
+        collection_name = get_collection_name()
         search_results = client.search(
-            collection_name=COLLECTION_NAME,
+            collection_name=collection_name,
             query_vector=query_embedding,
             limit=top_k,
             score_threshold=0.6  # Only return results with >60% similarity (lowered for better recall)

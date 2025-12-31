@@ -16,6 +16,7 @@ class QdrantService:
         self.client = QdrantClient(
             url=settings.qdrant_url,
             api_key=settings.qdrant_api_key,
+            timeout=60,  # Increase timeout to 60 seconds for cloud instances
         )
         self.collection_name = settings.qdrant_collection_name
 
