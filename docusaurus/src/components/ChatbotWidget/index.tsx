@@ -195,15 +195,11 @@ export default function ChatbotWidget(): JSX.Element {
 
           {/* Messages */}
           <div className={styles.chatMessages}>
-            {!user ? (
+            {messages.length === 0 ? (
               <div className={styles.welcomeMessage}>
-                <p>🔒 Login Required</p>
-                <p>Please login or signup using the "Sign In" button in the top navigation bar to use the AI teaching assistant.</p>
-              </div>
-            ) : messages.length === 0 ? (
-              <div className={styles.welcomeMessage}>
-                <p>👋 Hi! I'm your AI teaching assistant.</p>
+                <p>👋 Hi{user ? `, ${user.name}` : ''}! I'm your AI teaching assistant.</p>
                 <p>Ask me anything about the textbook content:</p>
+                {!user && <p className={styles.loginHint}>💡 <em>Login to get personalized answers based on your experience level!</em></p>}
                 <div className={styles.suggestionButtons}>
                   <button
                     className={styles.suggestionButton}
