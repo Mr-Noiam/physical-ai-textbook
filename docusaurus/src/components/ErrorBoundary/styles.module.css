@@ -1,0 +1,65 @@
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 200px;
+}
+
+.errorContent {
+  text-align: center;
+  max-width: 500px;
+  padding: 2rem;
+  border: 2px solid var(--ifm-color-danger);
+  border-radius: 8px;
+  background-color: var(--ifm-background-surface-color);
+}
+
+.errorContent h2 {
+  color: var(--ifm-color-danger);
+  margin-bottom: 1rem;
+}
+
+.errorContent p {
+  margin-bottom: 1.5rem;
+  color: var(--ifm-font-color-base);
+}
+
+.errorDetails {
+  text-align: left;
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: var(--ifm-code-background);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.errorDetails summary {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.errorDetails pre {
+  margin: 0;
+  padding: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-size: 0.875rem;
+  color: var(--ifm-color-danger);
+}
+
+.resetButton {
+  background-color: var(--ifm-color-primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.resetButton:hover {
+  background-color: var(--ifm-color-primary-dark);
+}

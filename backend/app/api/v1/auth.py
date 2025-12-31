@@ -13,6 +13,7 @@ import uuid
 
 from app.db.models import User, Session as SessionModel, Account
 from app.db.neon import get_db
+from app.config import settings
 
 router = APIRouter(prefix="/api/v1/auth", tags=["auth"])
 
@@ -126,10 +127,16 @@ async def signup(
 
     # Set session cookie for cross-origin authentication
     # HttpOnly: Prevents JavaScript access (security)
-    # Secure: Only sent over HTTPS
+    # Secure: Only sent over HTTPS (disabled for localhost development)
     # SameSite=None: Allows cross-origin requests (GitHub Pages -> Railway)
     # Max-Age: Cookie expires in 7 days
-    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/"
+
+    # Use Secure flag only in production (requires HTTPS)
+    is_production = settings.environment == "production"
+    secure_flag = "Secure; " if is_production else ""
+    samesite = "None" if is_production else "Lax"
+
+    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; {secure_flag}SameSite={samesite}; Max-Age={60 * 60 * 24 * 7}; Path=/"
     response.headers["Set-Cookie"] = cookie_value
 
     return AuthResponse(
@@ -181,10 +188,16 @@ async def signin(
 
     # Set session cookie for cross-origin authentication
     # HttpOnly: Prevents JavaScript access (security)
-    # Secure: Only sent over HTTPS
+    # Secure: Only sent over HTTPS (disabled for localhost development)
     # SameSite=None: Allows cross-origin requests (GitHub Pages -> Railway)
     # Max-Age: Cookie expires in 7 days
-    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; Secure; SameSite=None; Max-Age={60 * 60 * 24 * 7}; Path=/"
+
+    # Use Secure flag only in production (requires HTTPS)
+    is_production = settings.environment == "production"
+    secure_flag = "Secure; " if is_production else ""
+    samesite = "None" if is_production else "Lax"
+
+    cookie_value = f"better-auth.session_token={session.token}; HttpOnly; {secure_flag}SameSite={samesite}; Max-Age={60 * 60 * 24 * 7}; Path=/"
     response.headers["Set-Cookie"] = cookie_value
 
     return AuthResponse(
@@ -218,7 +231,11 @@ async def signout(
         Success message
     """
     # Clear session cookie with same attributes as when it was set
-    cookie_value = "better-auth.session_token=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/"
+    is_production = settings.environment == "production"
+    secure_flag = "Secure; " if is_production else ""
+    samesite = "None" if is_production else "Lax"
+
+    cookie_value = f"better-auth.session_token=; HttpOnly; {secure_flag}SameSite={samesite}; Max-Age=0; Path=/"
     response.headers["Set-Cookie"] = cookie_value
 
     return {"message": "Signed out successfully"}

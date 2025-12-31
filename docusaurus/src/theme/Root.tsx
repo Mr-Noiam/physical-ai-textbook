@@ -9,13 +9,16 @@
 
 import React from 'react';
 import ChatbotWidget from '@site/src/components/ChatbotWidget';
+import ErrorBoundary from '@site/src/components/ErrorBoundary';
 import { AuthProvider } from '@site/src/contexts/AuthContext';
 
 export default function Root({ children }): JSX.Element {
   return (
     <AuthProvider>
       {children}
-      <ChatbotWidget />
+      <ErrorBoundary>
+        <ChatbotWidget />
+      </ErrorBoundary>
     </AuthProvider>
   );
 }
