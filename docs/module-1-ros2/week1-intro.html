@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-module-1-ros2/week1-intro" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Week 1: Foundations of Physical AI | Physical AI &amp; Humanoid Robotics</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://mr-noiam.github.io/physical-ai-textbook/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://mr-noiam.github.io/physical-ai-textbook/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://mr-noiam.github.io/physical-ai-textbook/docs/module-1-ros2/week1-intro"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Week 1: Foundations of Physical AI | Physical AI &amp; Humanoid Robotics"><meta data-rh="true" name="description" content="Introduction to Embodied Intelligence"><meta data-rh="true" property="og:description" content="Introduction to Embodied Intelligence"><link data-rh="true" rel="icon" href="/physical-ai-textbook/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://mr-noiam.github.io/physical-ai-textbook/docs/module-1-ros2/week1-intro"><link data-rh="true" rel="alternate" href="https://mr-noiam.github.io/physical-ai-textbook/docs/module-1-ros2/week1-intro" hreflang="en"><link data-rh="true" rel="alternate" href="https://mr-noiam.github.io/physical-ai-textbook/docs/module-1-ros2/week1-intro" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Week 1: Foundations of Physical AI","item":"https://mr-noiam.github.io/physical-ai-textbook/docs/module-1-ros2/week1-intro"}]}</script><link rel="alternate" type="application/rss+xml" href="/physical-ai-textbook/blog/rss.xml" title="Physical AI &amp; Humanoid Robotics RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/physical-ai-textbook/blog/atom.xml" title="Physical AI &amp; Humanoid Robotics Atom Feed"><link rel="stylesheet" href="/physical-ai-textbook/assets/css/styles.c85e56a5.css">
+<script src="/physical-ai-textbook/assets/js/runtime~main.0f21fefb.js" defer="defer"></script>
+<script src="/physical-ai-textbook/assets/js/main.18b68c15.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/physical-ai-textbook/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/physical-ai-textbook/"><div class="navbar__logo"><img src="/physical-ai-textbook/img/logo.svg" alt="Physical AI Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/physical-ai-textbook/img/logo.svg" alt="Physical AI Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Physical AI &amp; Humanoid Robotics</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/physical-ai-textbook/docs/intro">Textbook</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/Mr-Noiam/physical-ai-textbook" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_x44X"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div><button class="authButton_BijS">Sign In</button></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/physical-ai-textbook/docs/intro"><span title="Physical AI &amp; Humanoid Robotics" class="linkLabel_WmDU">Physical AI &amp; Humanoid Robotics</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/physical-ai-textbook/docs/module-1-ros2/week1-intro"><span title="Module 1: ROS 2 Fundamentals" class="categoryLinkLabel_W154">Module 1: ROS 2 Fundamentals</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/physical-ai-textbook/docs/module-1-ros2/week1-intro"><span title="Week 1: Foundations of Physical AI" class="linkLabel_WmDU">Week 1: Foundations of Physical AI</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/physical-ai-textbook/docs/module-1-ros2/week2-fundamentals"><span title="Week 2: ROS 2 Architecture - Nodes, Topics, Services" class="linkLabel_WmDU">Week 2: ROS 2 Architecture - Nodes, Topics, Services</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/physical-ai-textbook/docs/module-1-ros2/week3-python"><span title="Week 3: Building ROS 2 Packages with Python" class="linkLabel_WmDU">Week 3: Building ROS 2 Packages with Python</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/physical-ai-textbook/docs/module-1-ros2/week4-urdf"><span title="Week 4: URDF for Humanoid Robot Descriptions" class="linkLabel_WmDU">Week 4: URDF for Humanoid Robot Descriptions</span></a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/physical-ai-textbook/docs/module-2-gazebo/week5-simulation"><span title="Module 2: Gazebo &amp; Unity Simulation" class="categoryLinkLabel_W154">Module 2: Gazebo &amp; Unity Simulation</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/physical-ai-textbook/docs/module-3-isaac/week7-isaac-sim"><span title="Module 3: NVIDIA Isaac Platform" class="categoryLinkLabel_W154">Module 3: NVIDIA Isaac Platform</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/physical-ai-textbook/docs/module-4-vla/week10-vla-intro"><span title="Module 4: Vision-Language-Action" class="categoryLinkLabel_W154">Module 4: Vision-Language-Action</span></a></div></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/physical-ai-textbook/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Module 1: ROS 2 Fundamentals</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Week 1: Foundations of Physical AI</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Week 1: Foundations of Physical AI</h1></header>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="introduction-to-embodied-intelligence">Introduction to Embodied Intelligence<a href="#introduction-to-embodied-intelligence" class="hash-link" aria-label="Direct link to Introduction to Embodied Intelligence" title="Direct link to Introduction to Embodied Intelligence" translate="no">​</a></h2>
+<p>Welcome to Week 1! This week, we&#x27;ll explore the foundational concepts of <strong>Physical AI</strong>—artificial intelligence systems that interact with and learn from the physical world through embodied platforms like robots.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="what-is-physical-ai">What is Physical AI?<a href="#what-is-physical-ai" class="hash-link" aria-label="Direct link to What is Physical AI?" title="Direct link to What is Physical AI?" translate="no">​</a></h3>
+<p><strong>Physical AI</strong> refers to AI systems that:</p>
+<ol>
+<li class=""><strong>Perceive</strong> the physical world through sensors (cameras, LiDAR, IMUs)</li>
+<li class=""><strong>Reason</strong> about spatial relationships, physics, and causality</li>
+<li class=""><strong>Act</strong> in the real world through actuators (motors, grippers)</li>
+<li class=""><strong>Learn</strong> from physical interactions and feedback</li>
+</ol>
+<p>Unlike purely digital AI (like ChatGPT), Physical AI must handle:</p>
+<ul>
+<li class=""><strong>Real-time constraints</strong>: Decisions must be made in milliseconds</li>
+<li class=""><strong>Uncertainty</strong>: Sensors are noisy, the world is unpredictable</li>
+<li class=""><strong>Safety</strong>: Mistakes can cause physical damage</li>
+<li class=""><strong>Embodiment</strong>: The AI&#x27;s &quot;body&quot; (robot morphology) affects what it can do</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="why-humanoid-robots">Why Humanoid Robots?<a href="#why-humanoid-robots" class="hash-link" aria-label="Direct link to Why Humanoid Robots?" title="Direct link to Why Humanoid Robots?" translate="no">​</a></h3>
+<p>Humanoid robots offer unique advantages:</p>
+<p><strong>1. Human-Designed Environments</strong></p>
+<ul>
+<li class="">Our world is built for humans (stairs, doors, furniture)</li>
+<li class="">Humanoid form factor can navigate these spaces naturally</li>
+</ul>
+<p><strong>2. Intuitive Interaction</strong></p>
+<ul>
+<li class="">People understand humanoid body language and gestures</li>
+<li class="">Easier to predict behavior and collaborate</li>
+</ul>
+<p><strong>3. Versatility</strong></p>
+<ul>
+<li class="">Bipedal locomotion enables complex navigation</li>
+<li class="">Dexterous manipulation with arms and hands</li>
+<li class="">Multimodal interaction (vision, speech, touch)</li>
+</ul>
+<p><strong>4. Research Platform</strong></p>
+<ul>
+<li class="">Test theories of human cognition and motor control</li>
+<li class="">Benchmark for embodied AI capabilities</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-physical-ai-stack">The Physical AI Stack<a href="#the-physical-ai-stack" class="hash-link" aria-label="Direct link to The Physical AI Stack" title="Direct link to The Physical AI Stack" translate="no">​</a></h2>
+<p>Building an autonomous humanoid requires integrating multiple layers:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">┌─────────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  High-Level AI (Vision-Language-Action) │  ← Week 10-13</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├─────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Planning &amp; Navigation                  │  ← Week 9</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├─────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Perception (SLAM, Object Detection)    │  ← Week 7-8</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├─────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Simulation (Gazebo, Unity, Isaac)      │  ← Week 5-7</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├─────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Middleware (ROS 2)                     │  ← Week 2-4</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├─────────────────────────────────────────┤</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│  Hardware (Actuators, Sensors, Compute) │  ← Throughout</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">└─────────────────────────────────────────┘</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-breakdown">Layer Breakdown<a href="#layer-breakdown" class="hash-link" aria-label="Direct link to Layer Breakdown" title="Direct link to Layer Breakdown" translate="no">​</a></h3>
+<p><strong>Hardware Layer</strong>:</p>
+<ul>
+<li class=""><strong>Actuators</strong>: Motors (servo, brushless, stepper)</li>
+<li class=""><strong>Sensors</strong>: Camera, LiDAR, IMU, force/torque sensors</li>
+<li class=""><strong>Compute</strong>: Single-board computers (Jetson), GPUs</li>
+</ul>
+<p><strong>Middleware (ROS 2)</strong>:</p>
+<ul>
+<li class="">Communication infrastructure for distributed robot systems</li>
+<li class="">Standardized message formats</li>
+<li class="">Tools for debugging, visualization, simulation</li>
+</ul>
+<p><strong>Simulation</strong>:</p>
+<ul>
+<li class="">Test algorithms safely before deploying to hardware</li>
+<li class="">Generate synthetic training data</li>
+<li class="">Rapid prototyping</li>
+</ul>
+<p><strong>Perception</strong>:</p>
+<ul>
+<li class="">Visual SLAM for localization and mapping</li>
+<li class="">Object detection and segmentation</li>
+<li class="">Depth estimation and 3D reconstruction</li>
+</ul>
+<p><strong>Planning &amp; Navigation</strong>:</p>
+<ul>
+<li class="">Path planning (A*, RRT)</li>
+<li class="">Obstacle avoidance</li>
+<li class="">Motion planning for manipulation</li>
+</ul>
+<p><strong>High-Level AI</strong>:</p>
+<ul>
+<li class="">Vision-language models (CLIP, LLaVA)</li>
+<li class="">Large language models for reasoning</li>
+<li class="">Reinforcement learning for policies</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="key-challenges-in-physical-ai">Key Challenges in Physical AI<a href="#key-challenges-in-physical-ai" class="hash-link" aria-label="Direct link to Key Challenges in Physical AI" title="Direct link to Key Challenges in Physical AI" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-sim-to-real-gap">1. Sim-to-Real Gap<a href="#1-sim-to-real-gap" class="hash-link" aria-label="Direct link to 1. Sim-to-Real Gap" title="Direct link to 1. Sim-to-Real Gap" translate="no">​</a></h3>
+<p><strong>Problem</strong>: Robots trained in simulation often fail in the real world.</p>
+<p><strong>Why?</strong></p>
+<ul>
+<li class="">Simulators don&#x27;t perfectly model physics (friction, compliance)</li>
+<li class="">Visual appearance differs (lighting, textures)</li>
+<li class="">Sensor noise not accurately modeled</li>
+</ul>
+<p><strong>Solutions</strong>:</p>
+<ul>
+<li class=""><strong>Domain randomization</strong>: Vary simulation parameters during training</li>
+<li class=""><strong>System identification</strong>: Measure real-world physics parameters</li>
+<li class=""><strong>Sim-to-real transfer learning</strong>: Fine-tune in the real world</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-real-time-performance">2. Real-Time Performance<a href="#2-real-time-performance" class="hash-link" aria-label="Direct link to 2. Real-Time Performance" title="Direct link to 2. Real-Time Performance" translate="no">​</a></h3>
+<p><strong>Problem</strong>: AI models (especially deep learning) can be slow.</p>
+<p><strong>Requirements</strong>:</p>
+<ul>
+<li class=""><strong>Perception</strong>: 30+ FPS for vision processing</li>
+<li class=""><strong>Control</strong>: 100+ Hz for stable motor control</li>
+<li class=""><strong>Planning</strong>: &lt;100ms for reactive behaviors</li>
+</ul>
+<p><strong>Solutions</strong>:</p>
+<ul>
+<li class=""><strong>Hardware acceleration</strong>: GPUs, TPUs, specialized chips</li>
+<li class=""><strong>Model optimization</strong>: Quantization, pruning, distillation</li>
+<li class=""><strong>Hierarchical control</strong>: Fast low-level loops, slower high-level planning</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-safety--robustness">3. Safety &amp; Robustness<a href="#3-safety--robustness" class="hash-link" aria-label="Direct link to 3. Safety &amp; Robustness" title="Direct link to 3. Safety &amp; Robustness" translate="no">​</a></h3>
+<p><strong>Problem</strong>: Physical systems can cause harm if they malfunction.</p>
+<p><strong>Requirements</strong>:</p>
+<ul>
+<li class=""><strong>Fault detection</strong>: Monitor sensor health and detect anomalies</li>
+<li class=""><strong>Graceful degradation</strong>: Safe fallback behaviors</li>
+<li class=""><strong>Emergency stops</strong>: Hardware kill switches</li>
+</ul>
+<p><strong>Solutions</strong>:</p>
+<ul>
+<li class=""><strong>Redundancy</strong>: Multiple sensors for critical functions</li>
+<li class=""><strong>Formal verification</strong>: Prove safety properties mathematically</li>
+<li class=""><strong>Human oversight</strong>: Teleoperation backup</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-data-efficiency">4. Data Efficiency<a href="#4-data-efficiency" class="hash-link" aria-label="Direct link to 4. Data Efficiency" title="Direct link to 4. Data Efficiency" translate="no">​</a></h3>
+<p><strong>Problem</strong>: Collecting real-world robot data is expensive and time-consuming.</p>
+<p><strong>Challenges</strong>:</p>
+<ul>
+<li class="">Deep learning requires millions of examples</li>
+<li class="">Each robot interaction takes seconds to minutes</li>
+<li class="">Hardware wear and safety concerns</li>
+</ul>
+<p><strong>Solutions</strong>:</p>
+<ul>
+<li class=""><strong>Simulation</strong>: Pre-train on synthetic data</li>
+<li class=""><strong>Transfer learning</strong>: Leverage pre-trained models (ImageNet, CLIP)</li>
+<li class=""><strong>Few-shot learning</strong>: Learn from limited demonstrations</li>
+<li class=""><strong>Self-supervised learning</strong>: Learn from unlabeled interaction data</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="the-role-of-ros-2">The Role of ROS 2<a href="#the-role-of-ros-2" class="hash-link" aria-label="Direct link to The Role of ROS 2" title="Direct link to The Role of ROS 2" translate="no">​</a></h2>
+<p><strong>ROS 2</strong> (Robot Operating System 2) is the de facto standard middleware for robotics. Think of it as the &quot;operating system&quot; for robot software.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="why-ros-2">Why ROS 2?<a href="#why-ros-2" class="hash-link" aria-label="Direct link to Why ROS 2?" title="Direct link to Why ROS 2?" translate="no">​</a></h3>
+<p><strong>1. Modularity</strong></p>
+<ul>
+<li class="">Break complex systems into reusable components (nodes)</li>
+<li class="">Each node does one thing well (camera driver, planner, controller)</li>
+</ul>
+<p><strong>2. Language-Agnostic</strong></p>
+<ul>
+<li class="">Write nodes in Python, C++, or other languages</li>
+<li class="">Nodes communicate via standardized messages</li>
+</ul>
+<p><strong>3. Distributed Computing</strong></p>
+<ul>
+<li class="">Nodes can run on different computers</li>
+<li class="">Scale from single-board computers to GPU clusters</li>
+</ul>
+<p><strong>4. Ecosystem</strong></p>
+<ul>
+<li class="">Thousands of open-source packages</li>
+<li class="">Drivers for common hardware</li>
+<li class="">Algorithms for SLAM, navigation, manipulation</li>
+</ul>
+<p><strong>5. Industry Adoption</strong></p>
+<ul>
+<li class="">Used by Boston Dynamics, NASA, automotive companies</li>
+<li class="">Active community and commercial support</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="ros-2-vs-ros-1">ROS 2 vs ROS 1<a href="#ros-2-vs-ros-1" class="hash-link" aria-label="Direct link to ROS 2 vs ROS 1" title="Direct link to ROS 2 vs ROS 1" translate="no">​</a></h3>
+<p>ROS 2 improves on ROS 1:</p>
+<table><thead><tr><th>Feature</th><th>ROS 1</th><th>ROS 2</th></tr></thead><tbody><tr><td><strong>Real-time</strong></td><td>No</td><td>Yes (with DDS)</td></tr><tr><td><strong>Security</strong></td><td>Minimal</td><td>Built-in encryption</td></tr><tr><td><strong>Multi-robot</strong></td><td>Difficult</td><td>Native support</td></tr><tr><td><strong>Windows/macOS</strong></td><td>Limited</td><td>Full support</td></tr><tr><td><strong>Lifecycle</strong></td><td>No</td><td>Managed node lifecycle</td></tr></tbody></table>
+<p>We&#x27;ll use <strong>ROS 2 Humble</strong> (LTS release, supported until 2027).</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="humanoid-robot-anatomy">Humanoid Robot Anatomy<a href="#humanoid-robot-anatomy" class="hash-link" aria-label="Direct link to Humanoid Robot Anatomy" title="Direct link to Humanoid Robot Anatomy" translate="no">​</a></h2>
+<p>Let&#x27;s understand the typical anatomy of a humanoid robot:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="degrees-of-freedom-dof">Degrees of Freedom (DOF)<a href="#degrees-of-freedom-dof" class="hash-link" aria-label="Direct link to Degrees of Freedom (DOF)" title="Direct link to Degrees of Freedom (DOF)" translate="no">​</a></h3>
+<p>Humanoids typically have <strong>20-40 DOF</strong>:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">Head: 3 DOF (pan, tilt, roll)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Neck: 2 DOF</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Torso: 3 DOF (pitch, yaw, roll)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Arms (×2): 7 DOF each = 14 DOF</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Shoulder: 3 DOF (pitch, yaw, roll)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Elbow: 1 DOF (pitch)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Wrist: 3 DOF (pitch, yaw, roll)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Hands (×2): 4-12 DOF each (finger articulation)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">│</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">Legs (×2): 6 DOF each = 12 DOF</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Hip: 3 DOF (pitch, yaw, roll)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Knee: 1 DOF (pitch)</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">├── Ankle: 2 DOF (pitch, roll)</span><br></span></code></pre></div></div>
+<p><strong>Total</strong>: ~30 DOF (excluding hands)</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="sensor-suite">Sensor Suite<a href="#sensor-suite" class="hash-link" aria-label="Direct link to Sensor Suite" title="Direct link to Sensor Suite" translate="no">​</a></h3>
+<p>Common sensors on humanoids:</p>
+<p><strong>Vision</strong>:</p>
+<ul>
+<li class="">RGB cameras (stereo for depth)</li>
+<li class="">Depth cameras (RealSense, ZED)</li>
+<li class="">360° cameras for omnidirectional vision</li>
+</ul>
+<p><strong>Proprioception</strong> (sensing own state):</p>
+<ul>
+<li class="">Joint encoders (position, velocity)</li>
+<li class="">Force/torque sensors in feet and joints</li>
+<li class="">IMU (Inertial Measurement Unit) for orientation</li>
+</ul>
+<p><strong>Exteroception</strong> (sensing environment):</p>
+<ul>
+<li class="">LiDAR for 3D mapping</li>
+<li class="">Proximity sensors for collision avoidance</li>
+<li class="">Microphones for audio input</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="example-nvidia-isaac-sim-humanoid">Example: NVIDIA Isaac Sim Humanoid<a href="#example-nvidia-isaac-sim-humanoid" class="hash-link" aria-label="Direct link to Example: NVIDIA Isaac Sim Humanoid" title="Direct link to Example: NVIDIA Isaac Sim Humanoid" translate="no">​</a></h2>
+<p>Let&#x27;s look at a reference humanoid in NVIDIA Isaac Sim:</p>
+<p><strong>Specifications</strong>:</p>
+<ul>
+<li class=""><strong>Height</strong>: 1.7m</li>
+<li class=""><strong>Weight</strong>: 60kg</li>
+<li class=""><strong>DOF</strong>: 28 (body only)</li>
+<li class=""><strong>Compute</strong>: NVIDIA Jetson AGX Orin</li>
+<li class=""><strong>Cameras</strong>: 2× stereo pairs (front + back)</li>
+<li class=""><strong>LiDAR</strong>: 1× 360° LiDAR</li>
+<li class=""><strong>Actuation</strong>: Brushless motors with harmonic drives</li>
+</ul>
+<p><strong>Capabilities</strong>:</p>
+<ul>
+<li class="">Walking speed: 1.5 m/s</li>
+<li class="">Runtime: 2 hours (battery)</li>
+<li class="">Payload: 10kg (arms)</li>
+<li class="">Balance recovery: Up to 30° perturbations</li>
+</ul>
+<p>We&#x27;ll simulate this robot throughout the course!</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="this-weeks-learning-objectives">This Week&#x27;s Learning Objectives<a href="#this-weeks-learning-objectives" class="hash-link" aria-label="Direct link to This Week&#x27;s Learning Objectives" title="Direct link to This Week&#x27;s Learning Objectives" translate="no">​</a></h2>
+<p>By the end of Week 1, you will:</p>
+<p>✅ <strong>Understand</strong> the unique challenges of Physical AI vs digital AI
+✅ <strong>Explain</strong> why humanoid robots are important for Physical AI research
+✅ <strong>Identify</strong> the key layers of the Physical AI stack
+✅ <strong>Describe</strong> the role of ROS 2 in robot software architecture
+✅ <strong>Recognize</strong> the anatomy and sensor suite of humanoid robots</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="hands-on-preview-ros-2-installation">Hands-On Preview: ROS 2 Installation<a href="#hands-on-preview-ros-2-installation" class="hash-link" aria-label="Direct link to Hands-On Preview: ROS 2 Installation" title="Direct link to Hands-On Preview: ROS 2 Installation" translate="no">​</a></h2>
+<p>While we&#x27;ll dive deep into ROS 2 next week, let&#x27;s get started with installation.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="installing-ros-2-humble-ubuntu-2204">Installing ROS 2 Humble (Ubuntu 22.04)<a href="#installing-ros-2-humble-ubuntu-2204" class="hash-link" aria-label="Direct link to Installing ROS 2 Humble (Ubuntu 22.04)" title="Direct link to Installing ROS 2 Humble (Ubuntu 22.04)" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain"># Set up sources</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo apt update &amp;&amp; sudo apt install -y software-properties-common</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo add-apt-repository universe</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo apt update &amp;&amp; sudo apt install curl -y</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Add ROS 2 GPG key</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key \</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">  -o /usr/share/keyrings/ros-archive-keyring.gpg</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Add repository</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">echo &quot;deb [arch=$(dpkg --print-architecture) \</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] \</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">http://packages.ros.org/ros2/ubuntu $(. /etc/os-release &amp;&amp; echo $UBUNTU_CODENAME) main&quot; \</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">| sudo tee /etc/apt/sources.list.d/ros2.list &gt; /dev/null</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Install ROS 2 Humble Desktop</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo apt update</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo apt install -y ros-humble-desktop</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Install development tools</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo apt install -y python3-colcon-common-extensions python3-rosdep</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Initialize rosdep</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">sudo rosdep init</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">rosdep update</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="verify-installation">Verify Installation<a href="#verify-installation" class="hash-link" aria-label="Direct link to Verify Installation" title="Direct link to Verify Installation" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain"># Source ROS 2 environment</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">source /opt/ros/humble/setup.bash</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#393A34"><span class="token plain"># Test with demo nodes</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">ros2 run demo_nodes_cpp talker</span><br></span></code></pre></div></div>
+<p>You should see messages being published!</p>
+<p><strong>Tip</strong>: Add <code>source /opt/ros/humble/setup.bash</code> to your <code>~/.bashrc</code> to auto-load ROS 2.</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="additional-resources">Additional Resources<a href="#additional-resources" class="hash-link" aria-label="Direct link to Additional Resources" title="Direct link to Additional Resources" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="recommended-reading">Recommended Reading<a href="#recommended-reading" class="hash-link" aria-label="Direct link to Recommended Reading" title="Direct link to Recommended Reading" translate="no">​</a></h3>
+<ol>
+<li class="">
+<p><strong>&quot;Physical Intelligence&quot; by DeepMind</strong> (2024)</p>
+<ul>
+<li class="">Overview of embodied AI challenges and opportunities</li>
+</ul>
+</li>
+<li class="">
+<p><strong>&quot;ROS 2 Design&quot;</strong> - Official ROS 2 documentation</p>
+<ul>
+<li class=""><a href="https://design.ros2.org/" target="_blank" rel="noopener noreferrer" class="">https://design.ros2.org/</a></li>
+</ul>
+</li>
+<li class="">
+<p><strong>&quot;The Hardware Lottery&quot; by Sara Hooker</strong> (2021)</p>
+<ul>
+<li class="">How hardware constraints shape AI research</li>
+</ul>
+</li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="videos">Videos<a href="#videos" class="hash-link" aria-label="Direct link to Videos" title="Direct link to Videos" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Boston Dynamics Atlas</strong>: State-of-the-art humanoid demonstrations</li>
+<li class=""><strong>NVIDIA Isaac Sim Overview</strong>: Platform we&#x27;ll use in Module 3</li>
+<li class=""><strong>ROS 2 Tutorial Series</strong>: Official ROS 2 getting started guides</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="communities">Communities<a href="#communities" class="hash-link" aria-label="Direct link to Communities" title="Direct link to Communities" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>ROS Discourse</strong>: <a href="https://discourse.ros.org/" target="_blank" rel="noopener noreferrer" class="">https://discourse.ros.org/</a></li>
+<li class=""><strong>Humanoid Robots Reddit</strong>: r/robotics, r/ROS</li>
+<li class=""><strong>NVIDIA Isaac Forum</strong>: For Isaac Sim questions</li>
+</ul>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="summary">Summary<a href="#summary" class="hash-link" aria-label="Direct link to Summary" title="Direct link to Summary" translate="no">​</a></h2>
+<p>This week we covered:</p>
+<p>✅ Definition and challenges of Physical AI
+✅ Why humanoid robots are crucial for embodied intelligence
+✅ The layered architecture of the Physical AI stack
+✅ ROS 2 as the middleware foundation
+✅ Humanoid robot anatomy and sensor suites
+✅ ROS 2 installation and verification</p>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="whats-next">What&#x27;s Next?<a href="#whats-next" class="hash-link" aria-label="Direct link to What&#x27;s Next?" title="Direct link to What&#x27;s Next?" translate="no">​</a></h2>
+<p><strong>Week 2: ROS 2 Fundamentals</strong> - We&#x27;ll dive into ROS 2 architecture, learning about nodes, topics, services, and the publish-subscribe communication pattern.</p>
+<p><strong>Preview question</strong>: <em>What&#x27;s the difference between a topic and a service in ROS 2? (We&#x27;ll answer this next week!)</em></p>
+<hr>
+<p><strong>Practice Exercise</strong>: Install ROS 2 Humble on Ubuntu 22.04 and run the talker/listener demo. Screenshot the output and understand what&#x27;s happening under the hood.</p>
+<p><strong>Discussion</strong>: Why do you think humanoid form factor is advantageous over wheeled robots for household tasks? Share your thoughts using the chatbot!</p>
+<p><strong>Next</strong>: <a class="" href="/physical-ai-textbook/docs/module-1-ros2/week2-fundamentals">Week 2: ROS 2 Architecture →</a></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/docs/module-1-ros2/week1-intro.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/physical-ai-textbook/docs/intro"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Physical AI &amp; Humanoid Robotics</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/physical-ai-textbook/docs/module-1-ros2/week2-fundamentals"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Week 2: ROS 2 Architecture - Nodes, Topics, Services</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#introduction-to-embodied-intelligence" class="table-of-contents__link toc-highlight">Introduction to Embodied Intelligence</a><ul><li><a href="#what-is-physical-ai" class="table-of-contents__link toc-highlight">What is Physical AI?</a></li><li><a href="#why-humanoid-robots" class="table-of-contents__link toc-highlight">Why Humanoid Robots?</a></li></ul></li><li><a href="#the-physical-ai-stack" class="table-of-contents__link toc-highlight">The Physical AI Stack</a><ul><li><a href="#layer-breakdown" class="table-of-contents__link toc-highlight">Layer Breakdown</a></li></ul></li><li><a href="#key-challenges-in-physical-ai" class="table-of-contents__link toc-highlight">Key Challenges in Physical AI</a><ul><li><a href="#1-sim-to-real-gap" class="table-of-contents__link toc-highlight">1. Sim-to-Real Gap</a></li><li><a href="#2-real-time-performance" class="table-of-contents__link toc-highlight">2. Real-Time Performance</a></li><li><a href="#3-safety--robustness" class="table-of-contents__link toc-highlight">3. Safety &amp; Robustness</a></li><li><a href="#4-data-efficiency" class="table-of-contents__link toc-highlight">4. Data Efficiency</a></li></ul></li><li><a href="#the-role-of-ros-2" class="table-of-contents__link toc-highlight">The Role of ROS 2</a><ul><li><a href="#why-ros-2" class="table-of-contents__link toc-highlight">Why ROS 2?</a></li><li><a href="#ros-2-vs-ros-1" class="table-of-contents__link toc-highlight">ROS 2 vs ROS 1</a></li></ul></li><li><a href="#humanoid-robot-anatomy" class="table-of-contents__link toc-highlight">Humanoid Robot Anatomy</a><ul><li><a href="#degrees-of-freedom-dof" class="table-of-contents__link toc-highlight">Degrees of Freedom (DOF)</a></li><li><a href="#sensor-suite" class="table-of-contents__link toc-highlight">Sensor Suite</a></li></ul></li><li><a href="#example-nvidia-isaac-sim-humanoid" class="table-of-contents__link toc-highlight">Example: NVIDIA Isaac Sim Humanoid</a></li><li><a href="#this-weeks-learning-objectives" class="table-of-contents__link toc-highlight">This Week&#39;s Learning Objectives</a></li><li><a href="#hands-on-preview-ros-2-installation" class="table-of-contents__link toc-highlight">Hands-On Preview: ROS 2 Installation</a><ul><li><a href="#installing-ros-2-humble-ubuntu-2204" class="table-of-contents__link toc-highlight">Installing ROS 2 Humble (Ubuntu 22.04)</a></li><li><a href="#verify-installation" class="table-of-contents__link toc-highlight">Verify Installation</a></li></ul></li><li><a href="#additional-resources" class="table-of-contents__link toc-highlight">Additional Resources</a><ul><li><a href="#recommended-reading" class="table-of-contents__link toc-highlight">Recommended Reading</a></li><li><a href="#videos" class="table-of-contents__link toc-highlight">Videos</a></li><li><a href="#communities" class="table-of-contents__link toc-highlight">Communities</a></li></ul></li><li><a href="#summary" class="table-of-contents__link toc-highlight">Summary</a></li><li><a href="#whats-next" class="table-of-contents__link toc-highlight">What&#39;s Next?</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Docs</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/physical-ai-textbook/docs/intro">Tutorial</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Community</div><ul class="footer__items clean-list"><li class="footer__item"><a href="https://stackoverflow.com/questions/tagged/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">Stack Overflow<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://discordapp.com/invite/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">Discord<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li><li class="footer__item"><a href="https://x.com/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">X<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">More</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/physical-ai-textbook/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/facebook/docusaurus" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Physical AI & Humanoid Robotics. Built with Docusaurus.</div></div></div></footer><button class="chatButton_P99F" aria-label="Toggle chatbot">💬</button></div>
+</body>
+</html>
