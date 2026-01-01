@@ -11,10 +11,10 @@ const config: Config = {
 
   // Custom fields for accessing in components
   customFields: {
-    // TEMPORARY: Hardcoded for local development
-    // TODO: Change back to Railway URL before production deployment
-    apiBaseUrl: 'http://localhost:8000',
-    // apiBaseUrl: process.env.API_BASE_URL || 'https://physical-ai-textbook-production-d71f.up.railway.app',
+    // Use environment variable or default to Railway production
+    // For local dev: Set API_BASE_URL=http://localhost:8000 before npm start
+    // For production: Defaults to Railway URL
+    apiBaseUrl: process.env.API_BASE_URL || 'https://physical-ai-textbook-production-d71f.up.railway.app',
   },
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
