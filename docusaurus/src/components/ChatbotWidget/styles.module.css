@@ -205,6 +205,12 @@
   font-style: italic;
 }
 
+.loginHint {
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 8px;
+}
+
 /* Suggestion buttons */
 .suggestionButtons {
   display: flex;
@@ -305,22 +311,25 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--ifm-color-emphasis-700);
+  margin-bottom: 4px;
 }
 
 .sourceLink {
   font-size: 12px;
-  color: var(--ifm-color-primary);
+  color: white;
   text-decoration: none;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background: var(--ifm-color-primary-lightest);
-  transition: background 0.2s;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--ifm-color-primary);
+  transition: all 0.2s;
   display: inline-block;
+  font-weight: 500;
 }
 
 .sourceLink:hover {
-  background: var(--ifm-color-primary-lighter);
+  background: var(--ifm-color-primary-dark);
   text-decoration: none;
+  transform: translateX(2px);
 }
 
 /* Loading dots */
@@ -460,8 +469,12 @@
 }
 
 [data-theme='dark'] .sourceLink {
-  background: var(--ifm-color-primary-darker);
-  color: var(--ifm-color-primary-lightest);
+  background: var(--ifm-color-primary);
+  color: white;
+}
+
+[data-theme='dark'] .sourceLink:hover {
+  background: var(--ifm-color-primary-light);
 }
 
 /* Auth UI in header */
