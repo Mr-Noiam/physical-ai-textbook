@@ -48,7 +48,7 @@ class AskQuestionResponse(BaseModel):
     """Response from chatbot."""
     answer: str = Field(..., description="Generated answer")
     sources: List[SourceReference] = Field(..., description="List of source references")
-    conversation_id: Optional[int] = Field(None, description="ID of saved conversation (if user is logged in)")
+    conversation_id: Optional[str] = Field(None, description="ID of saved conversation (if user is logged in)")
     timestamp: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:

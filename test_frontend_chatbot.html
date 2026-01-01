@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chatbot API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+            white-space: pre-wrap;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        button {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background: #ccc;
+        }
+        .loading {
+            color: #666;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chatbot API Test</h1>
+    <p>This test page simulates what the frontend chatbot does.</p>
+
+    <button id="testBtn" onclick="testChatbot()">Test Chatbot API</button>
+
+    <div id="result">Click the button to test the chatbot API...</div>
+
+    <script>
+        async function testChatbot() {
+            const resultDiv = document.getElementById('result');
+            const testBtn = document.getElementById('testBtn');
+
+            resultDiv.className = 'loading';
+            resultDiv.textContent = 'Loading... (this may take 20-40 seconds)';
+            testBtn.disabled = true;
+
+            try {
+                const API_BASE_URL = 'http://localhost:8000';
+
+                console.log('Making request to:', `${API_BASE_URL}/api/v1/chatbot/ask`);
+
+                const response = await fetch(`${API_BASE_URL}/api/v1/chatbot/ask`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        question: "What is a ROS 2 node?",
+                        selected_text: null,
+                        conversation_history: []
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                console.log('Response headers:', [...response.headers.entries()]);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                resultDiv.className = 'success';
+                resultDiv.textContent = `SUCCESS!\n\n` +
+                    `Answer: ${data.answer}\n\n` +
+                    `Sources: ${JSON.stringify(data.sources, null, 2)}\n\n` +
+                    `Timestamp: ${data.timestamp}`;
+
+                console.log('Success! Data:', data);
+
+            } catch (error) {
+                resultDiv.className = 'error';
+                resultDiv.textContent = `ERROR!\n\n` +
+                    `Message: ${error.message}\n\n` +
+                    `Full error: ${error.stack}`;
+
+                console.error('Error:', error);
+            } finally {
+                testBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
