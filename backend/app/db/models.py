@@ -94,6 +94,24 @@ class Session(Base):
     user = relationship("User", back_populates="sessions")
 
 
+class TranslationCache(Base):
+    """Cache for Urdu translations to avoid redundant API calls."""
+
+    __tablename__ = "translation_cache"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    chapter_path = Column(String(255), nullable=False)
+    language_code = Column(String(10), nullable=False, default="ur")  # Only Urdu for now
+    original_content = Column(Text, nullable=False)
+    translated_content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Composite unique constraint: same content shouldn't be translated twice
+    __table_args__ = (
+        {"schema": None},
+    )
+
+
 class Account(Base):
     """Better Auth account model for OAuth providers."""
 

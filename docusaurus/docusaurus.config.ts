@@ -11,10 +11,10 @@ const config: Config = {
 
   // Custom fields for accessing in components
   customFields: {
-    // Use environment variable or default to Railway production
-    // For local dev: Set API_BASE_URL=http://localhost:8000 before npm start
-    // For production: Defaults to Railway URL
-    apiBaseUrl: process.env.API_BASE_URL || 'https://physical-ai-textbook-production-d71f.up.railway.app',
+    // Use environment variable or default to localhost for development
+    // For local dev: Uses localhost by default
+    // For production: Set API_BASE_URL=https://your-railway-url before deploying
+    apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:8000',
   },
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
@@ -35,6 +35,12 @@ const config: Config = {
 
   onBrokenLinks: 'warn',
   trailingSlash: false,
+
+  // i18n configuration for multi-language support
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'ur'],
+  },
 
   presets: [
     [
@@ -87,6 +93,10 @@ const config: Config = {
           sidebarId: 'tutorialSidebar',
           position: 'left',
           label: 'Textbook',
+        },
+        {
+          type: 'localeDropdown',
+          position: 'right',
         },
         {
           href: 'https://github.com/Mr-Noiam/physical-ai-textbook',

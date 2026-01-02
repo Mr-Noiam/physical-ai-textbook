@@ -43,9 +43,7 @@ export default {
 };
 ```
 
-The docs version dropdown appears in your navbar:
-
-![Docs Version Dropdown](./img/docsVersionDropdown.png)
+The docs version dropdown appears in your navbar.
 
 ## Update an existing version
 

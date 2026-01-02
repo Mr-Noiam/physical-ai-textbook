@@ -34,6 +34,7 @@ ENV/
 .pytest_cache/
 .coverage
 htmlcov/
+backend/nul
 
 # IDEs
 .vscode/
@@ -45,6 +46,7 @@ htmlcov/
 # OS
 .DS_Store
 Thumbs.db
+nul
 
 # Deployment
 .vercel
