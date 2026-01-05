@@ -52,6 +52,10 @@ class Settings(BaseSettings):
     from_email: str = Field(default="", env="FROM_EMAIL")
     from_name: str = Field(default="Physical AI Textbook", env="FROM_NAME")
 
+    # Translation Script Configuration
+    translate_module: str = Field(default="module-1-ros2", env="TRANSLATE_MODULE")
+    skip_existing: bool = Field(default=False, env="SKIP_EXISTING")
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

@@ -1,86 +1,186 @@
 """
-Translation API Endpoints
+Translation API Endpoint
 
-Provides Urdu translation for authenticated users.
+Provides HTTP API for translating textbook content to multiple languages.
+Includes caching support to minimize API costs and improve response times.
 """
+
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
-from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
 
+from app.services.translation import (
+    translate_content,
+    translate_multiple,
+    SUPPORTED_LANGUAGES
+)
 from app.db.models import User
 from app.db.neon import get_db
-from app.services.translation import translate_to_urdu, translate_multiple
-from app.auth.dependencies import get_current_user_required
-
-router = APIRouter(prefix="/api/v1/translate", tags=["translation"])
+from app.auth.dependencies import get_current_user_optional
+from sqlalchemy.orm import Session
 
 
+# Create API router
+router = APIRouter(prefix="/api/v1/translate", tags=["translate"])
+
+
+# Request/Response models
 class TranslateRequest(BaseModel):
-    """Request body for translation."""
-    content: str = Field(..., description="English content to translate")
-    chapter_path: str = Field(..., description="Path to chapter (for caching)")
+    """Request body for translating content."""
+    content: str = Field(
+        ...,
+        min_length=1,
+        max_length=10000,
+        description="Content to translate"
+    )
+    target_language: str = Field(
+        default="ur",
+        description="Target language code (e.g., 'ur' for Urdu)"
+    )
+    source_language: str = Field(
+        default="en",
+        description="Source language code (default: 'en')"
+    )
+    use_cache: bool = Field(
+        default=True,
+        description="Whether to use caching (default: True)"
+    )
 
-
-class TranslateResponse(BaseModel):
-    """Response from translation endpoint."""
-    original_content: str
-    translated_content: str
-    cached: bool
-    chapter_path: str
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "content": "# ROS 2 Fundamentals\n\nROS 2 is a flexible framework for robot software...",
+                "target_language": "ur",
+                "source_language": "en",
+                "use_cache": True
+            }
+        }
 
 
 class TranslateMultipleRequest(BaseModel):
-    """Request body for batch translation."""
-    contents: list[str] = Field(..., description="List of English contents to translate")
-    chapter_paths: list[str] = Field(..., description="List of chapter paths (must match contents length)")
+    """Request body for translating multiple content items."""
+    contents: List[str] = Field(
+        ...,
+        min_length=1,
+        max_length=50,
+        description="List of content items to translate"
+    )
+    target_language: str = Field(
+        default="ur",
+        description="Target language code"
+    )
+    source_language: str = Field(
+        default="en",
+        description="Source language code"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "contents": [
+                    "ROS 2 is a robotics framework",
+                    "Nodes are independent processes",
+                    "Topics enable message passing"
+                ],
+                "target_language": "ur",
+                "source_language": "en"
+            }
+        }
+
+
+class TranslateResponse(BaseModel):
+    """Response from translation API."""
+    original_content: str
+    translated_content: str
+    source_language: str
+    target_language: str
+    cached: bool = Field(
+        ...,
+        description="Whether the translation was retrieved from cache"
+    )
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "original_content": "ROS 2 is a robotics framework",
+                "translated_content": "ROS 2 روبوٹکس فریم ورک ہے",
+                "source_language": "en",
+                "target_language": "ur",
+                "cached": False,
+                "timestamp": "2025-01-10T12:00:00"
+            }
+        }
 
 
 class TranslateMultipleResponse(BaseModel):
-    """Response from batch translation endpoint."""
-    results: list[dict]
+    """Response from multiple translations."""
+    translations: List[TranslateResponse]
     total: int
     cached_count: int
+    timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
+class LanguagesResponse(BaseModel):
+    """Response listing supported languages."""
+    languages: dict[str, str]
+    total: int
 
 
 @router.post("/", response_model=TranslateResponse)
-async def translate(
+async def translate_text(
     request: TranslateRequest,
-    current_user: User = Depends(get_current_user_required),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
 ):
-    """
-    Translate English content to Urdu.
+    """Translate content to target language.
 
-    Requires authentication. Uses GPT-4 for translation with caching.
+    This endpoint:
+    1. Checks cache for existing translation (if use_cache=True)
+    2. Calls OpenAI API if not cached
+    3. Saves translation to cache
+    4. Returns translated content with metadata
 
     Args:
-        request: Translation request with content and chapter path
-        current_user: Authenticated user (from session)
-        db: Database session
+        request: Translation request with content and language codes
+        db: Database session (injected)
+        current_user: Optional authenticated user (injected)
 
     Returns:
-        Original and translated content with cache status
+        Translated content with source/target languages and cache status
 
     Raises:
-        HTTPException: 401 if not authenticated, 500 if translation fails
+        HTTPException: If translation fails or language is unsupported
     """
     try:
-        translated_content, cached = await translate_to_urdu(
+        # Get user_id if authenticated
+        user_id = str(current_user.id) if current_user else None
+
+        # Translate content
+        translation_response = translate_content(
             content=request.content,
-            chapter_path=request.chapter_path,
-            db=db
+            target_language=request.target_language,
+            source_language=request.source_language,
+            db=db,
+            user_id=user_id,
+            use_cache=request.use_cache
         )
 
+        # Return response
         return TranslateResponse(
-            original_content=request.content,
-            translated_content=translated_content,
-            cached=cached,
-            chapter_path=request.chapter_path
+            original_content=translation_response.original_content,
+            translated_content=translation_response.translated_content,
+            source_language=translation_response.source_language,
+            target_language=translation_response.target_language,
+            cached=translation_response.cached
         )
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
     except Exception as e:
-        print(f"Translation error: {e}")
+        print(f"Error in translate endpoint: {e}")
         raise HTTPException(
             status_code=500,
             detail=f"Translation failed: {str(e)}"
@@ -88,66 +188,102 @@ async def translate(
 
 
 @router.post("/multiple", response_model=TranslateMultipleResponse)
-async def translate_batch(
+async def translate_multiple_texts(
     request: TranslateMultipleRequest,
-    current_user: User = Depends(get_current_user_required),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_current_user_optional)
 ):
-    """
-    Translate multiple content blocks to Urdu in batch.
+    """Translate multiple content items in a single request.
 
-    Requires authentication. More efficient than multiple single requests.
+    Useful for translating multiple sections or paragraphs efficiently.
+    Each item is cached separately for reuse.
 
     Args:
-        request: Batch translation request with contents and chapter paths
-        current_user: Authenticated user (from session)
-        db: Database session
+        request: Multiple translation request
+        db: Database session (injected)
+        current_user: Optional authenticated user (injected)
 
     Returns:
-        Translation results with cache statistics
+        List of translations with aggregate statistics
 
     Raises:
-        HTTPException: 401 if not authenticated, 400 if lengths don't match, 500 if translation fails
+        HTTPException: If translation fails
     """
-    if len(request.contents) != len(request.chapter_paths):
-        raise HTTPException(
-            status_code=400,
-            detail="Contents and chapter_paths must have the same length"
-        )
-
     try:
-        results = await translate_multiple(
+        # Get user_id if authenticated
+        user_id = str(current_user.id) if current_user else None
+
+        # Translate all contents
+        translation_responses = translate_multiple(
             contents=request.contents,
-            chapter_paths=request.chapter_paths,
-            db=db
+            target_language=request.target_language,
+            source_language=request.source_language,
+            db=db,
+            user_id=user_id
         )
 
-        cached_count = sum(1 for r in results if r["cached"])
+        # Convert to response models
+        translations = [
+            TranslateResponse(
+                original_content=resp.original_content,
+                translated_content=resp.translated_content,
+                source_language=resp.source_language,
+                target_language=resp.target_language,
+                cached=resp.cached
+            )
+            for resp in translation_responses
+        ]
+
+        # Calculate statistics
+        cached_count = sum(1 for t in translations if t.cached)
 
         return TranslateMultipleResponse(
-            results=results,
-            total=len(results),
+            translations=translations,
+            total=len(translations),
             cached_count=cached_count
         )
 
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
     except Exception as e:
-        print(f"Batch translation error: {e}")
+        print(f"Error in translate_multiple endpoint: {e}")
         raise HTTPException(
             status_code=500,
-            detail=f"Batch translation failed: {str(e)}"
+            detail=f"Translation failed: {str(e)}"
         )
+
+
+@router.get("/languages", response_model=LanguagesResponse)
+async def get_supported_languages():
+    """Get list of supported languages.
+
+    Returns:
+        Dictionary of language codes to language names
+
+    Example response:
+    {
+        "languages": {
+            "ur": "Urdu",
+            "ar": "Arabic",
+            "hi": "Hindi",
+            ...
+        },
+        "total": 15
+    }
+    """
+    return LanguagesResponse(
+        languages=SUPPORTED_LANGUAGES,
+        total=len(SUPPORTED_LANGUAGES)
+    )
 
 
 @router.get("/health")
 async def health_check():
-    """
-    Health check endpoint for translation service.
-
-    Returns:
-        Service status
-    """
+    """Check if translation API is running."""
     return {
         "status": "healthy",
         "service": "translation",
-        "supported_languages": ["ur"],  # Urdu only
+        "version": "1.0.0",
+        "supported_languages": len(SUPPORTED_LANGUAGES)
     }

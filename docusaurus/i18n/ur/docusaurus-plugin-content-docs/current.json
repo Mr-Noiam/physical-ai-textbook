@@ -1,0 +1,30 @@
+{
+  "version.label": {
+    "message": "اگلا",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - Basics": {
+    "message": "ٹیوٹوریل - بنیادی باتیں",
+    "description": "The label for category Tutorial - Basics in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Tutorial - Extras": {
+    "message": "ٹیوٹوریل - اضافی",
+    "description": "The label for category Tutorial - Extras in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Module 1: ROS 2 Fundamentals": {
+    "message": "ماڈیول 1: ROS 2 بنیادی باتیں",
+    "description": "The label for category Module 1: ROS 2 Fundamentals in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Module 2: Gazebo Simulation": {
+    "message": "ماڈیول 2: Gazebo سمیولیشن",
+    "description": "The label for category Module 2: Gazebo Simulation in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Module 3: Isaac Sim & NVIDIA Ecosystem": {
+    "message": "ماڈیول 3: Isaac Sim اور NVIDIA ماحولیاتی نظام",
+    "description": "The label for category Module 3: Isaac Sim & NVIDIA Ecosystem in sidebar tutorialSidebar"
+  },
+  "sidebar.tutorialSidebar.category.Module 4: Vision-Language-Action Models": {
+    "message": "ماڈیول 4: وژن-لینگویج-ایکشن ماڈلز",
+    "description": "The label for category Module 4: Vision-Language-Action Models in sidebar tutorialSidebar"
+  }
+}
