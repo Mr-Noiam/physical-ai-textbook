@@ -1,43 +1,46 @@
-import type {ReactNode} from 'react';
+import {ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import Translate from '@docusaurus/Translate';
 
 type FeatureItem = {
-  title: string;
+  title: ReactNode;
   Svg: React.ComponentType<React.ComponentProps<'svg'>>;
   description: ReactNode;
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: <Translate>Easy to Use</Translate>,
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
-      <>
+      <Translate>
         Docusaurus was designed from the ground up to be easily installed and
         used to get your website up and running quickly.
-      </>
+      </Translate>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: <Translate>Focus on What Matters</Translate>,
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
-      <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
-      </>
+      <Translate
+        values={{
+          code: <code>docs</code>,
+        }}>
+        {'Docusaurus lets you focus on your docs, and we\'ll do the chores. Go ahead and move your docs into the {code} directory.'}
+      </Translate>
     ),
   },
   {
-    title: 'Powered by React',
+    title: <Translate>Powered by React</Translate>,
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
-      <>
+      <Translate>
         Extend or customize your website layout by reusing React. Docusaurus can
         be extended while reusing the same header and footer.
-      </>
+      </Translate>
     ),
   },
 ];

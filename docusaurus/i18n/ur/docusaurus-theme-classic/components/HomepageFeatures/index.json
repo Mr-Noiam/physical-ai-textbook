@@ -1,0 +1,26 @@
+{
+  "Easy to Use": {
+    "message": "استعمال میں آسان",
+    "description": "The title of the first feature"
+  },
+  "Docusaurus was designed from the ground up to be easily installed and used to get your website up and running quickly.": {
+    "message": "Docusaurus کو شروع سے ہی اس لیے ڈیزائن کیا گیا تھا کہ اسے آسانی سے انسٹال کیا جا سکے اور آپ کی ویب سائٹ کو تیزی سے چلانے کے لیے استعمال کیا جا سکے۔",
+    "description": "The description of the first feature"
+  },
+  "Focus on What Matters": {
+    "message": "اہم چیزوں پر توجہ دیں",
+    "description": "The title of the second feature"
+  },
+  "Docusaurus lets you focus on your docs, and we'll do the chores. Go ahead and move your docs into the {code} directory.": {
+    "message": "Docusaurus آپ کو اپنی دستاویزات پر توجہ مرکوز کرنے دیتا ہے، اور ہم باقی کام کریں گے۔ آگے بڑھیں اور اپنی دستاویزات کو {code} ڈائرکٹری میں منتقل کریں۔",
+    "description": "The description of the second feature"
+  },
+  "Powered by React": {
+    "message": "ری ایکٹ سے تقویت یافتہ",
+    "description": "The title of the third feature"
+  },
+  "Extend or customize your website layout by reusing React. Docusaurus can be extended while reusing the same header and footer.": {
+    "message": "ری ایکٹ کو دوبارہ استعمال کرکے اپنی ویب سائٹ کی ترتیب کو بڑھائیں یا اپنی مرضی کے مطابق بنائیں۔ Docusaurus کو اسی ہیڈر اور فوٹر کو دوبارہ استعمال کرتے ہوئے بڑھایا جا سکتا ہے۔",
+    "description": "The description of the third feature"
+  }
+}
