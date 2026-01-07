@@ -1,109 +1,109 @@
-[TRANSLATION_FAILED] # Week 7: NVIDIA Isaac Sim
+# ہفتہ 7: NVIDIA Isaac Sim
 
-[TRANSLATION_FAILED] ## Introduction
+## تعارف
 
-[TRANSLATION_FAILED] **NVIDIA Isaac Sim** is the most advanced robot simulator, built on Omniverse. It provides RTX ray-traced rendering, PhysX physics, and native integration with NVIDIA AI tools. This week, you'll load humanoids, configure sensors, and generate synthetic training data at scale.
+**NVIDIA Isaac Sim** سب سے جدید روبوٹ سمیلیٹر ہے، جو Omniverse پر بنایا گیا ہے۔ یہ RTX رے ٹریسڈ رینڈرنگ، PhysX فزکس، اور NVIDIA AI ٹولز کے ساتھ مقامی انضمام فراہم کرتا ہے۔ اس ہفتے، آپ ہیومنائڈز لوڈ کریں گے، سینسرز کو کنفیگر کریں گے، اور بڑے پیمانے پر مصنوعی تربیتی ڈیٹا تیار کریں گے۔
 
-[TRANSLATION_FAILED] ## Why Isaac Sim?
+## آئزک سم کیوں؟
 
-[TRANSLATION_FAILED] **Advantages**:
+**فوائد**:
 
-[TRANSLATION_FAILED] - **RTX Rendering**: Photorealistic, ray-traced graphics for sim-to-real
-[TRANSLATION_FAILED] - **PhysX 5**: GPU-accelerated physics for fast simulation
-[TRANSLATION_FAILED] - **USD Format**: Universal Scene Description for collaboration
-[TRANSLATION_FAILED] - **Synthetic Data**: Built-in Replicator for dataset generation
-[TRANSLATION_FAILED] - **Isaac ROS**: Direct integration with ROS 2 GEMs (GPU-Enabled Modules)
-[TRANSLATION_FAILED] - **AI Workflows**: TensorRT, cuDNN, cuVSLAM, DeepStream
+- **RTX رینڈرنگ**: سم-ٹو-ریئل کے لیے فوٹو ریئلسٹک، رے ٹریسڈ گرافکس
+- **PhysX 5**: تیز سیمولیشن کے لیے GPU-ایکسلریٹڈ فزکس
+- **USD فارمیٹ**: تعاون کے لیے یونیورسل سین ڈسکرپشن
+- **مصنوعی ڈیٹا**: ڈیٹا سیٹ جنریشن کے لیے بلٹ ان ریپلیکیٹر
+- **Isaac ROS**: ROS 2 GEMs (GPU- فعال ماڈیولز) کے ساتھ براہ راست انضمام
+- **AI ورک فلوز**: TensorRT, cuDNN, cuVSLAM, DeepStream
 
-[TRANSLATION_FAILED] **Use cases**:
-[TRANSLATION_FAILED] - Training perception models
-[TRANSLATION_FAILED] - Multi-robot coordination
-[TRANSLATION_FAILED] - Digital twins
-[TRANSLATION_FAILED] - Reinforcement learning
+**استعمال کے معاملات**:
+- پرسیپشن ماڈلز کی تربیت
+- ملٹی روبوٹ کوآرڈینیشن
+- ڈیجیٹل ٹوئنز
+- ری انفورسمنٹ لرننگ
 
-[TRANSLATION_FAILED] ## Installation
+## انسٹالیشن
 
-[TRANSLATION_FAILED] ### Prerequisites
+### ضروریات
 
 ```bash
-# NVIDIA GPU required (RTX series recommended)
-# Ubuntu 22.04 or Windows 11
-# Driver 525+
+# NVIDIA GPU درکار ہے (RTX سیریز تجویز کردہ)
+# Ubuntu 22.04 یا Windows 11
+# ڈرائیور 525+
 
-# Check NVIDIA driver
+# NVIDIA ڈرائیور چیک کریں
 nvidia-smi
 ```
 
-[TRANSLATION_FAILED] ### Isaac Sim
+### آئزک سم
 
-[TRANSLATION_FAILED] Download from: https://developer.nvidia.com/isaac-sim
+یہاں سے ڈاؤن لوڈ کریں: https://developer.nvidia.com/isaac-sim
 
 ```bash
-# Install Omniverse Launcher
+# اومنیورس لانچر انسٹال کریں
 # Launch > Library > Isaac Sim
-# Click Install (Isaac Sim 2023.1.0+)
+# انسٹال پر کلک کریں (Isaac Sim 2023.1.0+)
 
-# Or Docker:
+# یا ڈاکر:
 docker pull nvcr.io/nvidia/isaac-sim:2023.1.0
 ```
 
-[TRANSLATION_FAILED] ### ROS 2 Bridge
+### ROS 2 برج
 
 ```bash
-# Enable ROS 2 Bridge in Isaac Sim:
+# آئزک سم میں ROS 2 برج کو فعال کریں:
 # Window > Extensions > ROS/ROS 2 Bridge
-# Enable "omni.isaac.ros2_bridge"
+# "omni.isaac.ros2_bridge" کو فعال کریں
 
-# Install ROS 2 Humble (if not already)
+# ROS 2 Humble انسٹال کریں (اگر پہلے سے نہیں ہے)
 sudo apt install ros-humble-desktop
 ```
 
-[TRANSLATION_FAILED] ## USD Format
+## USD فارمیٹ
 
-[TRANSLATION_FAILED] **Universal Scene Description** is Pixar's interchange format:
+**یونیورسل سین ڈسکرپشن** پکسر کا انٹرچینج فارمیٹ ہے:
 
 ```python
 # Python USD API
 from pxr import Usd, UsdGeom, Gf
 
-# Create stage
+# اسٹیج بنائیں
 stage = Usd.Stage.CreateNew('/tmp/scene.usda')
 
-# Add sphere
+# دائرہ شامل کریں
 sphere = UsdGeom.Sphere.Define(stage, '/World/Sphere')
 sphere.GetRadiusAttr().Set(1.0)
 sphere.AddTranslateOp().Set(Gf.Vec3d(0, 0, 1))
 
-# Save
+# محفوظ کریں
 stage.Save()
 ```
 
-[TRANSLATION_FAILED] ## Loading Humanoid in Isaac Sim
+## آئزک سم میں ہیومنائڈ لوڈ کرنا
 
-[TRANSLATION_FAILED] ### Method 1: URDF Import
+### طریقہ 1: URDF درآمد
 
 ```python
 import omni
 from omni.isaac.core.utils.extensions import enable_extension
 
-# Enable URDF importer
+# URDF امپورٹر کو فعال کریں
 enable_extension("omni.importer.urdf")
 
 import omni.kit.commands
 from omni.importer.urdf import _urdf
 
-# Import URDF
+# URDF درآمد کریں
 _urdf.acquire_urdf_interface()
 urdf_interface = _urdf.get_urdf_interface()
 
-# Import configuration
+# درآمدی ترتیب
 import_config = _urdf.ImportConfig()
 import_config.merge_fixed_joints = False
 import_config.convex_decomp = True
 import_config.import_inertia_tensor = True
 import_config.fix_base = False
 
-# Import
+# درآمد کریں
 success, prim_path = omni.kit.commands.execute(
     "URDFParseAndImportFile",
     urdf_path="/path/to/humanoid.urdf",
@@ -113,88 +113,88 @@ success, prim_path = omni.kit.commands.execute(
 print(f"Imported humanoid at: {prim_path}")
 ```
 
-[TRANSLATION_FAILED] ### Method 2: USD Import
+### طریقہ 2: USD درآمد
 
 ```python
 from omni.isaac.core.utils.stage import add_reference_to_stage
 
-# Load USD asset
+# USD اثاثہ لوڈ کریں
 add_reference_to_stage(
     usd_path="/Isaac/Robots/Humanoid/humanoid.usd",
     prim_path="/World/Humanoid"
 )
 ```
 
-[TRANSLATION_FAILED] ## Physics Configuration
+## فزکس کنفیگریشن
 
 ```python
 from omni.isaac.core import World
 from omni.isaac.core.prims import RigidPrimView
 from pxr import PhysxSchema
 
-# Create world with physics
+# فزکس کے ساتھ ورلڈ بنائیں
 world = World(stage_units_in_meters=1.0)
 world.scene.add_default_ground_plane()
 
-# Configure physics scene
+# فزکس سین کو کنفیگر کریں
 physx_scene = PhysxSchema.PhysxSceneAPI.Apply(world.stage.GetPrimAtPath("/physicsScene"))
 physx_scene.GetEnableGPUDynamicsAttr().Set(True)
 physx_scene.GetBroadphaseTypeAttr().Set("GPU")
 physx_scene.GetSolverTypeAttr().Set("TGS")
 
-# Reset world
+# ورلڈ ری سیٹ کریں
 world.reset()
 
-# Run simulation
+# سیمولیشن چلائیں
 for i in range(1000):
     world.step(render=True)
 ```
 
-[TRANSLATION_FAILED] ## Adding Sensors
+## سینسرز شامل کرنا
 
-[TRANSLATION_FAILED] ### RGB-D Camera
+### RGB-D کیمرہ
 
 ```python
 from omni.isaac.sensor import Camera
 import omni.replicator.core as rep
 
-# Create camera
+# کیمرہ بنائیں
 camera = Camera(
     prim_path="/World/Humanoid/head/camera",
     frequency=30,
     resolution=(640, 480),
 )
 
-# Render RGB
+# RGB رینڈر کریں
 camera.initialize()
 rgb = camera.get_rgba()
 
-# Get depth
+# ڈیپتھ حاصل کریں
 depth = camera.get_depth()
 
-# Create render product for Replicator
+# ریپلیکیٹر کے لیے رینڈر پروڈکٹ بنائیں
 render_product = rep.create.render_product(
     camera.prim_path,
     resolution=(640, 480)
 )
 
-# Annotators (ground truth)
+# تشریح کار (زمینی سچائی)
 rgb_annot = rep.AnnotatorRegistry.get_annotator("rgb")
 depth_annot = rep.AnnotatorRegistry.get_annotator("distance_to_camera")
 bbox_annot = rep.AnnotatorRegistry.get_annotator("bounding_box_2d_tight")
 
-# Attach to render product
+# رینڈر پروڈکٹ سے منسلک کریں
 rgb_annot.attach([render_product])
 depth_annot.attach([render_product])
 bbox_annot.attach([render_product])
 ```
 
-[TRANSLATION_FAILED] ### LiDAR
+### LiDAR
 
 ```python
 from omni.isaac.range_sensor import _range_sensor
 
-# Create LiDAR
+# LiDAR بنائیں
 result, lidar = omni.kit.commands.execute(
     "RangeSensorCreateLidar",
     path="/World/Humanoid/lidar",
@@ -213,17 +213,17 @@ result, lidar = omni.kit.commands.execute(
     enable_semantics=True
 )
 
-# Get point cloud data
+# پوائنٹ کلاؤڈ ڈیٹا حاصل کریں
 lidar_interface = _range_sensor.acquire_lidar_sensor_interface()
 depth_data = lidar_interface.get_linear_depth_data("/World/Humanoid/lidar")
 ```
 
-[TRANSLATION_FAILED] ### IMU
+### IMU
 
 ```python
 from omni.isaac.sensor import IMUSensor
 
-# Create IMU
+# IMU بنائیں
 imu = IMUSensor(
     prim_path="/World/Humanoid/torso/imu",
     name="imu_sensor",
@@ -231,7 +231,7 @@ imu = IMUSensor(
     translation=np.array([0, 0, 0]),
 )
 
-# Get readings
+# ریڈنگز حاصل کریں
 imu.initialize()
 current_frame = imu.get_current_frame()
 
@@ -240,14 +240,14 @@ angular_vel = current_frame["ang_vel"]
 orientation = current_frame["orientation"]
 ```
 
-[TRANSLATION_FAILED] ## ROS 2 Bridge
+## ROS 2 برج
 
-[TRANSLATION_FAILED] ### Publish Camera
+### کیمرہ شائع کریں
 
 ```python
 import omni.graph.core as og
 
-# Create ROS 2 camera publisher graph
+# ROS 2 کیمرہ پبلشر گراف بنائیں
 keys = og.Controller.Keys
 (graph, nodes, _, _) = og.Controller.edit(
     {"graph_path": "/ActionGraph", "evaluator_name": "execution"},
@@ -271,10 +271,10 @@ keys = og.Controller.Keys
 )
 ```
 
-[TRANSLATION_FAILED] ### Publish Joint States
+### جوائنٹ اسٹیٹس شائع کریں
 
 ```python
-# Create joint state publisher
+# جوائنٹ اسٹیٹ پبلشر بنائیں
 (graph, nodes, _, _) = og.Controller.edit(
     {"graph_path": "/JointStateGraph", "evaluator_name": "execution"},
     {
@@ -299,10 +299,10 @@ keys = og.Controller.Keys
 )
 ```
 
-[TRANSLATION_FAILED] ### Subscribe to Commands
+### کمانڈز کو سبسکرائب کریں
 
 ```python
-# Subscribe to joint trajectory commands
+# جوائنٹ ٹریجکٹری کمانڈز کو سبسکرائب کریں
 (graph, nodes, _, _) = og.Controller.edit(
     {"graph_path": "/JointCommandGraph", "evaluator_name": "execution"},
     {
@@ -323,34 +323,34 @@ keys = og.Controller.Keys
 )
 ```
 
-[TRANSLATION_FAILED] ## Synthetic Data Generation
+## مصنوعی ڈیٹا جنریشن
 
-[TRANSLATION_FAILED] ### Replicator for Datasets
+### ڈیٹا سیٹس کے لیے ریپلیکیٹر
 
 ```python
 import omni.replicator.core as rep
 
-# Randomize camera pose
+# کیمرہ پوز کو رینڈمائز کریں
 with rep.trigger.on_frame(num_frames=1000):
-    # Randomize lighting
+    # روشنی کو رینڈمائز کریں
     with rep.get.light():
         rep.modify.attribute("intensity", rep.distribution.uniform(500, 3000))
         rep.modify.attribute("color", rep.distribution.uniform((0.8, 0.8, 0.8), (1.0, 1.0, 1.0)))
 
-    # Randomize object materials
+    # آبجیکٹ میٹریلز کو رینڈمائز کریں
     with rep.get.prims(semantics=[("class", "object")]):
         rep.randomizer.materials(
             materials=rep.get.material(semantics=[("class", "random_mat")])
         )
 
-    # Randomize camera pose
+    # کیمرہ پوز کو رینڈمائز کریں
     with rep.get.prims(path_pattern="/World/Humanoid/head/camera"):
         rep.modify.pose(
             position=rep.distribution.uniform((-2, -2, 0.5), (2, 2, 2.0)),
             look_at="/World/Target"
         )
 
-# Write RGB-D data
+# RGB-D ڈیٹا لکھیں
 writer = rep.WriterRegistry.get("BasicWriter")
 writer.initialize(
     output_dir="/tmp/synthetic_data",
@@ -360,32 +360,32 @@ writer.initialize(
     distance_to_camera=True,
 )
 
-# Run
+# چلائیں
 rep.orchestrator.run()
 ```
 
-[TRANSLATION_FAILED] ### Domain Randomization
+### ڈومین رینڈمائزیشن
 
 ```python
 import omni.replicator.core as rep
 
-# Randomize physics parameters
+# فزکس پیرامیٹرز کو رینڈمائز کریں
 with rep.trigger.on_frame():
-    # Randomize joint friction
+    # جوائنٹ فریکشن کو رینڈمائز کریں
     with rep.get.prims(path_pattern="/World/Humanoid/.*", prim_type="Joint"):
         rep.modify.attribute("physxJoint:jointFriction", rep.distribution.uniform(0.0, 0.5))
 
-    # Randomize mass
+    # ماس کو رینڈمائز کریں
     with rep.get.prims(path_pattern="/World/Humanoid/.*", prim_type="RigidBody"):
         rep.modify.attribute("physics:mass", rep.distribution.uniform(0.5, 2.0))
 ```
 
-[TRANSLATION_FAILED] ## Complete Example: Humanoid with Sensors
+## مکمل مثال: سینسرز کے ساتھ ہیومنائڈ
 
 ```python
 from omni.isaac.kit import SimulationApp
 
-# Start simulator
+# سمیلیٹر شروع کریں
 simulation_app = SimulationApp({"headless": False})
 
 from omni.isaac.core import World
@@ -393,17 +393,17 @@ from omni.isaac.core.utils.stage import add_reference_to_stage
 from omni.isaac.sensor import Camera, IMUSensor
 import numpy as np
 
-# Create world
+# ورلڈ بنائیں
 world = World(stage_units_in_meters=1.0)
 world.scene.add_default_ground_plane()
 
-# Load humanoid
+# ہیومنائڈ لوڈ کریں
 add_reference_to_stage(
     usd_path="/Isaac/Robots/Humanoid/humanoid.usd",
     prim_path="/World/Humanoid"
 )
 
-# Add camera
+# کیمرہ شامل کریں
 camera = Camera(
     prim_path="/World/Humanoid/head/camera",
     position=np.array([0.1, 0, 0.15]),
@@ -411,23 +411,23 @@ camera = Camera(
     resolution=(640, 480),
 )
 
-# Add IMU
+# IMU شامل کریں
 imu = IMUSensor(
     prim_path="/World/Humanoid/torso/imu",
     frequency=100,
 )
 
-# Reset
+# ری سیٹ کریں
 world.reset()
 camera.initialize()
 imu.initialize()
 
-# Simulation loop
+# سیمولیشن لوپ
 for i in range(1000):
     world.step(render=True)
 
-    if i % 30 == 0:  # Every 30 frames
-        # Get sensor data
+    if i % 30 == 0:  # ہر 30 فریمز
+        # سینسر ڈیٹا حاصل کریں
         rgb = camera.get_rgba()
         depth = camera.get_depth()
         imu_data = imu.get_current_frame()
@@ -437,12 +437,12 @@ for i in range(1000):
 simulation_app.close()
 ```
 
-[TRANSLATION_FAILED] ## Performance Optimization
+## کارکردگی کی اصلاح
 
-[TRANSLATION_FAILED] ### GPU Acceleration
+### GPU ایکسلریشن
 
 ```python
-# Enable GPU physics
+# GPU فزکس کو فعال کریں
 from pxr import PhysxSchema
 
 physx_scene = PhysxSchema.PhysxSceneAPI.Apply(stage.GetPrimAtPath("/physicsScene"))
@@ -450,32 +450,32 @@ physx_scene.GetEnableGPUDynamicsAttr().Set(True)
 physx_scene.GetBroadphaseTypeAttr().Set("GPU")
 ```
 
-[TRANSLATION_FAILED] ### Headless Mode
+### ہیڈ لیس موڈ
 
 ```bash
-# Run without GUI for faster data generation
+# تیز ڈیٹا جنریشن کے لیے GUI کے بغیر چلائیں
 simulation_app = SimulationApp({"headless": True})
 ```
 
-[TRANSLATION_FAILED] ### Level of Detail (LOD)
+### تفصیل کی سطح (LOD)
 
-[TRANSLATION_FAILED] Reduce mesh complexity for distant objects.
+دور دراز اشیاء کے لیے میش کی پیچیدگی کو کم کریں۔
 
-[TRANSLATION_FAILED] ## Summary
+## خلاصہ
 
-[TRANSLATION_FAILED] This week you learned:
+اس ہفتے آپ نے سیکھا:
 
-[TRANSLATION_FAILED] - Isaac Sim architecture and USD format
-[TRANSLATION_FAILED] - Loading humanoid URDF/USD models
-[TRANSLATION_FAILED] - PhysX GPU physics configuration
-[TRANSLATION_FAILED] - RGB-D cameras, LiDAR, and IMU sensors
-[TRANSLATION_FAILED] - ROS 2 bridge for pub/sub
-[TRANSLATION_FAILED] - Synthetic data generation with Replicator
-[TRANSLATION_FAILED] - Domain randomization for robust training
-[TRANSLATION_FAILED] - Performance optimization techniques
+- آئزک سم فن تعمیر اور USD فارمیٹ
+- ہیومنائڈ URDF/USD ماڈلز لوڈ کرنا
+- PhysX GPU فزکس کنفیگریشن
+- RGB-D کیمرے، LiDAR، اور IMU سینسرز
+- پب/سب کے لیے ROS 2 برج
+- ریپلیکیٹر کے ساتھ مصنوعی ڈیٹا جنریشن
+- مضبوط تربیت کے لیے ڈومین رینڈمائزیشن
+- کارکردگی کی اصلاح کی تکنیکیں
 
-[TRANSLATION_FAILED] ## What's Next?
+## آگے کیا ہے؟
 
-[TRANSLATION_FAILED] **Week 8: Isaac ROS for VSLAM** - Use NVIDIA's GPU-accelerated perception stack for visual SLAM and navigation.
+**ہفتہ 8: VSLAM کے لیے آئزک ROS** - بصری SLAM اور نیویگیشن کے لیے NVIDIA کا GPU-ایکسلریٹڈ پرسیپشن اسٹیک استعمال کریں۔
 
-[TRANSLATION_FAILED] **Next**: [Week 8: Isaac ROS →](./week8-isaac-ros.md)
+**آگے**: [ہفتہ 8: آئزک ROS →](./week8-isaac-ros.md)

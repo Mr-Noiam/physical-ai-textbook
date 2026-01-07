@@ -1,72 +1,72 @@
-[TRANSLATION_FAILED] # Week 13: Capstone Project - Autonomous Humanoid Assistant
+# ہفتہ 13: کیپ اسٹون پروجیکٹ - خود مختار ہیومنائڈ اسسٹنٹ
 
-[TRANSLATION_FAILED] ## Introduction
+## تعارف
 
-[TRANSLATION_FAILED] This week, you'll integrate **everything you've learned** into a complete autonomous humanoid assistant. Your robot will navigate indoor environments, understand voice commands, recognize objects with vision-language models, and execute multi-step tasks.
+اس ہفتے، آپ **جو کچھ بھی سیکھا ہے** اسے ایک مکمل خود مختار ہیومنائڈ اسسٹنٹ میں ضم کریں گے۔ آپ کا روبوٹ اندرونی ماحول میں نیویگیٹ کرے گا، صوتی احکامات کو سمجھے گا، وژن-لینگویج ماڈلز کے ساتھ اشیاء کو پہچانے گا، اور کثیر مرحلہ والے کاموں کو انجام دے گا۔
 
-[TRANSLATION_FAILED] ## Project Overview
+## پروجیکٹ کا جائزہ
 
-[TRANSLATION_FAILED] **Goal**: Build a voice-controlled humanoid that can:
-[TRANSLATION_FAILED] 1. **Listen**: Accept natural language commands via Whisper
-[TRANSLATION_FAILED] 2. **See**: Detect objects with CLIP and answer questions with LLaVA
-[TRANSLATION_FAILED] 3. **Reason**: Plan actions with GPT-4
-[TRANSLATION_FAILED] 4. **Navigate**: Move to locations using Nav2
-[TRANSLATION_FAILED] 5. **Manipulate**: Pick and place objects using IK
+**مقصد**: ایک صوتی کنٹرول والا ہیومنائڈ بنانا جو کر سکتا ہے:
+1. **سننا**: وسپر کے ذریعے قدرتی زبان کے احکامات قبول کرنا
+2. **دیکھنا**: CLIP کے ساتھ اشیاء کا پتہ لگانا اور LLaVA کے ساتھ سوالات کے جواب دینا
+3. **استدلال**: GPT-4 کے ساتھ اعمال کی منصوبہ بندی کرنا
+4. **نیویگیٹ**: Nav2 کا استعمال کرتے ہوئے مقامات پر جانا
+5. **ہیرا پھیری**: IK کا استعمال کرتے ہوئے اشیاء کو اٹھانا اور رکھنا
 
-[TRANSLATION_FAILED] **Example Task**: "Go to the kitchen, find the blue mug, and bring it to me."
+**مثال کے طور پر کام**: "کچن میں جاؤ، نیلا مگ تلاش کرو، اور اسے میرے پاس لاؤ۔"
 
-[TRANSLATION_FAILED] ## System Architecture
+## سسٹم فن تعمیر
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│                 User Interface                       │
-│              (Voice + Visual Feedback)               │
+│                 یوزر انٹرفیس                       │
+│              (آواز + بصری فیڈ بیک)               │
 └──────────────────┬──────────────────────────────────┘
                    │
 ┌──────────────────▼──────────────────────────────────┐
-│              Task Orchestrator                       │
-│         (GPT-4 Planning + State Machine)             │
+│              ٹاسک آرکیسٹریٹر                       │
+│         (GPT-4 پلاننگ + اسٹیٹ مشین)             │
 └─┬────────────┬────────────┬──────────────┬─────────┘
   │            │            │              │
   ▼            ▼            ▼              ▼
 ┌────────┐ ┌────────┐ ┌──────────┐ ┌──────────────┐
-│ Whisper│ │  CLIP  │ │   Nav2   │ │ IK Controller│
-│  ASR   │ │ LLaVA  │ │Navigation│ │ Manipulation │
+│ وسپر   │ │  CLIP  │ │   Nav2   │ │ IK کنٹرولر  │
+│  ASR   │ │ LLaVA  │ │نیویگیشن │ │ ہیرا پھیری   │
 └────────┘ └────────┘ └──────────┘ └──────────────┘
      │         │           │              │
      └─────────┴───────────┴──────────────┘
                       │
               ┌───────▼────────┐
-              │   ROS 2 Graph  │
-              │ (Topics/Services)│
+              │   ROS 2 گراف  │
+              │ (ٹاپکس/سروسز)│
               └───────┬────────┘
                       │
               ┌───────▼────────┐
-              │ Isaac Sim / HW │
+              │ آئزک سم / HW │
               │   (28-DOF)     │
               └────────────────┘
 ```
 
-[TRANSLATION_FAILED] ## Prerequisites
+## ضروریات
 
-[TRANSLATION_FAILED] Ensure all previous weeks' packages are installed:
+یقینی بنائیں کہ پچھلے تمام ہفتوں کے پیکجز انسٹال ہیں:
 
 ```bash
-# ROS 2 packages
+# ROS 2 پیکجز
 sudo apt install ros-humble-nav2-* ros-humble-robot-state-publisher
 
-# Python packages
+# پائیتھن پیکجز
 pip install openai-whisper openai clip torch transformers sounddevice
 
-# NVIDIA Isaac (optional for sim)
-# See Week 7 installation
+# NVIDIA آئزک (سم کے لیے اختیاری)
+# ہفتہ 7 کی انسٹالیشن دیکھیں
 ```
 
-[TRANSLATION_FAILED] ## Phase 1: Task Orchestrator
+## مرحلہ 1: ٹاسک آرکیسٹریٹر
 
-[TRANSLATION_FAILED] ### State Machine Design
+### اسٹیٹ مشین ڈیزائن
 
-[TRANSLATION_FAILED] Create `humanoid_assistant/task_orchestrator.py`:
+`humanoid_assistant/task_orchestrator.py` بنائیں:
 
 ```python
 #!/usr/bin/env python3
@@ -95,21 +95,21 @@ class TaskOrchestrator(Node):
         # OpenAI API
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
-        # State machine
+        # اسٹیٹ مشین
         self.state = TaskState.IDLE
         self.current_task = None
         self.task_plan = []
 
-        # Service clients (will connect to perception, navigation, manipulation)
+        # سروس کلائنٹس (پرسیپشن، نیویگیشن، ہیرا پھیری سے جڑیں گے)
         self.setup_clients()
 
-        # Timer for state machine
+        # اسٹیٹ مشین کے لیے ٹائمر
         self.timer = self.create_timer(0.1, self.state_machine_loop)
 
-        self.get_logger().info('Task Orchestrator started')
+        self.get_logger().info('ٹاسک آرکیسٹریٹر شروع ہو گیا')
 
     def setup_clients(self):
-        """Initialize action/service clients"""
+        """ایکشن/سروس کلائنٹس کو شروع کریں"""
         from nav2_msgs.action import NavigateToPose
         from humanoid_msgs.srv import DetectObject, PickObject
 
@@ -118,9 +118,9 @@ class TaskOrchestrator(Node):
         self.pick_client = self.create_client(PickObject, 'pick_object')
 
     def state_machine_loop(self):
-        """Main state machine"""
+        """مرکزی اسٹیٹ مشین"""
         if self.state == TaskState.IDLE:
-            # Wait for voice command
+            # صوتی کمانڈ کا انتظار کریں
             pass
 
         elif self.state == TaskState.PLANNING:
@@ -136,22 +136,22 @@ class TaskOrchestrator(Node):
             self.execute_manipulation()
 
         elif self.state == TaskState.COMPLETE:
-            self.get_logger().info('✅ Task complete!')
+            self.get_logger().info('✅ کام مکمل!')
             self.state = TaskState.IDLE
 
     def plan_task(self):
-        """Use GPT-4 to decompose task into steps"""
+        """GPT-4 کا استعمال کرتے ہوئے کام کو مراحل میں تقسیم کریں"""
         prompt = f"""
-You are a humanoid robot task planner. Break down this command into atomic steps:
-Command: "{self.current_task}"
+آپ ایک ہیومنائڈ روبوٹ ٹاسک پلانر ہیں۔ اس کمانڈ کو جوہری مراحل میں تقسیم کریں:
+کمانڈ: "{self.current_task}"
 
-Available actions:
-- navigate(location): Move to a named location
-- detect(object): Find an object using vision
-- pick(object): Grasp the detected object
-- place(location): Put object down at location
+دستیاب اعمال:
+- navigate(location): ایک نامی مقام پر جائیں
+- detect(object): وژن کا استعمال کرتے ہوئے ایک آبجیکٹ تلاش کریں
+- pick(object): پتہ لگائے گئے آبجیکٹ کو پکڑیں
+- place(location): آبجیکٹ کو مقام پر رکھیں
 
-Output JSON list of steps:
+مراحل کی JSON فہرست آؤٹ پٹ کریں:
 [{{"action": "navigate", "params": {{"location": "kitchen"}}}}, ...]
 """
 
@@ -160,62 +160,62 @@ Output JSON list of steps:
             messages=[{"role": "user", "content": prompt}]
         )
 
-        # Parse plan
+        # منصوبہ پارس کریں
         import json
         self.task_plan = json.loads(response.choices[0].message.content)
 
-        self.get_logger().info(f'Task plan: {self.task_plan}')
-        self.state = TaskState.NAVIGATING  # Start executing
+        self.get_logger().info(f'ٹاسک منصوبہ: {self.task_plan}')
+        self.state = TaskState.NAVIGATING  # عمل درآمد شروع کریں
 
     def execute_navigation(self):
-        """Execute navigation step"""
-        # Get current step
+        """نیویگیشن مرحلہ انجام دیں"""
+        # موجودہ مرحلہ حاصل کریں
         step = self.task_plan[0]
 
         if step['action'] == 'navigate':
             location = step['params']['location']
-            self.get_logger().info(f'Navigating to {location}')
+            self.get_logger().info(f'{location} پر نیویگیٹ کر رہا ہے')
 
-            # Send Nav2 goal (simplified)
+            # Nav2 ہدف بھیجیں (سادہ)
             goal = self.create_navigation_goal(location)
             self.nav_client.send_goal_async(goal)
 
-            # Advance to next state
+            # اگلی حالت پر جائیں
             self.task_plan.pop(0)
             self.state = TaskState.DETECTING if self.task_plan else TaskState.COMPLETE
 
     def execute_detection(self):
-        """Execute object detection step"""
+        """آبجیکٹ ڈیٹیکشن مرحلہ انجام دیں"""
         step = self.task_plan[0]
 
         if step['action'] == 'detect':
             object_name = step['params']['object']
-            self.get_logger().info(f'Detecting {object_name}')
+            self.get_logger().info(f'{object_name} کا پتہ لگا رہا ہے')
 
-            # Call detection service
+            # ڈیٹیکشن سروس کو کال کریں
             request = DetectObject.Request()
             request.object_name = object_name
             future = self.detect_client.call_async(request)
 
-            # Wait for result (simplified)
+            # نتیجہ کا انتظار کریں (سادہ)
             rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
 
             if future.result().found:
                 self.task_plan.pop(0)
                 self.state = TaskState.MANIPULATING
             else:
-                self.get_logger().warn(f'Object {object_name} not found')
+                self.get_logger().warn(f'آبجیکٹ {object_name} نہیں ملا')
                 self.state = TaskState.ERROR
 
     def execute_manipulation(self):
-        """Execute pick/place step"""
+        """پک/پلیس مرحلہ انجام دیں"""
         step = self.task_plan[0]
 
         if step['action'] == 'pick':
             object_name = step['params']['object']
-            self.get_logger().info(f'Picking {object_name}')
+            self.get_logger().info(f'{object_name} اٹھا رہا ہے')
 
-            # Call manipulation service
+            # ہیرا پھیری سروس کو کال کریں
             request = PickObject.Request()
             request.object_name = object_name
             self.pick_client.call_async(request)
@@ -234,11 +234,11 @@ if __name__ == '__main__':
     main()
 ```
 
-[TRANSLATION_FAILED] ## Phase 2: Voice Command Interface
+## مرحلہ 2: وائس کمانڈ انٹرفیس
 
-[TRANSLATION_FAILED] ### Whisper Integration
+### وسپر انضمام
 
-[TRANSLATION_FAILED] Create `humanoid_assistant/voice_interface.py`:
+`humanoid_assistant/voice_interface.py` بنائیں:
 
 ```python
 #!/usr/bin/env python3
@@ -254,27 +254,27 @@ class VoiceInterface(Node):
     def __init__(self):
         super().__init__('voice_interface')
 
-        # Load Whisper model
-        self.get_logger().info('Loading Whisper model...')
+        # وسپر ماڈل لوڈ کریں
+        self.get_logger().info('وسپر ماڈل لوڈ ہو رہا ہے...')
         self.model = whisper.load_model("base")
 
-        # Publisher for transcribed commands
+        # ٹرانسکرائب شدہ کمانڈز کے لیے پبلشر
         self.command_pub = self.create_publisher(String, '/voice_command', 10)
 
-        # Recording parameters
+        # ریکارڈنگ پیرامیٹرز
         self.sample_rate = 16000
-        self.duration = 5  # seconds
+        self.duration = 5  # سیکنڈز
 
-        self.get_logger().info('Voice interface ready. Say "robot" to activate.')
+        self.get_logger().info('وائس انٹرفیس تیار ہے۔ فعال کرنے کے لیے "روبوٹ" کہیں۔')
 
-        # Start listening loop
+        # سننے کا لوپ شروع کریں
         self.timer = self.create_timer(0.5, self.listen_for_wake_word)
 
     def listen_for_wake_word(self):
-        """Continuously listen for wake word"""
-        self.get_logger().info('Listening...')
+        """مسلسل ویک ورڈ کے لیے سنیں"""
+        self.get_logger().info('سن رہا ہوں...')
 
-        # Record audio
+        # آڈیو ریکارڈ کریں
         audio = sd.rec(
             int(self.duration * self.sample_rate),
             samplerate=self.sample_rate,
@@ -283,24 +283,24 @@ class VoiceInterface(Node):
         )
         sd.wait()
 
-        # Save temporary file
+        # عارضی فائل محفوظ کریں
         write('/tmp/command.wav', self.sample_rate, audio)
 
-        # Transcribe
+        # ٹرانسکرائب کریں
         result = self.model.transcribe('/tmp/command.wav')
         text = result['text'].lower()
 
-        self.get_logger().info(f'Heard: {text}')
+        self.get_logger().info(f'سنا: {text}')
 
-        # Check for wake word
+        # ویک ورڈ کے لیے چیک کریں
         if 'robot' in text:
-            # Extract command after wake word
+            # ویک ورڈ کے بعد کمانڈ نکالیں
             command = text.split('robot', 1)[1].strip()
 
             if command:
-                self.get_logger().info(f'Command: {command}')
+                self.get_logger().info(f'کمانڈ: {command}')
 
-                # Publish command
+                # کمانڈ شائع کریں
                 msg = String()
                 msg.data = command
                 self.command_pub.publish(msg)
@@ -316,11 +316,11 @@ if __name__ == '__main__':
     main()
 ```
 
-[TRANSLATION_FAILED] ## Phase 3: Vision-Language Perception
+## مرحلہ 3: وژن-لینگویج پرسیپشن
 
-[TRANSLATION_FAILED] ### CLIP + LLaVA Integration
+### CLIP + LLaVA انضمام
 
-[TRANSLATION_FAILED] Create `humanoid_assistant/vision_perception.py`:
+`humanoid_assistant/vision_perception.py` بنائیں:
 
 ```python
 #!/usr/bin/env python3
@@ -338,11 +338,11 @@ class VisionPerception(Node):
         super().__init__('vision_perception')
         self.bridge = CvBridge()
 
-        # Load CLIP
+        # CLIP لوڈ کریں
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.clip_model, self.preprocess = clip.load("ViT-L/14", device=self.device)
 
-        # Subscribe to camera
+        # کیمرہ کو سبسکرائب کریں
         self.subscription = self.create_subscription(
             Image,
             '/camera/image_raw',
@@ -351,36 +351,36 @@ class VisionPerception(Node):
         )
         self.latest_image = None
 
-        # Services
+        # سروسز
         self.detect_srv = self.create_service(
             DetectObject,
             'detect_object',
             self.detect_callback
         )
 
-        self.get_logger().info('Vision perception ready')
+        self.get_logger().info('وژن پرسیپشن تیار ہے')
 
     def image_callback(self, msg):
-        """Store latest image"""
+        """تازہ ترین تصویر محفوظ کریں"""
         cv_image = self.bridge.imgmsg_to_cv2(msg, "rgb8")
         self.latest_image = PILImage.fromarray(cv_image)
 
     def detect_callback(self, request, response):
-        """Detect object using CLIP"""
+        """CLIP کا استعمال کرتے ہوئے آبجیکٹ کا پتہ لگائیں"""
         if self.latest_image is None:
             response.found = False
             return response
 
-        # Preprocess image
+        # تصویر کو پری پروسیس کریں
         image = self.preprocess(self.latest_image).unsqueeze(0).to(self.device)
 
-        # Text queries
+        # ٹیکسٹ سوالات
         text = clip.tokenize([
             f"a photo of a {request.object_name}",
             "a photo of background"
         ]).to(self.device)
 
-        # Compute similarity
+        # مماثلت کا حساب لگائیں
         with torch.no_grad():
             image_features = self.clip_model.encode_image(image)
             text_features = self.clip_model.encode_text(text)
@@ -388,15 +388,15 @@ class VisionPerception(Node):
             similarity = (image_features @ text_features.T).softmax(dim=-1)
             confidence = similarity[0][0].item()
 
-        self.get_logger().info(f'Detection confidence for {request.object_name}: {confidence:.2%}')
+        self.get_logger().info(f'{request.object_name} کے لیے پتہ لگانے کا اعتماد: {confidence:.2%}')
 
-        # Threshold
+        # حد
         response.found = confidence > 0.3
         response.confidence = confidence
 
-        # Estimate 3D position (simplified - use depth camera in real system)
+        # 3D پوزیشن کا تخمینہ لگائیں (سادہ - حقیقی نظام میں ڈیپتھ کیمرہ استعمال کریں)
         if response.found:
-            response.position.x = 1.0  # 1 meter ahead
+            response.position.x = 1.0  # 1 میٹر آگے
             response.position.y = 0.0
             response.position.z = 0.5
 
@@ -413,14 +413,14 @@ if __name__ == '__main__':
     main()
 ```
 
-[TRANSLATION_FAILED] ## Phase 4: Navigation Integration
+## مرحلہ 4: نیویگیشن انضمام
 
-[TRANSLATION_FAILED] ### Semantic Location Mapping
+### سیمنٹک لوکیشن میپنگ
 
-[TRANSLATION_FAILED] Create `config/semantic_map.yaml`:
+`config/semantic_map.yaml` بنائیں:
 
 ```yaml
-# Semantic location coordinates for Nav2
+# Nav2 کے لیے سیمنٹک لوکیشن کوآرڈینیٹس
 locations:
   kitchen:
     x: 5.0
@@ -443,7 +443,7 @@ locations:
     theta: 0.0
 ```
 
-[TRANSLATION_FAILED] Create `humanoid_assistant/semantic_navigator.py`:
+`humanoid_assistant/semantic_navigator.py` بنائیں:
 
 ```python
 #!/usr/bin/env python3
@@ -458,40 +458,40 @@ class SemanticNavigator(Node):
     def __init__(self):
         super().__init__('semantic_navigator')
 
-        # Load semantic map
+        # سیمنٹک نقشہ لوڈ کریں
         with open('config/semantic_map.yaml') as f:
             config = yaml.safe_load(f)
             self.locations = config['locations']
 
-        # Nav2 action client
+        # Nav2 ایکشن کلائنٹ
         self.nav_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
 
-        self.get_logger().info(f'Loaded {len(self.locations)} locations')
+        self.get_logger().info(f'{len(self.locations)} مقامات لوڈ کیے گئے')
 
     def navigate_to_location(self, location_name):
-        """Navigate to named location"""
+        """نامی مقام پر نیویگیٹ کریں"""
         if location_name not in self.locations:
-            self.get_logger().error(f'Unknown location: {location_name}')
+            self.get_logger().error(f'نامعلوم مقام: {location_name}')
             return False
 
         loc = self.locations[location_name]
 
-        # Create goal
+        # ہدف بنائیں
         goal = NavigateToPose.Goal()
         goal.pose = PoseStamped()
         goal.pose.header.frame_id = 'map'
         goal.pose.pose.position.x = loc['x']
         goal.pose.pose.position.y = loc['y']
 
-        # Quaternion from yaw
+        # یاو سے کواٹرنین
         import math
         theta = loc['theta']
         goal.pose.pose.orientation.z = math.sin(theta / 2)
         goal.pose.pose.orientation.w = math.cos(theta / 2)
 
-        self.get_logger().info(f'Navigating to {location_name} at ({loc["x"]}, {loc["y"]})')
+        self.get_logger().info(f'{location_name} پر ({loc["x"]}, {loc["y"]}) پر نیویگیٹ کر رہا ہے')
 
-        # Send goal
+        # ہدف بھیجیں
         self.nav_client.wait_for_server()
         future = self.nav_client.send_goal_async(goal)
 
@@ -508,11 +508,11 @@ if __name__ == '__main__':
     main()
 ```
 
-[TRANSLATION_FAILED] ## Phase 5: Manipulation Controller
+## مرحلہ 5: ہیرا پھیری کنٹرولر
 
-[TRANSLATION_FAILED] ### IK-Based Pick and Place
+### IK پر مبنی پک اور پلیس
 
-[TRANSLATION_FAILED] Create `humanoid_assistant/manipulation_controller.py`:
+`humanoid_assistant/manipulation_controller.py` بنائیں:
 
 ```python
 #!/usr/bin/env python3
@@ -525,47 +525,47 @@ class ManipulationController(Node):
     def __init__(self):
         super().__init__('manipulation_controller')
 
-        # IK solver (use your Week 12 implementation)
+        # IK سالور (ہفتہ 12 کا نفاذ استعمال کریں)
         from humanoid_kinematics import InverseKinematics
         self.ik_solver = InverseKinematics()
 
-        # Services
+        # سروسز
         self.pick_srv = self.create_service(PickObject, 'pick_object', self.pick_callback)
         self.place_srv = self.create_service(PlaceObject, 'place_object', self.place_callback)
 
-        # Joint command publisher
+        # جوائنٹ کمانڈ پبلشر
         from sensor_msgs.msg import JointState
         self.joint_pub = self.create_publisher(JointState, '/joint_commands', 10)
 
-        self.get_logger().info('Manipulation controller ready')
+        self.get_logger().info('ہیرا پھیری کنٹرولر تیار ہے')
 
     def pick_callback(self, request, response):
-        """Execute pick sequence"""
-        # Assume object position from vision service
+        """پک کی ترتیب انجام دیں"""
+        # وژن سروس سے آبجیکٹ کی پوزیشن فرض کریں
         target_pos = np.array([
             request.object_position.x,
             request.object_position.y,
             request.object_position.z
         ])
 
-        self.get_logger().info(f'Picking at {target_pos}')
+        self.get_logger().info(f'{target_pos} پر اٹھا رہا ہے')
 
-        # 1. Pre-grasp: Move arm above object
+        # 1. پری گراسپ: بازو کو آبجیکٹ کے اوپر لے جائیں
         pre_grasp_pos = target_pos + np.array([0, 0, 0.1])
         joint_angles = self.ik_solver.solve(pre_grasp_pos, arm='right')
         self.move_arm(joint_angles)
 
-        # 2. Open gripper
+        # 2. گرپر کھولیں
         self.control_gripper(open=True)
 
-        # 3. Approach: Move down to object
+        # 3. اپروچ: آبجیکٹ کی طرف نیچے جائیں
         joint_angles = self.ik_solver.solve(target_pos, arm='right')
         self.move_arm(joint_angles)
 
-        # 4. Close gripper
+        # 4. گرپر بند کریں
         self.control_gripper(open=False)
 
-        # 5. Lift
+        # 5. اٹھائیں
         lift_pos = target_pos + np.array([0, 0, 0.2])
         joint_angles = self.ik_solver.solve(lift_pos, arm='right')
         self.move_arm(joint_angles)
@@ -574,7 +574,7 @@ class ManipulationController(Node):
         return response
 
     def move_arm(self, joint_angles):
-        """Publish joint commands"""
+        """جوائنٹ کمانڈز شائع کریں"""
         msg = JointState()
         msg.name = ['right_shoulder_pitch', 'right_shoulder_roll',
                     'right_elbow', 'right_wrist_pitch']
@@ -582,14 +582,14 @@ class ManipulationController(Node):
 
         self.joint_pub.publish(msg)
 
-        # Wait for motion to complete (simplified)
+        # حرکت مکمل ہونے کا انتظار کریں (سادہ)
         import time
         time.sleep(2.0)
 
     def control_gripper(self, open=True):
-        """Open or close gripper"""
-        self.get_logger().info(f'Gripper: {"open" if open else "close"}')
-        # Publish gripper command
+        """گرپر کھولیں یا بند کریں"""
+        self.get_logger().info(f'گرپر: {"کھلا" if open else "بند"}')
+        # گرپر کمانڈ شائع کریں
 
 def main(args=None):
     rclpy.init(args=args)
@@ -602,9 +602,9 @@ if __name__ == '__main__':
     main()
 ```
 
-[TRANSLATION_FAILED] ## Complete Launch File
+## مکمل لانچ فائل
 
-[TRANSLATION_FAILED] Create `launch/humanoid_assistant.launch.py`:
+`launch/humanoid_assistant.launch.py` بنائیں:
 
 ```python
 from launch import LaunchDescription
@@ -615,7 +615,7 @@ from ament_index_python.packages import get_package_share_directory
 import os
 
 def generate_launch_description():
-    # Nav2 (from Week 9)
+    # Nav2 (ہفتہ 9 سے)
     nav2_dir = get_package_share_directory('nav2_bringup')
     nav2_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -625,10 +625,10 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # Navigation stack
+        # نیویگیشن اسٹیک
         nav2_launch,
 
-        # Voice interface
+        # وائس انٹرفیس
         Node(
             package='humanoid_assistant',
             executable='voice_interface',
@@ -636,7 +636,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Vision perception
+        # وژن پرسیپشن
         Node(
             package='humanoid_assistant',
             executable='vision_perception',
@@ -644,7 +644,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Semantic navigator
+        # سیمنٹک نیویگیٹر
         Node(
             package='humanoid_assistant',
             executable='semantic_navigator',
@@ -652,7 +652,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Manipulation controller
+        # ہیرا پھیری کنٹرولر
         Node(
             package='humanoid_assistant',
             executable='manipulation_controller',
@@ -660,7 +660,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Task orchestrator (main brain)
+        # ٹاسک آرکیسٹریٹر (مرکزی دماغ)
         Node(
             package='humanoid_assistant',
             executable='task_orchestrator',
@@ -671,11 +671,11 @@ def generate_launch_description():
     ])
 ```
 
-[TRANSLATION_FAILED] ## Testing Your System
+## اپنے سسٹم کی جانچ
 
-[TRANSLATION_FAILED] ### Unit Tests
+### یونٹ ٹیسٹ
 
-[TRANSLATION_FAILED] Create `test/test_integration.py`:
+`test/test_integration.py` بنائیں:
 
 ```python
 import pytest
@@ -683,7 +683,7 @@ import rclpy
 from humanoid_msgs.srv import DetectObject
 
 def test_object_detection():
-    """Test vision perception service"""
+    """وژن پرسیپشن سروس کی جانچ کریں"""
     rclpy.init()
     node = rclpy.create_node('test_node')
 
@@ -702,149 +702,149 @@ def test_object_detection():
     rclpy.shutdown()
 ```
 
-[TRANSLATION_FAILED] ### Integration Test Scenarios
+### انضمام ٹیسٹ کے منظرنامے
 
 ```bash
-# Scenario 1: Simple fetch
-ros2 topic pub /voice_command std_msgs/String "data: 'go to kitchen and find the cup'"
+# منظر نامہ 1: سادہ فیچ
+ros2 topic pub /voice_command std_msgs/String "data: 'کچن میں جاؤ اور کپ تلاش کرو'"
 
-# Scenario 2: Multi-step task
-ros2 topic pub /voice_command std_msgs/String "data: 'bring me the laptop from bedroom'"
+# منظر نامہ 2: کثیر مرحلہ والا کام
+ros2 topic pub /voice_command std_msgs/String "data: 'مجھے بیڈ روم سے لیپ ٹاپ لا دو'"
 
-# Scenario 3: Visual question
-ros2 service call /ask_question humanoid_msgs/AskQuestion "{question: 'what objects do you see?'}"
+# منظر نامہ 3: بصری سوال
+ros2 service call /ask_question humanoid_msgs/AskQuestion "{question: 'تمہیں کون سی اشیاء نظر آ رہی ہیں؟'}"
 ```
 
-[TRANSLATION_FAILED] ## Deployment Options
+## تعیناتی کے اختیارات
 
-[TRANSLATION_FAILED] ### Option 1: Isaac Sim (Recommended for Development)
+### آپشن 1: آئزک سم (ترقی کے لیے تجویز کردہ)
 
 ```bash
-# Launch Isaac Sim with humanoid
+# ہیومنائڈ کے ساتھ آئزک سم لانچ کریں
 ./isaac-sim.sh
 
-# In separate terminal:
+# الگ ٹرمینل میں:
 ros2 launch humanoid_assistant humanoid_assistant.launch.py use_sim_time:=true
 ```
 
-[TRANSLATION_FAILED] ### Option 2: Real Hardware
+### آپشن 2: حقیقی ہارڈ ویئر
 
-[TRANSLATION_FAILED] Requirements:
-[TRANSLATION_FAILED] - 28-DOF humanoid platform
-[TRANSLATION_FAILED] - NVIDIA Jetson AGX Orin (64GB)
-[TRANSLATION_FAILED] - RealSense D435i camera
-[TRANSLATION_FAILED] - USB microphone
+ضروریات:
+- 28-DOF ہیومنائڈ پلیٹ فارم
+- NVIDIA Jetson AGX Orin (64GB)
+- RealSense D435i کیمرہ
+- USB مائیکروفون
 
 ```bash
-# On robot computer:
+# روبوٹ کمپیوٹر پر:
 ros2 launch humanoid_assistant humanoid_assistant.launch.py use_sim_time:=false
 ```
 
-[TRANSLATION_FAILED] ## Performance Optimization
+## کارکردگی کی اصلاح
 
-[TRANSLATION_FAILED] ### Latency Targets
+### لیٹنسی کے اہداف
 
-[TRANSLATION_FAILED] | Component | Target Latency | Optimization |
-[TRANSLATION_FAILED] |-----------|---------------|--------------|
-[TRANSLATION_FAILED] | Voice recognition | &lt;2s | Use Whisper base model |
-[TRANSLATION_FAILED] | Object detection | &lt;500ms | CLIP ViT-B/32, GPU |
-[TRANSLATION_FAILED] | Navigation planning | &lt;1s | Nav2 GPU costmaps |
-[TRANSLATION_FAILED] | IK solving | &lt;100ms | Cached solutions |
-[TRANSLATION_FAILED] | Total task cycle | &lt;10s | Parallel execution |
+| جزو | ہدف لیٹنسی | اصلاح |
+|-----------|---------------|--------------|
+| آواز کی شناخت | <2s | وسپر بیس ماڈل استعمال کریں |
+| آبجیکٹ ڈیٹیکشن | <500ms | CLIP ViT-B/32, GPU |
+| نیویگیشن پلاننگ | <1s | Nav2 GPU کاسٹ میپس |
+| IK حل کرنا | <100ms | کیشڈ حل |
+| کل ٹاسک سائیکل | <10s | متوازی عمل درآمد |
 
-[TRANSLATION_FAILED] ### GPU Utilization
+### GPU کا استعمال
 
 ```python
-# Monitor GPU usage
+# GPU استعمال کی نگرانی کریں
 import torch
-print(f"GPU Memory: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
+print(f"GPU میموری: {torch.cuda.memory_allocated() / 1e9:.2f} GB")
 ```
 
-[TRANSLATION_FAILED] ## Evaluation Rubric
+## تشخیصی روبرک
 
-[TRANSLATION_FAILED] ### Functional Requirements (60 points)
+### कार्यात्मक आवश्यकताएं (60 پوائنٹس)
 
-[TRANSLATION_FAILED] - [20] **Voice Control**: Accurately transcribes and executes commands
-[TRANSLATION_FAILED] - [20] **Vision**: Detects specified objects with >70% accuracy
-[TRANSLATION_FAILED] - [10] **Navigation**: Reaches named locations within 10cm
-[TRANSLATION_FAILED] - [10] **Manipulation**: Successfully grasps objects 80% of the time
+- [20] **صوتی کنٹرول**: احکامات کو درست طریقے سے ٹرانسکرائب اور انجام دیتا ہے
+- [20] **وژن**: مخصوص اشیاء کا >70% درستگی کے ساتھ پتہ لگاتا ہے
+- [10] **نیویگیشن**: نامی مقامات تک 10 سینٹی میٹر کے اندر پہنچتا ہے
+- [10] **ہیرا پھیری**: 80% وقت اشیاء کو کامیابی سے پکڑتا ہے
 
-[TRANSLATION_FAILED] ### Integration (30 points)
+### انضمام (30 پوائنٹس)
 
-[TRANSLATION_FAILED] - [10] **Multi-step Tasks**: Completes 3-step tasks autonomously
-[TRANSLATION_FAILED] - [10] **Error Recovery**: Handles missing objects gracefully
-[TRANSLATION_FAILED] - [10] **Real-time Performance**: Meets latency targets
+- [10] **کثیر مرحلہ والے کام**: 3 مرحلہ والے کاموں کو خود مختار طور پر مکمل کرتا ہے
+- [10] **غلطی سے بحالی**: گمشدہ اشیاء کو احسن طریقے سے ہینڈل کرتا ہے
+- [10] **حقیقی وقت کی کارکردگی**: لیٹنسی کے اہداف کو پورا کرتا ہے
 
-[TRANSLATION_FAILED] ### Code Quality (10 points)
+### کوڈ کا معیار (10 پوائنٹس)
 
-[TRANSLATION_FAILED] - [5] **Documentation**: Clear docstrings and comments
-[TRANSLATION_FAILED] - [5] **Testing**: Unit tests for all components
+- [5] **دستاویزی**: واضح ڈاک اسٹرنگز اور تبصرے
+- [5] **جانچ**: تمام اجزاء کے لیے یونٹ ٹیسٹ
 
-[TRANSLATION_FAILED] ## Extensions (Optional)
+## توسیع (اختیاری)
 
-[TRANSLATION_FAILED] ### 1. Multi-Robot Coordination
+### 1. ملٹی روبوٹ کوآرڈینیشن
 
 ```python
-# Coordinate with multiple humanoids
+# متعدد ہیومنائڈز کے ساتھ کوآرڈینیٹ کریں
 from humanoid_msgs.msg import TaskAssignment
 
 class MultiRobotCoordinator(Node):
     def assign_tasks(self, tasks):
-        # Distribute tasks across available robots
+        # دستیاب روبوٹس میں کام تقسیم کریں
         for robot_id, task in enumerate(tasks):
             self.publish_assignment(robot_id, task)
 ```
 
-[TRANSLATION_FAILED] ### 2. Learning from Demonstration
+### 2. مظاہرے سے سیکھنا
 
 ```python
-# Record human demonstrations
+# انسانی مظاہروں کو ریکارڈ کریں
 from humanoid_msgs.msg import TrajectoryRecording
 
 class DemonstrationRecorder(Node):
     def record_trajectory(self):
-        # Record joint states + object interactions
-        # Train behavior cloning policy
+        # جوائنٹ اسٹیٹس + آبجیکٹ تعاملات ریکارڈ کریں
+        # رویے کی کلوننگ پالیسی کو تربیت دیں
         pass
 ```
 
-[TRANSLATION_FAILED] ### 3. Urdu Language Support
+### 3. اردو زبان کی معاونت
 
 ```python
-# Add Urdu voice commands (using Whisper multilingual)
+# اردو صوتی احکامات شامل کریں (وسپر ملٹی لینگول کا استعمال کرتے ہوئے)
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 
 processor = WhisperProcessor.from_pretrained("openai/whisper-large-v2")
 model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2")
 
-# Transcribe Urdu audio
+# اردو آڈیو کو ٹرانسکرائب کریں
 result = model.transcribe(audio, language="ur")
 ```
 
-[TRANSLATION_FAILED] ## Summary
+## خلاصہ
 
-[TRANSLATION_FAILED] This capstone project integrates:
+یہ کیپ اسٹون پروجیکٹ ضم کرتا ہے:
 
-[TRANSLATION_FAILED] - **Module 1 (ROS 2)**: Package structure, nodes, topics, services, launch files
-[TRANSLATION_FAILED] - **Module 2 (Simulation)**: Testing in Gazebo/Unity/Isaac Sim
-[TRANSLATION_FAILED] - **Module 3 (NVIDIA)**: Isaac ROS perception, Nav2 navigation
-[TRANSLATION_FAILED] - **Module 4 (VLA)**: CLIP detection, Whisper ASR, GPT-4 planning
+- **ماڈیول 1 (ROS 2)**: پیکیج کی ساخت، نوڈز، ٹاپکس، سروسز، لانچ فائلیں
+- **ماڈیول 2 (سیمولیشن)**: گیزبو/یونٹی/آئزک سم میں جانچ
+- **ماڈیول 3 (NVIDIA)**: آئزک ROS پرسیپشن، Nav2 نیویگیشن
+- **ماڈیول 4 (VLA)**: CLIP ڈیٹیکشن، وسپر ASR، GPT-4 پلاننگ
 
-[TRANSLATION_FAILED] You now have a **complete autonomous humanoid system** that bridges the gap from physical AI research to deployable robotics.
+اب آپ کے پاس ایک **مکمل خود مختار ہیومنائڈ سسٹم** ہے جو فزیکل AI تحقیق سے قابل تعیناتی روبوٹکس تک کے فرق کو پر کرتا ہے۔
 
-[TRANSLATION_FAILED] ## Next Steps
+## اگلے اقدامات
 
-[TRANSLATION_FAILED] 1. **Deploy to Real Hardware**: Port your system to physical humanoid
-[TRANSLATION_FAILED] 2. **Contribute to Open Source**: Share improvements to ROS 2 packages
-[TRANSLATION_FAILED] 3. **Research**: Explore diffusion policies, hierarchical RL, sim-to-real
-[TRANSLATION_FAILED] 4. **Industry**: Apply these skills to robotics companies, research labs
+1. **حقیقی ہارڈ ویئر پر تعینات کریں**: اپنے سسٹم کو فزیکل ہیومنائڈ پر پورٹ کریں
+2. **اوپن سورس میں حصہ ڈالیں**: ROS 2 پیکجز میں بہتری شیئر کریں
+3. **تحقیق**: ڈیفیوژن پالیسیاں، درجہ بندی RL، سم-ٹو-ریئل کو دریافت کریں
+4. **صنعت**: ان مہارتوں کو روبوٹکس کمپنیوں، تحقیقی لیبز میں لاگو کریں
 
-[TRANSLATION_FAILED] **Congratulations on completing the Physical AI & Humanoid Robotics course!** 🎓🤖
+**فزیکل AI اور ہیومنائڈ روبوٹکس کورس مکمل کرنے پر مبارک ہو!** 🎓🤖
 
 ---
 
-[TRANSLATION_FAILED] **Resources**:
-[TRANSLATION_FAILED] - [ROS 2 Documentation](https://docs.ros.org/en/humble/)
-[TRANSLATION_FAILED] - [NVIDIA Isaac](https://developer.nvidia.com/isaac-sim)
-[TRANSLATION_FAILED] - [OpenAI API](https://platform.openai.com/docs)
-[TRANSLATION_FAILED] - [Humanoid Robotics Papers](https://github.com/Improbable-AI/awesome-humanoid-robotics)
+**وسائل**:
+- [ROS 2 ڈاکومنٹیشن](https://docs.ros.org/en/humble/)
+- [NVIDIA آئزک](https://developer.nvidia.com/isaac-sim)
+- [اوپن اے آئی API](https://platform.openai.com/docs)
+- [ہیومنائڈ روبوٹکس پیپرز](https://github.com/Improbable-AI/awesome-humanoid-robotics)

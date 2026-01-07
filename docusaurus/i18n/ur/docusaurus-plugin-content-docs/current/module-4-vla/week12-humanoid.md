@@ -1,29 +1,29 @@
-[TRANSLATION_FAILED] # Week 12: Humanoid Kinematics and Control
+# ہفتہ 12: ہیومنائڈ کائنی میٹکس اور کنٹرول
 
-[TRANSLATION_FAILED] ## Introduction
+## تعارف
 
-[TRANSLATION_FAILED] This week, you'll implement the core motion control for humanoids: **forward/inverse kinematics**, **whole-body control**, and **balance**. These techniques enable manipulation, walking, and stable interactions with the environment.
+اس ہفتے، آپ ہیومنائڈز کے لیے بنیادی موشن کنٹرول نافذ کریں گے: **فارورڈ/انورس کائنی میٹکس**، **ہول باڈی کنٹرول**، اور **بیلنس**۔ یہ تکنیکیں ہیرا پھیری، چلنے، اور ماحول کے ساتھ مستحکم تعاملات کو ممکن بناتی ہیں۔
 
-[TRANSLATION_FAILED] ## Forward Kinematics (FK)
+## فارورڈ کائنی میٹکس (FK)
 
-[TRANSLATION_FAILED] **Forward kinematics** computes end-effector position from joint angles.
+**فارورڈ کائنی میٹکس** جوائنٹ اینگلز سے اینڈ ایفیکٹر کی پوزیشن کا حساب لگاتا ہے۔
 
-[TRANSLATION_FAILED] ### DH Parameters
+### DH پیرامیٹرز
 
-[TRANSLATION_FAILED] Denavit-Hartenberg parameters define link transforms:
+ڈیناویٹ-ہارٹنبرگ پیرامیٹرز لنک ٹرانسفارمز کی وضاحت کرتے ہیں:
 
 ```python
 import numpy as np
 
 class DHParameter:
     def __init__(self, a, alpha, d, theta):
-        self.a = a          # Link length
-        self.alpha = alpha  # Link twist
-        self.d = d          # Link offset
-        self.theta = theta  # Joint angle
+        self.a = a          # لنک کی لمبائی
+        self.alpha = alpha  # لنک کا موڑ
+        self.d = d          # لنک کا آفسیٹ
+        self.theta = theta  # جوائنٹ اینگل
 
 def dh_transform(dh):
-    """Compute transformation matrix from DH parameters"""
+    """DH پیرامیٹرز سے ٹرانسفارمیشن میٹرکس کا حساب لگائیں"""
     ct = np.cos(dh.theta)
     st = np.sin(dh.theta)
     ca = np.cos(dh.alpha)
@@ -37,25 +37,25 @@ def dh_transform(dh):
     ])
 ```
 
-[TRANSLATION_FAILED] ### 7-DOF Arm FK
+### 7-DOF آرم FK
 
 ```python
 class HumanoidArmFK:
     def __init__(self):
-        # DH parameters for 7-DOF arm
+        # 7-DOF آرم کے لیے DH پیرامیٹرز
         # [a, alpha, d, theta]
         self.dh_params = [
-            DHParameter(0, np.pi/2, 0.05, 0),   # Shoulder pitch
-            DHParameter(0, -np.pi/2, 0, 0),     # Shoulder roll
-            DHParameter(0, np.pi/2, 0.3, 0),    # Shoulder yaw
-            DHParameter(0, -np.pi/2, 0, 0),     # Elbow
-            DHParameter(0, np.pi/2, 0.25, 0),   # Wrist pitch
-            DHParameter(0, -np.pi/2, 0, 0),     # Wrist roll
-            DHParameter(0, 0, 0.1, 0),          # Wrist yaw
+            DHParameter(0, np.pi/2, 0.05, 0),   # کندھے کی پچ
+            DHParameter(0, -np.pi/2, 0, 0),     # کندھے کا رول
+            DHParameter(0, np.pi/2, 0.3, 0),    # کندھے کا یاو
+            DHParameter(0, -np.pi/2, 0, 0),     # کہنی
+            DHParameter(0, np.pi/2, 0.25, 0),   # کلائی کی پچ
+            DHParameter(0, -np.pi/2, 0, 0),     # کلائی کا رول
+            DHParameter(0, 0, 0.1, 0),          # کلائی کا یاو
         ]
 
     def forward_kinematics(self, joint_angles):
-        """Compute end-effector pose from joint angles"""
+        """جوائنٹ اینگلز سے اینڈ ایفیکٹر پوز کا حساب لگائیں"""
         T = np.eye(4)
 
         for i, angle in enumerate(joint_angles):
@@ -68,18 +68,18 @@ class HumanoidArmFK:
 
         return position, orientation
 
-# Usage
+# استعمال
 arm = HumanoidArmFK()
-joints = [0.5, 0.2, -0.3, 1.5, 0.0, 0.1, 0.0]  # radians
+joints = [0.5, 0.2, -0.3, 1.5, 0.0, 0.1, 0.0]  # ریڈینز
 position, rotation = arm.forward_kinematics(joints)
-print(f"End-effector position: {position}")
+print(f"اینڈ ایفیکٹر پوزیشن: {position}")
 ```
 
-[TRANSLATION_FAILED] ## Inverse Kinematics (IK)
+## انورس کائنی میٹکس (IK)
 
-[TRANSLATION_FAILED] **Inverse kinematics** computes joint angles for desired end-effector pose.
+**انورس کائنی میٹکس** مطلوبہ اینڈ ایفیکٹر پوز کے لیے جوائنٹ اینگلز کا حساب لگاتا ہے۔
 
-[TRANSLATION_FAILED] ### Numerical IK with Jacobian
+### جیکوبین کے ساتھ عددی IK
 
 ```python
 class HumanoidArmIK:
@@ -88,94 +88,94 @@ class HumanoidArmIK:
         self.num_joints = 7
 
     def jacobian(self, joint_angles, delta=0.0001):
-        """Compute numerical Jacobian"""
+        """عددی جیکوبین کا حساب لگائیں"""
         J = np.zeros((6, self.num_joints))
 
-        # Current pose
+        # موجودہ پوز
         pos0, rot0 = self.fk.forward_kinematics(joint_angles)
 
         for i in range(self.num_joints):
-            # Perturb joint i
+            # جوائنٹ i کو پریشان کریں
             joints_perturbed = joint_angles.copy()
             joints_perturbed[i] += delta
 
             pos1, rot1 = self.fk.forward_kinematics(joints_perturbed)
 
-            # Position derivative
+            # پوزیشن ڈیریویٹو
             J[:3, i] = (pos1 - pos0) / delta
 
-            # Orientation derivative (simplified)
-            # In practice, use axis-angle or quaternion representation
-            J[3:, i] = 0  # Placeholder
+            # اورینٹیشن ڈیریویٹو (سادہ)
+            # عملی طور پر، محور-زاویہ یا کواٹرنین نمائندگی استعمال کریں
+            J[3:, i] = 0  # پلیس ہولڈر
 
         return J
 
     def inverse_kinematics(self, target_pos, initial_guess=None, max_iter=100):
-        """IK using Jacobian pseudoinverse"""
+        """جیکوبین سیوڈو انورس کا استعمال کرتے ہوئے IK"""
         if initial_guess is None:
             joint_angles = np.zeros(self.num_joints)
         else:
             joint_angles = initial_guess.copy()
 
         for iteration in range(max_iter):
-            # Current position
+            # موجودہ پوزیشن
             current_pos, _ = self.fk.forward_kinematics(joint_angles)
 
-            # Error
+            # غلطی
             error = target_pos - current_pos
             error_norm = np.linalg.norm(error)
 
-            if error_norm < 0.001:  # 1mm tolerance
+            if error_norm < 0.001:  # 1 ملی میٹر کی رواداری
                 return joint_angles, True
 
-            # Jacobian
+            # جیکوبین
             J = self.jacobian(joint_angles)
-            J_pos = J[:3, :]  # Position part only
+            J_pos = J[:3, :]  # صرف پوزیشن کا حصہ
 
-            # Pseudoinverse
+            # سیوڈو انورس
             J_pinv = np.linalg.pinv(J_pos)
 
-            # Update joints
+            # جوائنٹس کو اپ ڈیٹ کریں
             delta_q = J_pinv @ error
-            joint_angles += 0.1 * delta_q  # Step size
+            joint_angles += 0.1 * delta_q  # قدم کا سائز
 
-            # Clip to joint limits
+            # جوائنٹ کی حدود میں کلپ کریں
             joint_angles = np.clip(joint_angles, -np.pi, np.pi)
 
-        return joint_angles, False  # Failed to converge
+        return joint_angles, False  # کنورج ہونے میں ناکام
 
-# Usage
+# استعمال
 ik = HumanoidArmIK()
-target = np.array([0.4, 0.2, 0.3])  # Desired end-effector position
+target = np.array([0.4, 0.2, 0.3])  # مطلوبہ اینڈ ایفیکٹر پوزیشن
 joints, success = ik.inverse_kinematics(target)
 
 if success:
-    print(f"IK solution: {joints}")
+    print(f"IK حل: {joints}")
 else:
-    print("IK failed to converge")
+    print("IK کنورج ہونے میں ناکام")
 ```
 
-[TRANSLATION_FAILED] ### IKFast (Analytical IK)
+### IKFast (تجزیاتی IK)
 
-[TRANSLATION_FAILED] For faster, exact solutions, use IKFast:
+تیز، درست حل کے لیے، IKFast استعمال کریں:
 
 ```bash
-# Generate IKFast solver
+# IKFast سالور تیار کریں
 pip install ikfast-pybind
 
-# In Python
+# پائیتھن میں
 from ikfast_humanoid_arm import get_ik
 
 solutions = get_ik(target_pose)
 for sol in solutions:
-    print(f"Solution: {sol}")
+    print(f"حل: {sol}")
 ```
 
-[TRANSLATION_FAILED] ## Whole-Body Control
+## ہول باڈی کنٹرول
 
-[TRANSLATION_FAILED] Control all joints simultaneously while respecting constraints.
+رکاوٹوں کا احترام کرتے ہوئے تمام جوڑوں کو بیک وقت کنٹرول کریں۔
 
-[TRANSLATION_FAILED] ### Quadratic Programming (QP)
+### کواڈریٹک پروگرامنگ (QP)
 
 ```python
 import cvxpy as cp
@@ -185,32 +185,32 @@ class WholeBodyController:
         self.num_joints = num_joints
 
     def solve(self, desired_accelerations, joint_limits, contact_forces):
-        """Solve QP for joint torques"""
-        # Decision variables
-        tau = cp.Variable(self.num_joints)  # Joint torques
-        f_contact = cp.Variable(4)  # Contact forces (2 feet)
+        """جوائنٹ ٹارک کے لیے QP حل کریں"""
+        # فیصلے کے متغیرات
+        tau = cp.Variable(self.num_joints)  # جوائنٹ ٹارک
+        f_contact = cp.Variable(4)  # رابطہ قوتیں (2 پاؤں)
 
-        # Dynamics: M * ddq = tau + J^T * f
-        # Simplified: minimize tracking error + regularization
+        # ڈائنامکس: M * ddq = tau + J^T * f
+        # سادہ: ٹریکنگ کی غلطی کو کم سے کم کریں + ریگولرائزیشن
 
-        # Cost function
+        # لاگت کا فنکشن
         cost = cp.sum_squares(tau - desired_accelerations * 10)
-        cost += 0.01 * cp.sum_squares(tau)  # Regularization
+        cost += 0.01 * cp.sum_squares(tau)  # ریگولرائزیشن
 
-        # Constraints
+        # رکاوٹیں
         constraints = [
-            tau >= joint_limits[:, 0],  # Lower limits
-            tau <= joint_limits[:, 1],  # Upper limits
-            f_contact >= 0,  # Unilateral contacts
+            tau >= joint_limits[:, 0],  # نچلی حدود
+            tau <= joint_limits[:, 1],  # اوپری حدود
+            f_contact >= 0,  # یکطرفہ رابطے
         ]
 
-        # Solve
+        # حل کریں
         problem = cp.Problem(cp.Minimize(cost), constraints)
         problem.solve()
 
         return tau.value
 
-# Usage
+# استعمال
 wbc = WholeBodyController(num_joints=28)
 joint_limits = np.array([[-100, 100]] * 28)  # Nm
 desired_acc = np.zeros(28)
@@ -219,11 +219,11 @@ contact_forces = np.zeros(4)
 torques = wbc.solve(desired_acc, joint_limits, contact_forces)
 ```
 
-[TRANSLATION_FAILED] ## Balance Control
+## بیلنس کنٹرول
 
-[TRANSLATION_FAILED] Maintain stability using **Zero Moment Point (ZMP)**.
+**زیرو مومنٹ پوائنٹ (ZMP)** کا استعمال کرتے ہوئے استحکام برقرار رکھیں۔
 
-[TRANSLATION_FAILED] ### ZMP Calculation
+### ZMP کا حساب کتاب
 
 ```python
 class BalanceController:
@@ -233,7 +233,7 @@ class BalanceController:
         self.height = height
 
     def compute_zmp(self, com_pos, com_acc):
-        """Compute ZMP from CoM state"""
+        """CoM حالت سے ZMP کا حساب لگائیں"""
         # ZMP_x = CoM_x - (CoM_z / g) * CoM_ddx
         zmp_x = com_pos[0] - (com_pos[2] / self.g) * com_acc[0]
         zmp_y = com_pos[1] - (com_pos[2] / self.g) * com_acc[1]
@@ -241,16 +241,16 @@ class BalanceController:
         return np.array([zmp_x, zmp_y])
 
     def is_stable(self, zmp, support_polygon):
-        """Check if ZMP is inside support polygon"""
-        # Simple rectangular check
+        """چیک کریں کہ آیا ZMP سپورٹ پولی گون کے اندر ہے"""
+        # سادہ مستطیل چیک
         x_min, x_max = support_polygon[0]
         y_min, y_max = support_polygon[1]
 
         return (x_min <= zmp[0] <= x_max) and (y_min <= zmp[1] <= y_max)
 
     def stabilize(self, current_com, desired_com, support_polygon):
-        """Compute CoM acceleration to stabilize"""
-        # PD controller for CoM
+        """مستحکم کرنے کے لیے CoM ایکسلریشن کا حساب لگائیں"""
+        # CoM کے لیے PD کنٹرولر
         kp = 100.0
         kd = 20.0
 
@@ -259,27 +259,27 @@ class BalanceController:
 
         com_acc = kp * com_error - kd * com_vel
 
-        # Check ZMP
+        # ZMP چیک کریں
         zmp = self.compute_zmp(current_com[:3], com_acc)
 
         if not self.is_stable(zmp, support_polygon):
-            # Reduce acceleration
+            # ایکسلریشن کو کم کریں
             com_acc *= 0.5
 
         return com_acc
 
-# Usage
+# استعمال
 balance = BalanceController(mass=60.0)
 current_com = np.array([0.0, 0.0, 1.0, 0.0, 0.0, 0.0])  # [x, y, z, vx, vy, vz]
 desired_com = np.array([0.1, 0.0, 1.0])
-support = [(-0.1, 0.1), (-0.05, 0.05)]  # Foot polygon
+support = [(-0.1, 0.1), (-0.05, 0.05)]  # پاؤں کا پولی گون
 
 com_acc = balance.stabilize(current_com, desired_com, support)
 ```
 
-[TRANSLATION_FAILED] ## Walking Gait Generation
+## چلنے کی چال کی جنریشن
 
-[TRANSLATION_FAILED] ### Simple Periodic Gait
+### سادہ متواتر چال
 
 ```python
 class GaitGenerator:
@@ -289,9 +289,9 @@ class GaitGenerator:
         self.period = period
 
     def foot_trajectory(self, t, phase='swing'):
-        """Generate foot trajectory"""
+        """پاؤں کی ٹریجکٹری تیار کریں"""
         if phase == 'swing':
-            # Sinusoidal swing
+            # سائنوسائیڈل سوئنگ
             progress = (t % self.period) / self.period
 
             x = self.step_length * progress
@@ -300,12 +300,12 @@ class GaitGenerator:
 
             return np.array([x, y, z])
         else:
-            # Stance (stationary)
+            # اسٹینس (اسٹیشنری)
             return np.array([0.0, 0.0, 0.0])
 
     def generate_gait(self, t):
-        """Generate full walking pattern"""
-        # Alternate legs
+        """مکمل چلنے کا پیٹرن تیار کریں"""
+        # ٹانگوں کو باری باری
         left_phase = 'swing' if (t // self.period) % 2 == 0 else 'stance'
         right_phase = 'stance' if left_phase == 'swing' else 'swing'
 
@@ -314,7 +314,7 @@ class GaitGenerator:
 
         return left_foot, right_foot
 
-# Usage
+# استعمال
 gait = GaitGenerator(step_length=0.2, step_height=0.05, period=1.0)
 
 for t in np.linspace(0, 4, 100):
@@ -322,7 +322,7 @@ for t in np.linspace(0, 4, 100):
     print(f"t={t:.2f}: Left={left}, Right={right}")
 ```
 
-[TRANSLATION_FAILED] ## ROS 2 Integration
+## ROS 2 انضمام
 
 ```python
 from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
@@ -331,17 +331,17 @@ class HumanoidController(Node):
     def __init__(self):
         super().__init__('humanoid_controller')
 
-        # Publishers
+        # پبلشرز
         self.traj_pub = self.create_publisher(
             JointTrajectory,
             '/joint_trajectory',
             10
         )
 
-        # IK solver
+        # IK سالور
         self.ik_solver = HumanoidArmIK()
 
-        # Service for cartesian goals
+        # کارٹیشین اہداف کے لیے سروس
         self.srv = self.create_service(
             MoveToCartesian,
             'move_to_cartesian',
@@ -352,16 +352,16 @@ class HumanoidController(Node):
         # request.target_pose = [x, y, z]
         target = np.array([request.x, request.y, request.z])
 
-        # Solve IK
+        # IK حل کریں
         joints, success = self.ik_solver.inverse_kinematics(target)
 
         if success:
-            # Send trajectory
+            # ٹریجکٹری بھیجیں
             self.send_trajectory(joints)
             response.success = True
         else:
             response.success = False
-            response.message = "IK failed"
+            response.message = "IK ناکام"
 
         return response
 
@@ -377,20 +377,20 @@ class HumanoidController(Node):
         self.traj_pub.publish(msg)
 ```
 
-[TRANSLATION_FAILED] ## Summary
+## خلاصہ
 
-[TRANSLATION_FAILED] This week you learned:
+اس ہفتے آپ نے سیکھا:
 
-[TRANSLATION_FAILED] - Forward kinematics with DH parameters
-[TRANSLATION_FAILED] - Inverse kinematics (numerical and analytical)
-[TRANSLATION_FAILED] - Jacobian-based methods
-[TRANSLATION_FAILED] - Whole-body control with QP
-[TRANSLATION_FAILED] - Balance control and ZMP
-[TRANSLATION_FAILED] - Walking gait generation
-[TRANSLATION_FAILED] - ROS 2 motion control integration
+- DH پیرامیٹرز کے ساتھ فارورڈ کائنی میٹکس
+- انورس کائنی میٹکس (عددی اور تجزیاتی)
+- جیکوبین پر مبنی طریقے
+- QP کے ساتھ ہول باڈی کنٹرول
+- بیلنس کنٹرول اور ZMP
+- چلنے کی چال کی جنریشن
+- ROS 2 موشن کنٹرول انضمام
 
-[TRANSLATION_FAILED] ## What's Next?
+## آگے کیا ہے؟
 
-[TRANSLATION_FAILED] **Week 13: Capstone Project** - Build a complete autonomous humanoid assistant integrating all modules.
+**ہفتہ 13: کیپ اسٹون پروجیکٹ** - تمام ماڈیولز کو مربوط کرتے ہوئے ایک مکمل خود مختار ہیومنائڈ اسسٹنٹ بنائیں۔
 
-[TRANSLATION_FAILED] **Next**: [Week 13: Capstone →](./week13-capstone.md)
+**آگے**: [ہفتہ 13: کیپ اسٹون →](./week13-capstone.md)

@@ -1,49 +1,49 @@
-[TRANSLATION_FAILED] # Week 11: Voice-to-Action with Whisper
+# ہفتہ 11: وسپر کے ساتھ وائس ٹو ایکشن
 
-[TRANSLATION_FAILED] ## Introduction
+## تعارف
 
-[TRANSLATION_FAILED] This week, you'll build a complete voice control system for your humanoid using **Whisper** (speech recognition), **LLMs** (reasoning), and action primitives. The pipeline converts spoken commands to robot actions in real-time.
+اس ہفتے، آپ **وسپر** (اسپیچ ریکگنیشن)، **ایل ایل ایم** (استدلال)، اور ایکشن پریمیٹیوز کا استعمال کرتے ہوئے اپنے ہیومنائڈ کے لیے ایک مکمل وائس کنٹرول سسٹم بنائیں گے۔ یہ پائپ لائن بولے گئے احکامات کو حقیقی وقت میں روبوٹ کے اعمال میں تبدیل کرتی ہے۔
 
-[TRANSLATION_FAILED] ## Architecture
+## فن تعمیر
 
 ```
 ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│Microphone│───>│ Whisper  │───>│   LLM    │───>│ Actions  │
-│  (Audio) │    │   (ASR)  │    │(Reasoning)│    │(Robotics)│
+│مائیکروفون│───>│  وسپر    │───>│   LLM    │───>│   اعمال   │
+│  (آڈیو)  │    │   (ASR)  │    │(استدلال) │    │(روبوٹکس)│
 └──────────┘    └──────────┘    └──────────┘    └──────────┘
 ```
 
-[TRANSLATION_FAILED] **Components**:
-[TRANSLATION_FAILED] - **ASR**: Whisper (OpenAI)
-[TRANSLATION_FAILED] - **LLM**: GPT-4, LLaMA, Mistral
-[TRANSLATION_FAILED] - **TTS**: piper, coqui-tts (optional feedback)
-[TRANSLATION_FAILED] - **Action primitives**: Navigate, pick, place, etc.
+**اجزاء**:
+- **ASR**: وسپر (اوپن اے آئی)
+- **LLM**: GPT-4, LLaMA, Mistral
+- **TTS**: پائپر، کوکی-ٹی ٹی ایس (اختیاری فیڈ بیک)
+- **ایکشن پریمیٹیوز**: نیویگیٹ، پک، پلیس، وغیرہ۔
 
-[TRANSLATION_FAILED] ## Whisper Installation
+## وسپر انسٹالیشن
 
 ```bash
 pip install openai-whisper torch
 
-# For faster inference (optional)
+# تیز تر انفرنس کے لیے (اختیاری)
 pip install faster-whisper
 ```
 
-[TRANSLATION_FAILED] ## Basic Whisper Usage
+## بنیادی وسپر استعمال
 
 ```python
 import whisper
 
-# Load model
+# ماڈل لوڈ کریں
 model = whisper.load_model("base")  # tiny, base, small, medium, large
 
-# Transcribe audio file
+# آڈیو فائل کو ٹرانسکرائب کریں
 result = model.transcribe("audio.mp3")
 
 print(result["text"])
-# Output: "Robot, please bring me a cup of water"
+# آؤٹ پٹ: "روبوٹ، براہ کرم مجھے ایک کپ پانی لا دو"
 ```
 
-[TRANSLATION_FAILED] ## Real-Time Microphone Input
+## حقیقی وقت میں مائیکروفون ان پٹ
 
 ```python
 import pyaudio
@@ -64,7 +64,7 @@ class VoiceListener:
         )
 
     def listen(self, duration=5):
-        print("Listening...")
+        print("سن رہا ہوں...")
         frames = []
 
         for _ in range(0, int(16000 / 1024 * duration)):
@@ -81,14 +81,14 @@ class VoiceListener:
         self.stream.close()
         self.audio.terminate()
 
-# Usage
+# استعمال
 listener = VoiceListener()
 command = listener.listen(duration=5)
-print(f"You said: {command}")
+print(f"آپ نے کہا: {command}")
 listener.close()
 ```
 
-[TRANSLATION_FAILED] ## ROS 2 Voice Command Node
+## ROS 2 وائس کمانڈ نوڈ
 
 ```python
 from std_msgs.msg import String
@@ -100,13 +100,13 @@ class VoiceCommandNode(Node):
     def __init__(self):
         super().__init__('voice_command')
 
-        # Whisper model
+        # وسپر ماڈل
         self.model = whisper.load_model("base")
 
-        # Publisher for transcriptions
+        # ٹرانسکرپشنز کے لیے پبلشر
         self.pub = self.create_publisher(String, '/voice_command', 10)
 
-        # Audio stream
+        # آڈیو اسٹریم
         self.audio = pyaudio.PyAudio()
         self.stream = self.audio.open(
             format=pyaudio.paInt16,
@@ -116,13 +116,13 @@ class VoiceCommandNode(Node):
             frames_per_buffer=1024
         )
 
-        # Timer for continuous listening
+        # مسلسل سننے کے لیے ٹائمر
         self.timer = self.create_timer(5.0, self.listen_and_transcribe)
 
-        self.get_logger().info('Voice command node started')
+        self.get_logger().info('وائس کمانڈ نوڈ شروع ہو گیا')
 
     def listen_and_transcribe(self):
-        # Record 5 seconds of audio
+        # 5 سیکنڈ کا آڈیو ریکارڈ کریں
         frames = []
         for _ in range(0, int(16000 / 1024 * 5)):
             data = self.stream.read(1024)
@@ -130,12 +130,12 @@ class VoiceCommandNode(Node):
 
         audio_data = np.concatenate(frames).astype(np.float32) / 32768.0
 
-        # Transcribe
+        # ٹرانسکرائب کریں
         result = self.model.transcribe(audio_data, language='en', fp16=False)
         text = result["text"].strip()
 
         if text:
-            self.get_logger().info(f'Heard: {text}')
+            self.get_logger().info(f'سنا: {text}')
             msg = String()
             msg.data = text
             self.pub.publish(msg)
@@ -147,9 +147,9 @@ class VoiceCommandNode(Node):
         super().destroy_node()
 ```
 
-[TRANSLATION_FAILED] ## LLM for Command Parsing
+## کمانڈ پارسنگ کے لیے LLM
 
-[TRANSLATION_FAILED] Use LLM to extract intent and parameters:
+نیت اور پیرامیٹرز نکالنے کے لیے LLM استعمال کریں:
 
 ```python
 from openai import OpenAI
@@ -159,17 +159,17 @@ class CommandParser:
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def parse_command(self, text):
-        prompt = f"""Parse this robot command into a JSON action:
-Command: "{text}"
+        prompt = f"""اس روبوٹ کمانڈ کو JSON ایکشن میں پارس کریں:
+کمانڈ: "{text}"
 
-Available actions:
+دستیاب اعمال:
 - navigate(location: str)
 - pick(object: str)
 - place(object: str, location: str)
 - search(object: str)
 
-Return only JSON, no explanation.
-Example: {{"action": "navigate", "params": {{"location": "kitchen"}}}}"""
+صرف JSON واپس کریں، کوئی وضاحت نہیں۔
+مثال: {{"action": "navigate", "params": {{"location": "kitchen"}}}}"""
 
         response = self.client.chat.completions.create(
             model="gpt-4",
@@ -180,14 +180,14 @@ Example: {{"action": "navigate", "params": {{"location": "kitchen"}}}}"""
         import json
         return json.loads(response.choices[0].message.content)
 
-# Usage
+# استعمال
 parser = CommandParser()
-result = parser.parse_command("Robot, bring me a cup from the kitchen")
+result = parser.parse_command("روبوٹ، مجھے کچن سے ایک کپ لا دو")
 print(result)
 # {"action": "pick", "params": {"object": "cup", "location": "kitchen"}}
 ```
 
-[TRANSLATION_FAILED] ## Complete Voice-to-Action Pipeline
+## مکمل وائس ٹو ایکشن پائپ لائن
 
 ```python
 from std_msgs.msg import String
@@ -200,16 +200,16 @@ class VoiceToActionNode(Node):
     def __init__(self):
         super().__init__('voice_to_action')
 
-        # Whisper
+        # وسپر
         self.whisper_model = whisper.load_model("base")
 
-        # LLM parser
+        # LLM پارسر
         self.llm = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-        # Navigator
+        # نیویگیٹر
         self.navigator = BasicNavigator()
 
-        # Voice command subscriber
+        # وائس کمانڈ سبسکرائبر
         self.sub = self.create_subscription(
             String,
             '/voice_command',
@@ -217,24 +217,24 @@ class VoiceToActionNode(Node):
             10
         )
 
-        # Predefined locations
+        # پہلے سے طے شدہ مقامات
         self.locations = {
             "kitchen": (3.0, 2.0),
             "living room": (1.0, 1.0),
             "bedroom": (5.0, 4.0),
         }
 
-        self.get_logger().info('Voice-to-Action ready')
+        self.get_logger().info('وائس ٹو ایکشن تیار ہے')
 
     def command_callback(self, msg):
         command_text = msg.data
 
-        # Parse with LLM
+        # LLM کے ساتھ پارس کریں
         action = self.parse_command(command_text)
 
-        self.get_logger().info(f'Executing: {action}')
+        self.get_logger().info(f'عمل درآمد: {action}')
 
-        # Execute action
+        # عمل درآمد کریں
         if action["action"] == "navigate":
             self.navigate_to(action["params"]["location"])
         elif action["action"] == "pick":
@@ -243,9 +243,9 @@ class VoiceToActionNode(Node):
             self.search_object(action["params"]["object"])
 
     def parse_command(self, text):
-        prompt = f"""Parse: "{text}"
-Actions: navigate(location), pick(object), search(object)
-JSON only:"""
+        prompt = f"""پارس کریں: "{text}"
+اعمال: navigate(location), pick(object), search(object)
+صرف JSON:"""
 
         response = self.llm.chat.completions.create(
             model="gpt-4",
@@ -266,22 +266,22 @@ JSON only:"""
             goal_pose.pose.orientation.w = 1.0
 
             self.navigator.goToPose(goal_pose)
-            self.get_logger().info(f'Navigating to {location}')
+            self.get_logger().info(f'{location} پر نیویگیٹ کر رہا ہے')
         else:
-            self.get_logger().warn(f'Unknown location: {location}')
+            self.get_logger().warn(f'نامعلوم مقام: {location}')
 
     def pick_object(self, object_name):
-        self.get_logger().info(f'Picking {object_name}')
-        # Implement pick logic (Week 12)
+        self.get_logger().info(f'{object_name} اٹھا رہا ہے')
+        # اٹھانے کی منطق نافذ کریں (ہفتہ 12)
 
     def search_object(self, object_name):
-        self.get_logger().info(f'Searching for {object_name}')
-        # Use CLIP to find object (Week 10)
+        self.get_logger().info(f'{object_name} کی تلاش ہے')
+        # آبجیکٹ تلاش کرنے کے لیے CLIP استعمال کریں (ہفتہ 10)
 ```
 
-[TRANSLATION_FAILED] ## Text-to-Speech Feedback
+## ٹیکسٹ ٹو اسپیچ فیڈ بیک
 
-[TRANSLATION_FAILED] Provide voice feedback:
+صوتی فیڈ بیک فراہم کریں:
 
 ```python
 from piper import PiperVoice
@@ -292,25 +292,25 @@ class VoiceFeedback:
 
     def speak(self, text):
         audio = self.voice.synthesize(text)
-        # Play audio
+        # آڈیو چلائیں
         import sounddevice as sd
         sd.play(audio, samplerate=22050)
         sd.wait()
 
-# In node
+# نوڈ میں
 class VoiceToActionNode(Node):
     def __init__(self):
         # ...
         self.feedback = VoiceFeedback()
 
     def navigate_to(self, location):
-        self.feedback.speak(f"Navigating to {location}")
+        self.feedback.speak(f"{location} پر نیویگیٹ کر رہا ہوں")
         # ...
 ```
 
-[TRANSLATION_FAILED] ## Wake Word Detection
+## ویک ورڈ ڈیٹیکشن
 
-[TRANSLATION_FAILED] Use voice activity detection:
+وائس ایکٹیویٹی ڈیٹیکشن استعمال کریں:
 
 ```python
 import webrtcvad
@@ -318,27 +318,27 @@ import webrtcvad
 class WakeWordDetector:
     def __init__(self, wake_word="robot"):
         self.wake_word = wake_word
-        self.vad = webrtcvad.Vad(3)  # Aggressiveness 0-3
+        self.vad = webrtcvad.Vad(3)  # جارحیت 0-3
 
     def is_wake_word(self, audio_chunk):
-        # Simple implementation: use Whisper
+        # سادہ نفاذ: وسپر استعمال کریں
         model = whisper.load_model("tiny")
         result = model.transcribe(audio_chunk)
 
         return self.wake_word.lower() in result["text"].lower()
 
-# Usage
+# استعمال
 detector = WakeWordDetector(wake_word="hey robot")
 
 while True:
     audio = record_audio(duration=2)
     if detector.is_wake_word(audio):
-        print("Wake word detected!")
+        print("ویک ورڈ کا پتہ چلا!")
         command = record_audio(duration=5)
-        # Process command
+        # کمانڈ پر کارروائی کریں
 ```
 
-[TRANSLATION_FAILED] ## Complete Example Launch
+## مکمل مثال لانچ
 
 ```python
 from launch import LaunchDescription
@@ -346,7 +346,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     return LaunchDescription([
-        # Voice command listener
+        # وائس کمانڈ لسنسر
         Node(
             package='humanoid_voice',
             executable='voice_listener',
@@ -354,7 +354,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Voice-to-action executor
+        # وائس ٹو ایکشن ایگزیکیوٹر
         Node(
             package='humanoid_voice',
             executable='voice_to_action',
@@ -366,12 +366,12 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Navigation (from Week 9)
-        # CLIP detection (from Week 10)
+        # نیویگیشن (ہفتہ 9 سے)
+        # CLIP ڈیٹیکشن (ہفتہ 10 سے)
     ])
 ```
 
-[TRANSLATION_FAILED] ## Error Handling
+## غلطی سے نمٹنا
 
 ```python
 def command_callback(self, msg):
@@ -379,30 +379,30 @@ def command_callback(self, msg):
         action = self.parse_command(msg.data)
         self.execute_action(action)
     except json.JSONDecodeError:
-        self.get_logger().error('Failed to parse command')
-        self.feedback.speak("I didn't understand that")
+        self.get_logger().error('کمانڈ پارس کرنے میں ناکام')
+        self.feedback.speak("مجھے یہ سمجھ نہیں آیا")
     except KeyError as e:
-        self.get_logger().error(f'Missing parameter: {e}')
-        self.feedback.speak("I'm missing some information")
+        self.get_logger().error(f'پیرامیٹر غائب ہے: {e}')
+        self.feedback.speak("مجھے کچھ معلومات غائب ہیں")
     except Exception as e:
-        self.get_logger().error(f'Error: {e}')
-        self.feedback.speak("Something went wrong")
+        self.get_logger().error(f'خرابی: {e}')
+        self.feedback.speak("کچھ غلط ہو گیا")
 ```
 
-[TRANSLATION_FAILED] ## Summary
+## خلاصہ
 
-[TRANSLATION_FAILED] This week you learned:
+اس ہفتے آپ نے سیکھا:
 
-[TRANSLATION_FAILED] - Whisper for speech-to-text
-[TRANSLATION_FAILED] - Real-time microphone input
-[TRANSLATION_FAILED] - LLM command parsing
-[TRANSLATION_FAILED] - Voice-to-action pipeline
-[TRANSLATION_FAILED] - Text-to-speech feedback
-[TRANSLATION_FAILED] - Wake word detection
-[TRANSLATION_FAILED] - Complete ROS 2 integration
+- اسپیچ ٹو ٹیکسٹ کے لیے وسپر
+- حقیقی وقت میں مائیکروفون ان پٹ
+- ایل ایل ایم کمانڈ پارسنگ
+- وائس ٹو ایکشن پائپ لائن
+- ٹیکسٹ ٹو اسپیچ فیڈ بیک
+- ویک ورڈ ڈیٹیکشن
+- مکمل ROS 2 انضمام
 
-[TRANSLATION_FAILED] ## What's Next?
+## آگے کیا ہے؟
 
-[TRANSLATION_FAILED] **Week 12: Humanoid Kinematics and Control** - Implement forward/inverse kinematics and whole-body control for manipulation.
+**ہفتہ 12: ہیومنائڈ کائنی میٹکس اور کنٹرول** - ہیرا پھیری کے لیے فارورڈ/انورس کائنی میٹکس اور ہول باڈی کنٹرول نافذ کریں۔
 
-[TRANSLATION_FAILED] **Next**: [Week 12: Humanoid Control →](./week12-humanoid.md)
+**آگے**: [ہفتہ 12: ہیومنائڈ کنٹرول →](./week12-humanoid.md)

@@ -1,10 +1,10 @@
-[TRANSLATION_FAILED] # Week 9: Nav2 for Bipedal Navigation
+#ہفتہ 9: بائی پیڈل نیویگیشن کے لیے Nav2
 
-[TRANSLATION_FAILED] ## Introduction
+## تعارف
 
-[TRANSLATION_FAILED] **Nav2** (Navigation2) is ROS 2's autonomous navigation framework. This week, you'll integrate SLAM with Nav2 to enable your humanoid to navigate autonomously - planning paths, avoiding obstacles, and recovering from failures.
+**Nav2** (نیویگیشن 2) ROS 2 کا خود مختار نیویگیشن فریم ورک ہے۔ اس ہفتے، آپ SLAM کو Nav2 کے ساتھ مربوط کریں گے تاکہ آپ کا ہیومنائڈ خود مختار طور پر نیویگیٹ کر سکے - راستوں کی منصوبہ بندی، رکاوٹوں سے بچنا، اور ناکامیوں سے بحالی۔
 
-[TRANSLATION_FAILED] ## Nav2 Architecture
+## Nav2 فن تعمیر
 
 ```
 ┌─────────┐    ┌──────────┐    ┌─────────────┐
@@ -24,26 +24,26 @@
                                └───────────────┘
 ```
 
-[TRANSLATION_FAILED] **Components**:
-[TRANSLATION_FAILED] - **Planner Server**: Global path (A*, Theta*, SmacPlanner)
-[TRANSLATION_FAILED] - **Controller Server**: Local trajectory (DWB, TEB, MPPI)
-[TRANSLATION_FAILED] - **Costmap 2D**: Obstacle representation
-[TRANSLATION_FAILED] - **Behavior Server**: Recovery behaviors
-[TRANSLATION_FAILED] - **BT Navigator**: Behavior tree coordination
+**اجزاء**:
+- **پلانر سرور**: عالمی راستہ (A*, Theta*, SmacPlanner)
+- **کنٹرولر سرور**: مقامی ٹریجکٹری (DWB, TEB, MPPI)
+- **کاسٹ میپ 2D**: رکاوٹوں کی نمائندگی
+- **بی ہیویئر سرور**: بحالی کے رویے
+- **بی ٹی نیویگیٹر**: بی ہیویئر ٹری کوآرڈینیشن
 
-[TRANSLATION_FAILED] ## Installation
+## انسٹالیشن
 
 ```bash
-# Install Nav2
+# Nav2 انسٹال کریں
 sudo apt install ros-humble-navigation2 ros-humble-nav2-bringup
 
-# Test
+# ٹیسٹ
 ros2 pkg list | grep nav2
 ```
 
-[TRANSLATION_FAILED] ## Costmaps Configuration
+## کاسٹ میپس کنفیگریشن
 
-[TRANSLATION_FAILED] Create `config/nav2_params.yaml`:
+`config/nav2_params.yaml` بنائیں:
 
 ```yaml
 costmap_2d:
@@ -56,7 +56,7 @@ costmap_2d:
     width: 20
     height: 20
     resolution: 0.05
-    robot_radius: 0.3  # Humanoid footprint
+    robot_radius: 0.3  # ہیومنائڈ فٹ پرنٹ
 
     plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
 
@@ -81,9 +81,9 @@ costmap_2d:
       inflation_radius: 0.55
 ```
 
-[TRANSLATION_FAILED] ## Planner Configuration
+## پلانر کنفیگریشن
 
-[TRANSLATION_FAILED] ### NavFn Planner (A*)
+### NavFn پلانر (A*)
 
 ```yaml
 planner_server:
@@ -98,9 +98,9 @@ planner_server:
       allow_unknown: true
 ```
 
-[TRANSLATION_FAILED] ### Smac Planner (Hybrid A*)
+### Smac پلانر (ہائبرڈ A*)
 
-[TRANSLATION_FAILED] Better for non-holonomic robots:
+غیر ہولونومک روبوٹس کے لیے بہتر:
 
 ```yaml
     SmacHybrid:
@@ -115,16 +115,16 @@ planner_server:
       angle_quantization_bins: 72
       analytic_expansion_ratio: 3.5
       analytic_expansion_max_length: 3.0
-      minimum_turning_radius: 0.4  # Humanoid turning radius
+      minimum_turning_radius: 0.4  # ہیومنائڈ ٹرننگ ریڈیس
       reverse_penalty: 2.0
       change_penalty: 0.05
       non_straight_penalty: 1.05
       cost_penalty: 2.0
 ```
 
-[TRANSLATION_FAILED] ## Controller Configuration
+## کنٹرولر کنفیگریشن
 
-[TRANSLATION_FAILED] ### DWB Controller
+### DWB کنٹرولر
 
 ```yaml
 controller_server:
@@ -154,7 +154,7 @@ controller_server:
       debug_trajectory_details: true
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.5  # Humanoid max walk speed
+      max_vel_x: 0.5  # ہیومنائڈ کی زیادہ سے زیادہ چلنے کی رفتار
       max_vel_y: 0.0
       max_vel_theta: 1.0
       min_speed_xy: 0.0
@@ -191,9 +191,9 @@ controller_server:
       RotateToGoal.lookahead_time: -1.0
 ```
 
-[TRANSLATION_FAILED] ## Behavior Server
+## بی ہیویئر سرور
 
-[TRANSLATION_FAILED] Recovery behaviors for failures:
+ناکامیوں کے لیے بحالی کے رویے:
 
 ```yaml
 behavior_server:
@@ -219,7 +219,7 @@ behavior_server:
     rotational_acc_lim: 3.2
 ```
 
-[TRANSLATION_FAILED] ## Launch Nav2
+## Nav2 لانچ کریں
 
 ```python
 from launch import LaunchDescription
@@ -233,14 +233,14 @@ def generate_launch_description():
     nav2_params = os.path.join(pkg_dir, 'config', 'nav2_params.yaml')
 
     return LaunchDescription([
-        # Map server (if using pre-built map)
+        # میپ سرور (اگر پہلے سے بنایا ہوا نقشہ استعمال کر رہے ہیں)
         Node(
             package='nav2_map_server',
             executable='map_server',
             parameters=[{'yaml_filename': '/path/to/map.yaml'}]
         ),
 
-        # Lifecycle manager for map server
+        # میپ سرور کے لیے لائف سائیکل مینیجر
         Node(
             package='nav2_lifecycle_manager',
             executable='lifecycle_manager',
@@ -250,10 +250,10 @@ def generate_launch_description():
             }]
         ),
 
-        # AMCL localization (if not using cuVSLAM)
+        # AMCL لوکلائزیشن (اگر cuVSLAM استعمال نہیں کر رہے ہیں)
         # Node(...),
 
-        # Nav2 bringup
+        # Nav2 برنگ اپ
         IncludeLaunchDescription(
             os.path.join(
                 get_package_share_directory('nav2_bringup'),
@@ -267,27 +267,27 @@ def generate_launch_description():
     ])
 ```
 
-[TRANSLATION_FAILED] Run:
+چلائیں:
 
 ```bash
 ros2 launch humanoid_navigation nav2.launch.py
 ```
 
-[TRANSLATION_FAILED] ## Sending Navigation Goals
+## نیویگیشن اہداف بھیجنا
 
-[TRANSLATION_FAILED] ### Command Line
+### کمانڈ لائن
 
 ```bash
-# Send goal via RViz: 2D Goal Pose button
+# RViz کے ذریعے ہدف بھیجیں: 2D گول پوز بٹن
 
-# Or via command line:
+# یا کمانڈ لائن کے ذریعے:
 ros2 topic pub --once /goal_pose geometry_msgs/PoseStamped \
   "{header: {frame_id: 'map'}, \
     pose: {position: {x: 2.0, y: 1.0, z: 0.0}, \
-           orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}}"
+           orientation: {x: 0.0, y: 0.0, z: 0.0, w: 1.0}}"}
 ```
 
-[TRANSLATION_FAILED] ### Python API
+### پائیتھن API
 
 ```python
 from geometry_msgs.msg import PoseStamped
@@ -298,10 +298,10 @@ def main():
     rclpy.init()
     navigator = BasicNavigator()
 
-    # Wait for Nav2 to activate
+    # Nav2 کے فعال ہونے کا انتظار کریں
     navigator.waitUntilNav2Active()
 
-    # Create goal pose
+    # ہدف پوز بنائیں
     goal_pose = PoseStamped()
     goal_pose.header.frame_id = 'map'
     goal_pose.header.stamp = navigator.get_clock().now().to_msg()
@@ -309,22 +309,22 @@ def main():
     goal_pose.pose.position.y = 1.0
     goal_pose.pose.orientation.w = 1.0
 
-    # Navigate to goal
+    # ہدف پر نیویگیٹ کریں
     navigator.goToPose(goal_pose)
 
-    # Wait for completion
+    # تکمیل کا انتظار کریں
     while not navigator.isTaskComplete():
         feedback = navigator.getFeedback()
-        print(f"Distance remaining: {feedback.distance_remaining:.2f} m")
+        print(f"باقی فاصلہ: {feedback.distance_remaining:.2f} m")
         rclpy.spin_once(navigator, timeout_sec=0.1)
 
     result = navigator.getResult()
     if result == TaskResult.SUCCEEDED:
-        print('Goal reached!')
+        print('ہدف تک پہنچ گئے!')
     elif result == TaskResult.CANCELED:
-        print('Goal canceled')
+        print('ہدف منسوخ کر دیا گیا')
     elif result == TaskResult.FAILED:
-        print('Goal failed')
+        print('ہدف ناکام ہو گیا')
 
     navigator.lifecycleShutdown()
     rclpy.shutdown()
@@ -333,7 +333,7 @@ if __name__ == '__main__':
     main()
 ```
 
-[TRANSLATION_FAILED] ### Action Client
+### ایکشن کلائنٹ
 
 ```python
 from rclpy.action import ActionClient
@@ -351,7 +351,7 @@ class NavigationClient(Node):
         goal_msg.pose.pose.position.x = x
         goal_msg.pose.pose.position.y = y
 
-        # Convert theta to quaternion
+        # تھیٹا کو کواٹرنین میں تبدیل کریں
         import math
         goal_msg.pose.pose.orientation.z = math.sin(theta / 2)
         goal_msg.pose.pose.orientation.w = math.cos(theta / 2)
@@ -366,14 +366,14 @@ class NavigationClient(Node):
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info(
-            f'Distance: {feedback.distance_remaining:.2f} m, '
+            f'فاصلہ: {feedback.distance_remaining:.2f} m, ' 
             f'ETA: {feedback.estimated_time_remaining.sec} s'
         )
 
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
-            self.get_logger().warn('Goal rejected')
+            self.get_logger().warn('ہدف مسترد کر دیا گیا')
             return
 
         get_result_future = goal_handle.get_result_async()
@@ -381,20 +381,20 @@ class NavigationClient(Node):
 
     def result_callback(self, future):
         result = future.result().result
-        self.get_logger().info(f'Result: {result}')
+        self.get_logger().info(f'نتیجہ: {result}')
 ```
 
-[TRANSLATION_FAILED] ## Waypoint Following
+## وے پوائنٹ فالوونگ
 
-[TRANSLATION_FAILED] Navigate through multiple points:
+متعدد پوائنٹس کے ذریعے نیویگیٹ کریں:
 
 ```python
 from nav2_simple_commander.robot_navigator import BasicNavigator
 
 navigator = BasicNavigator()
-navigator.waitUntilNav2Active()
+avigator.waitUntilNav2Active()
 
-# Define waypoints
+# وے پوائنٹس کی وضاحت کریں
 waypoints = [
     create_pose(1.0, 1.0),
     create_pose(2.0, 0.5),
@@ -402,13 +402,13 @@ waypoints = [
     create_pose(2.0, 2.0),
 ]
 
-navigator.followWaypoints(waypoints)
+avigator.followWaypoints(waypoints)
 
 while not navigator.isTaskComplete():
     feedback = navigator.getFeedback()
-    print(f'Waypoint {feedback.current_waypoint + 1}/{len(waypoints)}')
+    print(f'وے پوائنٹ {feedback.current_waypoint + 1}/{len(waypoints)}')
 
-navigator.lifecycleShutdown()
+avigator.lifecycleShutdown()
 
 def create_pose(x, y, theta=0.0):
     pose = PoseStamped()
@@ -419,15 +419,15 @@ def create_pose(x, y, theta=0.0):
     return pose
 ```
 
-[TRANSLATION_FAILED] ## Obstacle Avoidance
+## رکاوٹوں سے بچنا
 
-[TRANSLATION_FAILED] ### Dynamic Obstacles
+### متحرک رکاوٹیں
 
-[TRANSLATION_FAILED] Nav2 automatically avoids obstacles detected by sensors.
+Nav2 خود بخود سینسرز کے ذریعے پتہ لگائی گئی رکاوٹوں سے بچتا ہے۔
 
-[TRANSLATION_FAILED] ### Keepout Zones
+### کیپ آؤٹ زونز
 
-[TRANSLATION_FAILED] Define no-go areas:
+نو-گو ایریاز کی وضاحت کریں:
 
 ```yaml
 # keepout_filter.yaml
@@ -438,10 +438,10 @@ filters:
       enabled: true
       filter_info_topic: "/costmap_filter_info"
 
-# Define keepout zones in map
+# نقشے میں کیپ آؤٹ زونز کی وضاحت کریں
 ```
 
-[TRANSLATION_FAILED] ## Complete Humanoid Navigation Example
+## مکمل ہیومنائڈ نیویگیشن مثال
 
 ```python
 from launch import LaunchDescription
@@ -450,8 +450,8 @@ from launch.actions import IncludeLaunchDescription
 
 def generate_launch_description():
     return LaunchDescription([
-        # Isaac Sim with cuVSLAM
-        # (run separately)
+        # cuVSLAM کے ساتھ آئزک سم
+        # (الگ سے چلائیں)
 
         # Nav2
         IncludeLaunchDescription(
@@ -462,7 +462,7 @@ def generate_launch_description():
             }.items()
         ),
 
-        # RViz with Nav2 plugins
+        # Nav2 پلگ انز کے ساتھ RViz
         Node(
             package='rviz2',
             executable='rviz2',
@@ -471,37 +471,37 @@ def generate_launch_description():
     ])
 ```
 
-[TRANSLATION_FAILED] ## Tuning Tips
+## ٹیوننگ کی تجاویز
 
-[TRANSLATION_FAILED] ### Speed up planning:
-[TRANSLATION_FAILED] - Reduce `expected_planner_frequency`
-[TRANSLATION_FAILED] - Lower costmap `update_frequency`
+### منصوبہ بندی کو تیز کریں:
+- `expected_planner_frequency` کو کم کریں
+- کاسٹ میپ `update_frequency` کو کم کریں
 
-[TRANSLATION_FAILED] ### Better accuracy:
-[TRANSLATION_FAILED] - Increase `sim_time` in DWB
-[TRANSLATION_FAILED] - More `vx_samples` and `vtheta_samples`
+### بہتر درستگی:
+- DWB میں `sim_time` بڑھائیں
+- زیادہ `vx_samples` اور `vtheta_samples`
 
-[TRANSLATION_FAILED] ### Humanoid-specific:
-[TRANSLATION_FAILED] - Small `robot_radius` for narrow passages
-[TRANSLATION_FAILED] - Low `max_vel_x` (0.3-0.5 m/s)
-[TRANSLATION_FAILED] - High `decel_lim_x` for quick stops
-[TRANSLATION_FAILED] - Enable `RotateToGoal` critic
+### ہیومنائڈ کے لیے مخصوص:
+- تنگ راستوں کے لیے چھوٹا `robot_radius`
+- کم `max_vel_x` (0.3-0.5 m/s)
+- فوری رکنے کے لیے زیادہ `decel_lim_x`
+- `RotateToGoal` نقاد کو فعال کریں
 
-[TRANSLATION_FAILED] ## Summary
+## خلاصہ
 
-[TRANSLATION_FAILED] This week you learned:
+اس ہفتے آپ نے سیکھا:
 
-[TRANSLATION_FAILED] - Nav2 architecture and components
-[TRANSLATION_FAILED] - Costmap configuration for humanoids
-[TRANSLATION_FAILED] - Path planning with A* and Smac
-[TRANSLATION_FAILED] - DWB controller for trajectory tracking
-[TRANSLATION_FAILED] - Recovery behaviors
-[TRANSLATION_FAILED] - Sending navigation goals via API
-[TRANSLATION_FAILED] - Waypoint following
-[TRANSLATION_FAILED] - Complete SLAM + Nav2 integration
+- Nav2 فن تعمیر اور اجزاء
+- ہیومنائڈز کے لیے کاسٹ میپ کنفیگریشن
+- A* اور Smac کے ساتھ پاتھ پلاننگ
+- ٹریجکٹری ٹریکنگ کے لیے DWB کنٹرولر
+- بحالی کے رویے
+- API کے ذریعے نیویگیشن اہداف بھیجنا
+- وے پوائنٹ فالوونگ
+- مکمل SLAM + Nav2 انضمام
 
-[TRANSLATION_FAILED] ## What's Next?
+## آگے کیا ہے؟
 
-[TRANSLATION_FAILED] **Week 10: Vision-Language-Action Models** - Integrate VLMs like CLIP for object-aware navigation and manipulation.
+**ہفتہ 10: وژن-لینگویج-ایکشن ماڈلز** - آبجیکٹ سے آگاہ نیویگیشن اور ہیرا پھیری کے لیے CLIP جیسے VLMs کو مربوط کریں۔
 
-[TRANSLATION_FAILED] **Next**: [Week 10: VLA Introduction →](../module-4-vla/week10-vla-intro.md)
+**آگے**: [ہفتہ 10: VLA تعارف →](../module-4-vla/week10-vla-intro.md)

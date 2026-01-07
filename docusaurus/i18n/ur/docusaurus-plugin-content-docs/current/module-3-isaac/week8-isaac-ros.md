@@ -1,10 +1,10 @@
-[TRANSLATION_FAILED] # Week 8: Isaac ROS for VSLAM
+# ہفتہ 8: VSLAM کے لیے آئزک ROS
 
-[TRANSLATION_FAILED] ## Introduction
+## تعارف
 
-[TRANSLATION_FAILED] **Isaac ROS** provides GPU-accelerated perception and navigation packages (GEMs - GPU-Enabled Modules). This week, you'll implement visual SLAM (Simultaneous Localization and Mapping) using **cuVSLAM**, enabling your humanoid to build maps and localize in real-time.
+**آئزک ROS** GPU-ایکسلریٹڈ پرسیپشن اور نیویگیشن پیکجز (GEMs - GPU-فعال ماڈیولز) فراہم کرتا ہے۔ اس ہفتے، آپ **cuVSLAM** کا استعمال کرتے ہوئے بصری SLAM (بیک وقت لوکلائزیشن اور میپنگ) نافذ کریں گے، جس سے آپ کا ہیومنائڈ نقشے بنا سکے گا اور حقیقی وقت میں لوکلائز کر سکے گا۔
 
-[TRANSLATION_FAILED] ## Isaac ROS Architecture
+## آئزک ROS فن تعمیر
 
 ```
 ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
@@ -19,18 +19,18 @@
                                         └──────────────┘
 ```
 
-[TRANSLATION_FAILED] **Isaac ROS GEMs**:
-[TRANSLATION_FAILED] - cuVSLAM: Visual SLAM
-[TRANSLATION_FAILED] - DNN Inference: TensorRT for object detection
-[TRANSLATION_FAILED] - Image Processing: Stereo disparity, rectification
-[TRANSLATION_FAILED] - AprilTag: Fiducial markers
+**آئزک ROS GEMs**:
+- cuVSLAM: بصری SLAM
+- DNN انفرنس: آبجیکٹ ڈیٹیکشن کے لیے TensorRT
+- امیج پروسیسنگ: سٹیریو ڈسپیرٹی، ریکٹیفیکیشن
+- اپریل ٹیگ: فیڈوشل مارکرز
 
-[TRANSLATION_FAILED] ## Installation
+## انسٹالیشن
 
-[TRANSLATION_FAILED] ### Isaac ROS Prerequisites
+### آئزک ROS کی ضروریات
 
 ```bash
-# Install NVIDIA Container Toolkit
+# NVIDIA کنٹینر ٹول کٹ انسٹال کریں
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
    && curl -s -L https://nvidia.github.io/libnvidia-container/gpgkey | sudo apt-key add - \
    && curl -s -L https://nvidia.github.io/libnvidia-container/$distribution/libnvidia-container.list | sudo tee /etc/apt/sources.list.d/nvidia-container-toolkit.list
@@ -38,58 +38,58 @@ distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
 sudo apt update && sudo apt install nvidia-docker2
 sudo systemctl restart docker
 
-# Test
+# ٹیسٹ
 docker run --rm --gpus all nvidia/cuda:11.8.0-base-ubuntu22.04 nvidia-smi
 ```
 
-[TRANSLATION_FAILED] ### Isaac ROS Workspace
+### آئزک ROS ورک اسپیس
 
 ```bash
-# Create workspace
+# ورک اسپیس بنائیں
 mkdir -p ~/isaac_ros_ws/src
 cd ~/isaac_ros_ws/src
 
-# Clone Isaac ROS
+# آئزک ROS کلون کریں
 git clone --recurse-submodules https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_common.git
 git clone --recurse-submodules https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_visual_slam.git
 git clone --recurse-submodules https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_image_pipeline.git
 
-# Build (using Isaac ROS Docker)
+# بلڈ کریں (آئزک ROS ڈاکر کا استعمال کرتے ہوئے)
 cd ~/isaac_ros_ws
 ./src/isaac_ros_common/scripts/run_dev.sh
 
-# Inside container
+# کنٹینر کے اندر
 cd /workspaces/isaac_ros_ws
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-[TRANSLATION_FAILED] ## cuVSLAM Setup
+## cuVSLAM سیٹ اپ
 
-[TRANSLATION_FAILED] ### Launch cuVSLAM
+### cuVSLAM لانچ کریں
 
 ```bash
-# Terminal 1: Isaac ROS container
+# ٹرمینل 1: آئزک ROS کنٹینر
 cd ~/isaac_ros_ws
 ./src/isaac_ros_common/scripts/run_dev.sh
 source install/setup.bash
 
-# Launch cuVSLAM
+# cuVSLAM لانچ کریں
 ros2 launch isaac_ros_visual_slam isaac_ros_visual_slam.launch.py
 ```
 
-[TRANSLATION_FAILED] ### Input Topics
+### ان پٹ ٹاپکس
 
-[TRANSLATION_FAILED] cuVSLAM requires stereo or RGB-D:
+cuVSLAM کو سٹیریو یا RGB-D کی ضرورت ہے:
 
-[TRANSLATION_FAILED] - **/stereo_camera/left/image_raw**: Left rectified image
-[TRANSLATION_FAILED] - **/stereo_camera/left/camera_info**: Camera calibration
-[TRANSLATION_FAILED] - **/stereo_camera/right/image_raw**: Right rectified image
-[TRANSLATION_FAILED] - **/stereo_camera/right/camera_info**
+- **/stereo_camera/left/image_raw**: بائیں ریکٹیفائیڈ تصویر
+- **/stereo_camera/left/camera_info**: کیمرہ کیلیبریشن
+- **/stereo_camera/right/image_raw**: دائیں ریکٹیفائیڈ تصویر
+- **/stereo_camera/right/camera_info**
 
-[TRANSLATION_FAILED] ## Connecting Isaac Sim Camera
+## آئزک سم کیمرہ کو جوڑنا
 
-[TRANSLATION_FAILED] ### Isaac Sim: Stereo Camera
+### آئزک سم: سٹیریو کیمرہ
 
 ```python
 from omni.isaac.kit import SimulationApp
@@ -100,10 +100,10 @@ from omni.isaac.sensor import Camera
 import omni.graph.core as og
 import numpy as np
 
-# Create world
+# ورلڈ بنائیں
 world = World()
 
-# Left camera
+# بائیں کیمرہ
 left_camera = Camera(
     prim_path="/World/Humanoid/head/stereo_left",
     position=np.array([0.1, -0.03, 0.15]),
@@ -111,7 +111,7 @@ left_camera = Camera(
     resolution=(640, 480),
 )
 
-# Right camera
+# دائیں کیمرہ
 right_camera = Camera(
     prim_path="/World/Humanoid/head/stereo_right",
     position=np.array([0.1, 0.03, 0.15]),
@@ -119,7 +119,7 @@ right_camera = Camera(
     resolution=(640, 480),
 )
 
-# ROS 2 bridge for left camera
+# بائیں کیمرے کے لیے ROS 2 برج
 keys = og.Controller.Keys
 og.Controller.edit(
     {"graph_path": "/StereoGraphLeft", "evaluator_name": "execution"},
@@ -142,8 +142,8 @@ og.Controller.edit(
     },
 )
 
-# Similar for right camera
-# ... (repeat for stereo_right)
+# دائیں کیمرے کے لیے اسی طرح
+# ... (stereo_right کے لیے دہرائیں)
 
 world.reset()
 for i in range(1000):
@@ -152,7 +152,7 @@ for i in range(1000):
 simulation_app.close()
 ```
 
-[TRANSLATION_FAILED] ### Camera Calibration
+### کیمرہ کیلیبریشن
 
 ```yaml
 # stereo_left_camera_info.yaml
@@ -184,7 +184,7 @@ projection_matrix:
          0.0, 0.0, 1.0, 0.0]
 ```
 
-[TRANSLATION_FAILED] Publish camera info:
+کیمرہ معلومات شائع کریں:
 
 ```python
 from sensor_msgs.msg import CameraInfo
@@ -199,7 +199,7 @@ class CameraInfoPublisher(Node):
         self.info.width = 640
         self.info.height = 480
         self.info.k = [387.229, 0.0, 320.0, 0.0, 387.229, 240.0, 0.0, 0.0, 1.0]
-        # ... (fill in rest)
+        # ... (باقی بھریں)
 
     def publish_info(self):
         self.info.header.stamp = self.get_clock().now().to_msg()
@@ -207,9 +207,9 @@ class CameraInfoPublisher(Node):
         self.publisher.publish(self.info)
 ```
 
-[TRANSLATION_FAILED] ## Running cuVSLAM
+## cuVSLAM چلانا
 
-[TRANSLATION_FAILED] ### Launch File
+### لانچ فائل
 
 ```python
 from launch import LaunchDescription
@@ -217,7 +217,7 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     return LaunchDescription([
-        # cuVSLAM node
+        # cuVSLAM نوڈ
         Node(
             package='isaac_ros_visual_slam',
             executable='visual_slam_node',
@@ -245,7 +245,7 @@ def generate_launch_description():
             ]
         ),
 
-        # RViz visualization
+        # RViz ویژولائزیشن
         Node(
             package='rviz2',
             executable='rviz2',
@@ -254,23 +254,23 @@ def generate_launch_description():
     ])
 ```
 
-[TRANSLATION_FAILED] ### Run
+### چلائیں
 
 ```bash
 ros2 launch humanoid_navigation cuvslam.launch.py
 ```
 
-[TRANSLATION_FAILED] ## Output Topics
+## آؤٹ پٹ ٹاپکس
 
-[TRANSLATION_FAILED] cuVSLAM publishes:
+cuVSLAM شائع کرتا ہے:
 
-[TRANSLATION_FAILED] - **/visual_slam/tracking/odometry**: Visual odometry (nav_msgs/Odometry)
-[TRANSLATION_FAILED] - **/visual_slam/tracking/vo_pose**: Pose estimate (geometry_msgs/PoseStamped)
-[TRANSLATION_FAILED] - **/visual_slam/tracking/slam_path**: Robot trajectory (nav_msgs/Path)
-[TRANSLATION_FAILED] - **/visual_slam/vis/landmarks_cloud**: 3D map points (sensor_msgs/PointCloud2)
-[TRANSLATION_FAILED] - **/tf**: Transform tree (map → odom → base_link)
+- **/visual_slam/tracking/odometry**: بصری اوڈومیٹری (nav_msgs/Odometry)
+- **/visual_slam/tracking/vo_pose**: پوز کا تخمینہ (geometry_msgs/PoseStamped)
+- **/visual_slam/tracking/slam_path**: روبوٹ کا راستہ (nav_msgs/Path)
+- **/visual_slam/vis/landmarks_cloud**: 3D نقشہ پوائنٹس (sensor_msgs/PointCloud2)
+- **/tf**: ٹرانسفارم ٹری (map → odom → base_link)
 
-[TRANSLATION_FAILED] Subscribe to pose:
+پوز کو سبسکرائب کریں:
 
 ```python
 from nav_msgs.msg import Odometry
@@ -290,22 +290,22 @@ class SLAMSubscriber(Node):
         self.get_logger().info(f'Position: x={pos.x:.2f}, y={pos.y:.2f}, z={pos.z:.2f}')
 ```
 
-[TRANSLATION_FAILED] ## AprilTag Detection
+## اپریل ٹیگ ڈیٹیکشن
 
-[TRANSLATION_FAILED] AprilTags provide fiducial markers for localization:
+اپریل ٹیگز لوکلائزیشن کے لیے فیڈوشل مارکر فراہم کرتے ہیں:
 
-[TRANSLATION_FAILED] ### Install Isaac ROS AprilTag
+### آئزک ROS اپریل ٹیگ انسٹال کریں
 
 ```bash
 cd ~/isaac_ros_ws/src
 git clone --recurse-submodules https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_apriltag.git
 
-# Build
+# بلڈ کریں
 cd ~/isaac_ros_ws
 colcon build --packages-select isaac_ros_apriltag
 ```
 
-[TRANSLATION_FAILED] ### Launch AprilTag Detector
+### اپریل ٹیگ ڈیٹیکٹر لانچ کریں
 
 ```python
 from launch import LaunchDescription
@@ -318,7 +318,7 @@ def generate_launch_description():
             executable='apriltag_node',
             name='apriltag_detector',
             parameters=[{
-                'size': 0.16,  # Tag size in meters
+                'size': 0.16,  #میٹر میں ٹیگ کا سائز
                 'max_tags': 64,
                 'family': '36h11',
             }],
@@ -330,14 +330,14 @@ def generate_launch_description():
     ])
 ```
 
-[TRANSLATION_FAILED] ### Output
+### آؤٹ پٹ
 
 ```bash
-# Detected tags published on:
+# پتہ لگائے گئے ٹیگز یہاں شائع ہوتے ہیں:
 ros2 topic echo /tag_detections
 ```
 
-[TRANSLATION_FAILED] Process detections:
+پتہ لگائے گئے ٹیگز پر کارروائی کریں:
 
 ```python
 from isaac_ros_apriltag_interfaces.msg import AprilTagDetectionArray
@@ -362,53 +362,53 @@ class AprilTagProcessor(Node):
             )
 ```
 
-[TRANSLATION_FAILED] ## Map Saving and Loading
+## نقشہ محفوظ کرنا اور لوڈ کرنا
 
-[TRANSLATION_FAILED] ### Save Map
+### نقشہ محفوظ کریں
 
 ```bash
-# cuVSLAM saves map to disk automatically
-# Check /tmp/cuvslam or configured path
+# cuVSLAM نقشے کو خود بخود ڈسک پر محفوظ کرتا ہے
+# /tmp/cuvslam یا کنفیگر شدہ پاتھ چیک کریں
 
-# Alternatively, use ROS 2 service
+# متبادل طور پر، ROS 2 سروس استعمال کریں
 ros2 service call /visual_slam/save_map isaac_ros_visual_slam_interfaces/srv/FilePath \
   "{file_path: '/tmp/my_map.osa'}"
 ```
 
-[TRANSLATION_FAILED] ### Load Map
+### نقشہ لوڈ کریں
 
 ```bash
 ros2 service call /visual_slam/load_map isaac_ros_visual_slam_interfaces/srv/FilePath \
   "{file_path: '/tmp/my_map.osa'}"
 ```
 
-[TRANSLATION_FAILED] ### Reset SLAM
+### SLAM ری سیٹ کریں
 
 ```bash
 ros2 service call /visual_slam/reset std_srvs/srv/Empty
 ```
 
-[TRANSLATION_FAILED] ## Performance Tuning
+## کارکردگی کی ٹیوننگ
 
-[TRANSLATION_FAILED] ### Image Resolution
+### امیج ریزولوشن
 
-[TRANSLATION_FAILED] Lower resolution = faster processing:
+کم ریزولوشن = تیز پراسیسنگ:
 
 ```python
 camera = Camera(
-    resolution=(320, 240),  # Reduced from (640, 480)
+    resolution=(320, 240),  # (640, 480) سے کم کیا گیا
 )
 ```
 
-[TRANSLATION_FAILED] ### Frame Rate
+### فریم ریٹ
 
 ```python
 parameters=[{
-    'img_jitter_threshold_ms': 50.0,  # Tolerate more jitter
+    'img_jitter_threshold_ms': 50.0,  # زیادہ جٹر برداشت کریں
 }]
 ```
 
-[TRANSLATION_FAILED] ### Disable Debugging
+### ڈیبگنگ کو غیر فعال کریں
 
 ```python
 parameters=[{
@@ -417,7 +417,7 @@ parameters=[{
 }]
 ```
 
-[TRANSLATION_FAILED] ## Complete Humanoid VSLAM Example
+## مکمل ہیومنائڈ VSLAM مثال
 
 ```python
 from launch import LaunchDescription
@@ -426,10 +426,10 @@ from launch.actions import IncludeLaunchDescription
 
 def generate_launch_description():
     return LaunchDescription([
-        # Isaac Sim (run separately)
+        # آئزک سم (الگ سے چلائیں)
         # ros2 launch humanoid_sim isaac_sim.launch.py
 
-        # Camera info publishers
+        # کیمرہ معلومات پبلشرز
         Node(
             package='humanoid_navigation',
             executable='camera_info_publisher',
@@ -440,12 +440,14 @@ def generate_launch_description():
         Node(
             package='isaac_ros_visual_slam',
             executable='visual_slam_node',
-            parameters=[{
-                'map_frame': 'map',
-                'odom_frame': 'odom',
-                'base_frame': 'base_link',
-                'enable_slam_visualization': True,
-            }],
+            parameters=[
+                {
+                    'map_frame': 'map',
+                    'odom_frame': 'odom',
+                    'base_frame': 'base_link',
+                    'enable_slam_visualization': True,
+                }
+            ],
             remappings=[
                 ('stereo_camera/left/image', '/stereo_camera/left/image_raw'),
                 ('stereo_camera/left/camera_info', '/stereo_camera/left/camera_info'),
@@ -463,21 +465,21 @@ def generate_launch_description():
     ])
 ```
 
-[TRANSLATION_FAILED] ## Summary
+## خلاصہ
 
-[TRANSLATION_FAILED] This week you learned:
+اس ہفتے آپ نے سیکھا:
 
-[TRANSLATION_FAILED] - Isaac ROS architecture and GEMs
-[TRANSLATION_FAILED] - Installing cuVSLAM in Docker
-[TRANSLATION_FAILED] - Stereo camera setup in Isaac Sim
-[TRANSLATION_FAILED] - Running cuVSLAM for visual SLAM
-[TRANSLATION_FAILED] - AprilTag detection for fiducials
-[TRANSLATION_FAILED] - Map saving/loading
-[TRANSLATION_FAILED] - Performance optimization
-[TRANSLATION_FAILED] - Complete humanoid VSLAM pipeline
+- آئزک ROS فن تعمیر اور GEMs
+- ڈاکر میں cuVSLAM انسٹال کرنا
+- آئزک سم میں سٹیریو کیمرہ سیٹ اپ
+- بصری SLAM کے لیے cuVSLAM چلانا
+- فیڈوشلز کے لیے اپریل ٹیگ ڈیٹیکشن
+- نقشہ محفوظ کرنا/لوڈ کرنا
+- کارکردگی کی اصلاح
+- مکمل ہیومنائڈ VSLAM پائپ لائن
 
-[TRANSLATION_FAILED] ## What's Next?
+## آگے کیا ہے؟
 
-[TRANSLATION_FAILED] **Week 9: Nav2 for Bipedal Navigation** - Integrate SLAM with Nav2 for autonomous navigation and path planning.
+**ہفتہ 9: بائی پیڈل نیویگیشن کے لیے Nav2** - خود مختار نیویگیشن اور پاتھ پلاننگ کے لیے SLAM کو Nav2 کے ساتھ مربوط کریں۔
 
-[TRANSLATION_FAILED] **Next**: [Week 9: Navigation →](./week9-navigation.md)
+**آگے**: [ہفتہ 9: نیویگیشن →](./week9-navigation.md)

@@ -9,6 +9,7 @@ import time
 import hashlib
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+import argparse
 
 # Add the backend directory to the Python path
 backend_dir = Path(__file__).parent.parent
@@ -108,16 +109,27 @@ def process_translation(
     return lines
 
 
+import argparse
+
 # --- Main Script Logic ---
 
 def main():
     """
     Main function to translate markdown files from English to Urdu.
     """
+    parser = argparse.ArgumentParser(description="Translate markdown files from English to Urdu.")
+    parser.add_argument("--file", type=str, help="Translate a single file.")
+    args = parser.parse_args()
+
     print("=" * 70)
     print("URDU TRANSLATION SCRIPT")
     print("=" * 70)
-    print(f"Target module: {TARGET_MODULE}")
+    
+    if args.file:
+        print(f"Target file: {args.file}")
+    else:
+        print(f"Target module: {TARGET_MODULE}")
+        
     print(f"Skip existing: {SKIP_EXISTING}")
     print("=" * 70)
 
@@ -127,17 +139,20 @@ def main():
     print()
 
     try:
-        # Find markdown files based on TARGET_MODULE
-        if TARGET_MODULE == "all":
-            source_files = list(SOURCE_DIR.rglob("*.md")) + list(SOURCE_DIR.rglob("*.mdx"))
+        if args.file:
+            source_files = [SOURCE_DIR / args.file]
         else:
-            # Only process specific module
-            module_dir = SOURCE_DIR / TARGET_MODULE
-            if module_dir.exists():
-                source_files = list(module_dir.glob("*.md")) + list(module_dir.glob("*.mdx"))
+            # Find markdown files based on TARGET_MODULE
+            if TARGET_MODULE == "all":
+                source_files = list(SOURCE_DIR.rglob("*.md")) + list(SOURCE_DIR.rglob("*.mdx"))
             else:
-                print(f"✗ Error: Module directory {module_dir} not found.")
-                return
+                # Only process specific module
+                module_dir = SOURCE_DIR / TARGET_MODULE
+                if module_dir.exists():
+                    source_files = list(module_dir.glob("*.md")) + list(module_dir.glob("*.mdx"))
+                else:
+                    print(f"✗ Error: Module directory {module_dir} not found.")
+                    return
 
         if not source_files:
             print(f"✗ Error: No markdown files found in {SOURCE_DIR / TARGET_MODULE}.")

@@ -13,18 +13,18 @@
   },
   "sidebar.tutorialSidebar.category.Module 1: ROS 2 Fundamentals": {
     "message": "ماڈیول 1: ROS 2 بنیادی باتیں",
-    "description": "The label for category Module 1: ROS 2 Fundamentals in sidebar tutorialSidebar"
+    "description": "The label for category 'Module 1: ROS 2 Fundamentals' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Module 2: Gazebo Simulation": {
-    "message": "ماڈیول 2: Gazebo سمیولیشن",
-    "description": "The label for category Module 2: Gazebo Simulation in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Module 2: Gazebo & Unity Simulation": {
+    "message": "ماڈیول 2: گیزبو اور یونٹی سیمولیشن",
+    "description": "The label for category 'Module 2: Gazebo & Unity Simulation' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Module 3: Isaac Sim & NVIDIA Ecosystem": {
-    "message": "ماڈیول 3: Isaac Sim اور NVIDIA ماحولیاتی نظام",
-    "description": "The label for category Module 3: Isaac Sim & NVIDIA Ecosystem in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Module 3: NVIDIA Isaac Platform": {
+    "message": "ماڈیول 3: این ویڈیا آئزک پلیٹ فارم",
+    "description": "The label for category 'Module 3: NVIDIA Isaac Platform' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.Module 4: Vision-Language-Action Models": {
-    "message": "ماڈیول 4: وژن-لینگویج-ایکشن ماڈلز",
-    "description": "The label for category Module 4: Vision-Language-Action Models in sidebar tutorialSidebar"
+  "sidebar.tutorialSidebar.category.Module 4: Vision-Language-Action": {
+    "message": "ماڈیول 4: وژن-لینگویج-ایکشن",
+    "description": "The label for category 'Module 4: Vision-Language-Action' in sidebar 'tutorialSidebar'"
   }
 }
