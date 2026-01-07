@@ -316,7 +316,8 @@ class JointController(Node):
 - جب ممکن ہو، معیاری پیغامات کا استعمال کریں (`sensor_msgs`, `geometry_msgs`)
 - حسب ضرورت ہی حسب ضرورت پیغامات کا استعمال کریں
 - حسب ضرورت پیغام کے میدانوں کو واضح طور پر دستاویز کریں
-### 4. غلطی کا انتظام```python
+### 4. غلطی کا انتظام
+```python
 def callback(self, msg):
     try:
         # Process message

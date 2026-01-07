@@ -2,13 +2,13 @@
 sidebar_position: 2
 ---
 
-[TRANSLATION_FAILED] # Translate your site
+# اپنی سائٹ کا ترجمہ کریں
 
-[TRANSLATION_FAILED] Let's translate `docs/intro.md` to French.
+آئیے `docs/intro.md` کا فرانسیسی میں ترجمہ کریں۔
 
-[TRANSLATION_FAILED] ## Configure i18n
+## i18n کو کنفیگر کریں
 
-[TRANSLATION_FAILED] Modify `docusaurus.config.js` to add support for the `fr` locale:
+`fr` لوکیل کے لیے سپورٹ شامل کرنے کے لیے `docusaurus.config.js` میں ترمیم کریں:
 
 ```js title="docusaurus.config.js"
 export default {
@@ -19,9 +19,9 @@ export default {
 };
 ```
 
-[TRANSLATION_FAILED] ## Translate a doc
+## ایک دستاویز کا ترجمہ کریں
 
-[TRANSLATION_FAILED] Copy the `docs/intro.md` file to the `i18n/fr` folder:
+`docs/intro.md` فائل کو `i18n/fr` فولڈر میں کاپی کریں:
 
 ```bash
 mkdir -p i18n/fr/docusaurus-plugin-content-docs/current/
@@ -29,29 +29,29 @@ mkdir -p i18n/fr/docusaurus-plugin-content-docs/current/
 cp docs/intro.md i18n/fr/docusaurus-plugin-content-docs/current/intro.md
 ```
 
-[TRANSLATION_FAILED] Translate `i18n/fr/docusaurus-plugin-content-docs/current/intro.md` in French.
+`i18n/fr/docusaurus-plugin-content-docs/current/intro.md` کا فرانسیسی میں ترجمہ کریں۔
 
-[TRANSLATION_FAILED] ## Start your localized site
+## اپنی مقامی سائٹ شروع کریں
 
-[TRANSLATION_FAILED] Start your site on the French locale:
+اپنی سائٹ کو فرانسیسی لوکیل پر شروع کریں:
 
 ```bash
 npm run start -- --locale fr
 ```
 
-[TRANSLATION_FAILED] Your localized site is accessible at [http://localhost:3000/fr/](http://localhost:3000/fr/) and the `Getting Started` page is translated.
+آپ کی مقامی سائٹ [http://localhost:3000/fr/](http://localhost:3000/fr/) پر قابل رسائی ہے اور `شروع کریں` صفحہ کا ترجمہ ہو چکا ہے۔
 
-[TRANSLATION_FAILED] :::caution
+:::caution
 
-[TRANSLATION_FAILED] In development, you can only use one locale at a time.
+ترقی میں، آپ ایک وقت میں صرف ایک لوکیل استعمال کر سکتے ہیں۔
 
-[TRANSLATION_FAILED] :::
+:::
 
-[TRANSLATION_FAILED] ## Add a Locale Dropdown
+## ایک لوکیل ڈراپ ڈاؤن شامل کریں
 
-[TRANSLATION_FAILED] To navigate seamlessly across languages, add a locale dropdown.
+زبانوں کے درمیان بغیر کسی رکاوٹ کے نیویگیٹ کرنے کے لیے، ایک لوکیل ڈراپ ڈاؤن شامل کریں۔
 
-[TRANSLATION_FAILED] Modify the `docusaurus.config.js` file:
+`docusaurus.config.js` فائل میں ترمیم کریں:
 
 ```js title="docusaurus.config.js"
 export default {
@@ -69,17 +69,17 @@ export default {
 };
 ```
 
-[TRANSLATION_FAILED] The locale dropdown now appears in your navbar:
+لوکیل ڈراپ ڈاؤن اب آپ کے نیوبار میں ظاہر ہوتا ہے:
 
-[TRANSLATION_FAILED] ## Build your localized site
+## اپنی مقامی سائٹ بنائیں
 
-[TRANSLATION_FAILED] Build your site for a specific locale:
+اپنی سائٹ کو ایک مخصوص لوکیل کے لیے بنائیں:
 
 ```bash
 npm run build -- --locale fr
 ```
 
-[TRANSLATION_FAILED] Or build your site to include all the locales at once:
+یا اپنی سائٹ کو ایک ساتھ تمام لوکیلز کو شامل کرنے کے لیے بنائیں:
 
 ```bash
 npm run build

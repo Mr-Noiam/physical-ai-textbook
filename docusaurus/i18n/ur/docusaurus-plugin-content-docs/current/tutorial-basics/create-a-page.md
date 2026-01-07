@@ -2,17 +2,17 @@
 sidebar_position: 1
 ---
 
-[TRANSLATION_FAILED] # Create a Page
+# ایک صفحہ بنائیں
 
-[TRANSLATION_FAILED] Add **Markdown or React** files to `src/pages` to create a **standalone page**:
+ایک **اسٹینڈ لون صفحہ** بنانے کے لیے `src/pages` میں **مارک ڈاؤن یا ری ایکٹ** فائلیں شامل کریں:
 
-[TRANSLATION_FAILED] - `src/pages/index.js` → `localhost:3000/`
-[TRANSLATION_FAILED] - `src/pages/foo.md` → `localhost:3000/foo`
-[TRANSLATION_FAILED] - `src/pages/foo/bar.js` → `localhost:3000/foo/bar`
+- `src/pages/index.js` → `localhost:3000/`
+- `src/pages/foo.md` → `localhost:3000/foo`
+- `src/pages/foo/bar.js` → `localhost:3000/foo/bar`
 
-[TRANSLATION_FAILED] ## Create your first React Page
+## اپنا پہلا ری ایکٹ صفحہ بنائیں
 
-[TRANSLATION_FAILED] Create a file at `src/pages/my-react-page.js`:
+`src/pages/my-react-page.js` پر ایک فائل بنائیں:
 
 ```jsx title="src/pages/my-react-page.js"
 import React from 'react';
@@ -21,23 +21,23 @@ import Layout from '@theme/Layout';
 export default function MyReactPage() {
   return (
     <Layout>
-      <h1>My React page</h1>
-      <p>This is a React page</p>
+      <h1>میرا ری ایکٹ صفحہ</h1>
+      <p>یہ ایک ری ایکٹ صفحہ ہے</p>
     </Layout>
   );
 }
 ```
 
-[TRANSLATION_FAILED] A new page is now available at [http://localhost:3000/my-react-page](http://localhost:3000/my-react-page).
+ایک نیا صفحہ اب [http://localhost:3000/my-react-page](http://localhost:3000/my-react-page) پر دستیاب ہے۔
 
-[TRANSLATION_FAILED] ## Create your first Markdown Page
+## اپنا پہلا مارک ڈاؤن صفحہ بنائیں
 
-[TRANSLATION_FAILED] Create a file at `src/pages/my-markdown-page.md`:
+`src/pages/my-markdown-page.md` پر ایک فائل بنائیں:
 
 ```mdx title="src/pages/my-markdown-page.md"
-# My Markdown page
+# میرا مارک ڈاؤن صفحہ
 
-This is a Markdown page
+یہ ایک مارک ڈاؤن صفحہ ہے
 ```
 
-[TRANSLATION_FAILED] A new page is now available at [http://localhost:3000/my-markdown-page](http://localhost:3000/my-markdown-page).
+ایک نیا صفحہ اب [http://localhost:3000/my-markdown-page](http://localhost:3000/my-markdown-page) پر دستیاب ہے۔

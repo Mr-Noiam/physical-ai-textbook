@@ -2,30 +2,30 @@
 sidebar_position: 5
 ---
 
-[TRANSLATION_FAILED] # Deploy your site
+# اپنی سائٹ کو تعینات کریں
 
-[TRANSLATION_FAILED] Docusaurus is a **static-site-generator** (also called **[Jamstack](https://jamstack.org/)**).
+Docusaurus ایک **اسٹیٹک سائٹ جنریٹر** ہے (جسے **[Jamstack](https://jamstack.org/)** بھی کہا جاتا ہے)۔
 
-[TRANSLATION_FAILED] It builds your site as simple **static HTML, JavaScript and CSS files**.
+یہ آپ کی سائٹ کو سادہ **اسٹیٹک HTML، JavaScript اور CSS فائلوں** کے طور پر بناتا ہے۔
 
-[TRANSLATION_FAILED] ## Build your site
+## اپنی سائٹ بنائیں
 
-[TRANSLATION_FAILED] Build your site **for production**:
+اپنی سائٹ کو **پروڈکشن کے لیے** بنائیں:
 
 ```bash
 npm run build
 ```
 
-[TRANSLATION_FAILED] The static files are generated in the `build` folder.
+اسٹیٹک فائلیں `build` فولڈر میں تیار کی جاتی ہیں۔
 
-[TRANSLATION_FAILED] ## Deploy your site
+## اپنی سائٹ کو تعینات کریں
 
-[TRANSLATION_FAILED] Test your production build locally:
+اپنے پروڈکشن بلڈ کو مقامی طور پر ٹیسٹ کریں:
 
 ```bash
 npm run serve
 ```
 
-[TRANSLATION_FAILED] The `build` folder is now served at [http://localhost:3000/](http://localhost:3000/).
+`build` فولڈر اب [http://localhost:3000/](http://localhost:3000/) پر پیش کیا جاتا ہے۔
 
-[TRANSLATION_FAILED] You can now deploy the `build` folder **almost anywhere** easily, **for free** or very small cost (read the **[Deployment Guide](https://docusaurus.io/docs/deployment)**).
+اب آپ `build` فولڈر کو **تقریباً کہیں بھی** آسانی سے، **مفت** یا بہت کم قیمت پر تعینات کر سکتے ہیں (**[تعیناتی گائیڈ](https://docusaurus.io/docs/deployment)** پڑھیں)۔

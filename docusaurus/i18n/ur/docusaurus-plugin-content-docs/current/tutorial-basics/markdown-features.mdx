@@ -2,13 +2,13 @@
 sidebar_position: 4
 ---
 
-[TRANSLATION_FAILED] # Markdown Features
+# مارک ڈاؤن خصوصیات
 
-[TRANSLATION_FAILED] Docusaurus supports **[Markdown](https://daringfireball.net/projects/markdown/syntax)** and a few **additional features**.
+Docusaurus **[مارک ڈاؤن](https://daringfireball.net/projects/markdown/syntax)** اور کچھ **اضافی خصوصیات** کی حمایت کرتا ہے۔
 
-[TRANSLATION_FAILED] ## Front Matter
+## فرنٹ میٹر
 
-[TRANSLATION_FAILED] Markdown documents have metadata at the top called [Front Matter](https://jekyllrb.com/docs/front-matter/):
+مارک ڈاؤن دستاویزات کے اوپری حصے میں میٹا ڈیٹا ہوتا ہے جسے [فرنٹ میٹر](https://jekyllrb.com/docs/front-matter/) کہتے ہیں:
 
 ```text title="my-doc.md"
 // highlight-start
@@ -20,30 +20,30 @@ slug: /my-custom-url
 ---
 // highlight-end
 
-## Markdown heading
+## مارک ڈاؤن ہیڈنگ
 
-Markdown text with [links](./hello.md)
+[لنکس](./hello.md) کے ساتھ مارک ڈاؤن متن
 ```
 
-[TRANSLATION_FAILED] ## Links
+## لنکس
 
-[TRANSLATION_FAILED] Regular Markdown links are supported, using url paths or relative file paths.
+باقاعدہ مارک ڈاؤن لنکس کی حمایت کی جاتی ہے، یو آر ایل پاتھ یا متعلقہ فائل پاتھ کا استعمال کرتے ہوئے۔
 
 ```md
-Let's see how to [Create a page](/create-a-page).
+آئیے دیکھتے ہیں کہ [ایک صفحہ کیسے بنائیں](/create-a-page)۔
 ```
 
 ```md
-Let's see how to [Create a page](./create-a-page.md).
+آئیے دیکھتے ہیں کہ [ایک صفحہ کیسے بنائیں](./create-a-page.md)۔
 ```
 
-[TRANSLATION_FAILED] **Result:** Let's see how to [Create a page](./create-a-page.md).
+**نتیجہ:** آئیے دیکھتے ہیں کہ [ایک صفحہ کیسے بنائیں](./create-a-page.md)۔
 
-[TRANSLATION_FAILED] ## Images
+## تصاویر
 
-[TRANSLATION_FAILED] Regular Markdown images are supported.
+باقاعدہ مارک ڈاؤن تصاویر کی حمایت کی جاتی ہے۔
 
-[TRANSLATION_FAILED] You can use absolute paths to reference images in the static directory (`static/img/docusaurus.png`):
+آپ اسٹیٹک ڈائرکٹری (`static/img/docusaurus.png`) میں تصاویر کا حوالہ دینے کے لیے مطلق پاتھ استعمال کر سکتے ہیں:
 
 ```md
 ![Docusaurus logo](/img/docusaurus.png)
@@ -51,63 +51,63 @@ Let's see how to [Create a page](./create-a-page.md).
 
 ![Docusaurus logo](/img/docusaurus.png)
 
-[TRANSLATION_FAILED] You can reference images relative to the current file as well. This is particularly useful to colocate images close to the Markdown files using them:
+آپ موجودہ فائل کے متعلقہ تصاویر کا بھی حوالہ دے سکتے ہیں۔ یہ خاص طور پر ان تصاویر کو مارک ڈاؤن فائلوں کے قریب رکھنے کے لیے مفید ہے جو انہیں استعمال کرتی ہیں:
 
 ```md
 ![Docusaurus logo](./img/docusaurus.png)
 ```
 
-[TRANSLATION_FAILED] ## Code Blocks
+## کوڈ بلاکس
 
-[TRANSLATION_FAILED] Markdown code blocks are supported with Syntax highlighting.
+مارک ڈاؤن کوڈ بلاکس کو سنٹیکس ہائی لائٹنگ کے ساتھ سپورٹ کیا جاتا ہے۔
 
 ````md
 ```jsx title="src/components/HelloDocusaurus.js"
-[TRANSLATION_FAILED] function HelloDocusaurus() {
-  return <h1>Hello, Docusaurus!</h1>;
-[TRANSLATION_FAILED] }
+function HelloDocusaurus() {
+  return <h1>ہیلو، Docusaurus!</h1>;
+}
 ```
 ````
 
 ```jsx title="src/components/HelloDocusaurus.js"
 function HelloDocusaurus() {
-  return <h1>Hello, Docusaurus!</h1>;
+  return <h1>ہیلو، Docusaurus!</h1>;
 }
 ```
 
-[TRANSLATION_FAILED] ## Admonitions
+## ایڈمونیشنز
 
-[TRANSLATION_FAILED] Docusaurus has a special syntax to create admonitions and callouts:
+Docusaurus کے پاس ایڈمونیشنز اور کال آؤٹ بنانے کے لیے ایک خاص سنٹیکس ہے:
 
 ```md
-:::tip My tip
+:::tip میری ٹپ
 
-Use this awesome feature option
+اس زبردست فیچر آپشن کا استعمال کریں
 
 :::
 
-:::danger Take care
+:::danger خیال رکھیں
 
-This action is dangerous
+یہ عمل خطرناک ہے
 
 :::
 ```
 
-[TRANSLATION_FAILED] :::tip My tip
+:::tip میری ٹپ
 
-[TRANSLATION_FAILED] Use this awesome feature option
+اس زبردست فیچر آپشن کا استعمال کریں
 
-[TRANSLATION_FAILED] :::
+:::
 
-[TRANSLATION_FAILED] :::danger Take care
+:::danger خیال رکھیں
 
-[TRANSLATION_FAILED] This action is dangerous
+یہ عمل خطرناک ہے
 
-[TRANSLATION_FAILED] :::
+:::
 
-[TRANSLATION_FAILED] ## MDX and React Components
+## MDX اور ری ایکٹ اجزاء
 
-[TRANSLATION_FAILED] [MDX](https://mdxjs.com/) can make your documentation more **interactive** and allows using any **React components inside Markdown**:
+[MDX](https://mdxjs.com/) آپ کی دستاویزات کو زیادہ **انٹرایکٹو** بنا سکتا ہے اور مارک ڈاؤن کے اندر کسی بھی **ری ایکٹ اجزاء** کو استعمال کرنے کی اجازت دیتا ہے:
 
 ```jsx
 export const Highlight = ({children, color}) => (
@@ -126,27 +126,27 @@ export const Highlight = ({children, color}) => (
   </span>
 );
 
-This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
+یہ <Highlight color="#25c2a0">Docusaurus سبز</Highlight> ہے!
 
-This is <Highlight color="#1877F2">Facebook blue</Highlight> !
+یہ <Highlight color="#1877F2">Facebook نیلا</Highlight> ہے!
 ```
 
-[TRANSLATION_FAILED] export const Highlight = ({children, color}) => (
+export const Highlight = ({children, color}) => (
   <span
-    [TRANSLATION_FAILED] style={{
-      [TRANSLATION_FAILED] backgroundColor: color,
-      [TRANSLATION_FAILED] borderRadius: '20px',
-      [TRANSLATION_FAILED] color: '#fff',
-      [TRANSLATION_FAILED] padding: '10px',
-      [TRANSLATION_FAILED] cursor: 'pointer',
-    [TRANSLATION_FAILED] }}
-    [TRANSLATION_FAILED] onClick={() => {
-      [TRANSLATION_FAILED] alert(`You clicked the color ${color} with label ${children}`);
-    [TRANSLATION_FAILED] }}>
-    [TRANSLATION_FAILED] {children}
+    style={{
+      backgroundColor: color,
+      borderRadius: '20px',
+      color: '#fff',
+      padding: '10px',
+      cursor: 'pointer',
+    }}
+    onClick={() => {
+      alert(`You clicked the color ${color} with label ${children}`);
+    }}>
+    {children}
   </span>
-[TRANSLATION_FAILED] );
+);
 
-This is <Highlight color="#25c2a0">Docusaurus green</Highlight> !
+یہ <Highlight color="#25c2a0">Docusaurus سبز</Highlight> ہے!
 
-This is <Highlight color="#1877F2">Facebook blue</Highlight> !
+یہ <Highlight color="#1877F2">Facebook نیلا</Highlight> ہے!

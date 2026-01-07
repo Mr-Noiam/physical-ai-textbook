@@ -2,44 +2,44 @@
 sidebar_position: 2
 ---
 
-[TRANSLATION_FAILED] # Create a Document
+# ایک دستاویز بنائیں
 
-[TRANSLATION_FAILED] Documents are **groups of pages** connected through:
+دستاویزات **صفحات کے گروپس** ہیں جو اس کے ذریعے جڑے ہوئے ہیں:
 
-[TRANSLATION_FAILED] - a **sidebar**
-[TRANSLATION_FAILED] - **previous/next navigation**
-[TRANSLATION_FAILED] - **versioning**
+- ایک **سائڈبار**
+- **پچھلا/اگلا نیویگیشن**
+- **ورژننگ**
 
-[TRANSLATION_FAILED] ## Create your first Doc
+## اپنی پہلی دستاویز بنائیں
 
-[TRANSLATION_FAILED] Create a Markdown file at `docs/hello.md`:
+`docs/hello.md` پر ایک مارک ڈاؤن فائل بنائیں:
 
 ```md title="docs/hello.md"
-# Hello
+# ہیلو
 
-This is my **first Docusaurus document**!
+یہ میری **پہلی Docusaurus دستاویز** ہے!
 ```
 
-[TRANSLATION_FAILED] A new document is now available at [http://localhost:3000/docs/hello](http://localhost:3000/docs/hello).
+ایک نئی دستاویز اب [http://localhost:3000/docs/hello](http://localhost:3000/docs/hello) پر دستیاب ہے۔
 
-[TRANSLATION_FAILED] ## Configure the Sidebar
+## سائڈبار کو کنفیگر کریں
 
-[TRANSLATION_FAILED] Docusaurus automatically **creates a sidebar** from the `docs` folder.
+Docusaurus خود بخود `docs` فولڈر سے **ایک سائڈبار بناتا ہے**۔
 
-[TRANSLATION_FAILED] Add metadata to customize the sidebar label and position:
+سائڈبار لیبل اور پوزیشن کو اپنی مرضی کے مطابق بنانے کے لیے میٹا ڈیٹا شامل کریں:
 
 ```md title="docs/hello.md" {1-4}
 ---
-sidebar_label: 'Hi!'
+sidebar_label: 'ہیلو!'
 sidebar_position: 3
 ---
 
-# Hello
+# ہیلو
 
-This is my **first Docusaurus document**!
+یہ میری **پہلی Docusaurus دستاویز** ہے!
 ```
 
-[TRANSLATION_FAILED] It is also possible to create your sidebar explicitly in `sidebars.js`:
+`sidebars.js` میں واضح طور پر اپنا سائڈبار بنانا بھی ممکن ہے:
 
 ```js title="sidebars.js"
 export default {
@@ -49,7 +49,7 @@ export default {
     'hello',
     {
       type: 'category',
-      label: 'Tutorial',
+      label: 'ٹیوٹوریل',
       items: ['tutorial-basics/create-a-document'],
     },
   ],

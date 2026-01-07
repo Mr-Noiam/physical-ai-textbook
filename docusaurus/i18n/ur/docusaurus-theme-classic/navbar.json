@@ -1,18 +1,18 @@
 {
   "title": {
-    "message": "Physical AI & Humanoid Robotics",
+    "message": "فزیکل AI اور ہیومنائڈ روبوٹکس",
     "description": "The title in the navbar"
   },
   "logo.alt": {
-    "message": "Physical AI Logo",
+    "message": "فزیکل AI لوگو",
     "description": "The alt text of navbar logo"
   },
   "item.label.Textbook": {
-    "message": "Textbook",
+    "message": "ٹیکسٹ بک",
     "description": "Navbar item with label Textbook"
   },
   "item.label.GitHub": {
-    "message": "GitHub",
+    "message": "گٹ ہب",
     "description": "Navbar item with label GitHub"
   }
 }
