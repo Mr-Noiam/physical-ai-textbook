@@ -26,6 +26,7 @@ class AskQuestionRequest(BaseModel):
     question: str = Field(..., min_length=1, max_length=1000, description="User's question")
     selected_text: Optional[str] = Field(None, max_length=5000, description="Text selected by user (optional)")
     conversation_history: Optional[List[Dict]] = Field(None, description="Previous messages in conversation")
+    language: str = Field("en", description="Desired response language (e.g., 'en', 'ur')")
 
     class Config:
         json_schema_extra = {
@@ -106,14 +107,18 @@ async def ask_question(
                 conversation_history=request.conversation_history,
                 selected_text=request.selected_text,
                 software_level=software_level,
-                hardware_level=hardware_level
+                hardware_level=hardware_level,
+                response_language=request.language,
+                db=db
             )
         else:
             chatbot_response = generate_answer(
                 question=request.question,
                 selected_text=request.selected_text,
                 software_level=software_level,
-                hardware_level=hardware_level
+                hardware_level=hardware_level,
+                response_language=request.language,
+                db=db
             )
 
         # Convert sources to Pydantic models

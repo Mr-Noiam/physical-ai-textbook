@@ -15,6 +15,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
+import Translate, { translate } from '@docusaurus/Translate';
 import { useAuth } from '../../contexts/AuthContext';
 import styles from './styles.module.css';
 
@@ -32,9 +33,30 @@ interface Source {
 }
 
 export default function ChatbotWidget(): JSX.Element {
-  const { siteConfig } = useDocusaurusContext();
+  const { siteConfig, i18n } = useDocusaurusContext();
   const API_BASE_URL = (siteConfig.customFields?.apiBaseUrl as string) || 'http://localhost:8000';
+  const { currentLocale } = i18n;
   const { user } = useAuth();
+
+  // Detect RTL languages
+  const isRTL = currentLocale === 'ur'; // Urdu is RTL
+
+  // Translated suggestion questions
+  const suggestion1Text = translate({
+    id: 'chatbot.suggestion1',
+    message: 'What is a ROS 2 node?',
+    description: 'Chatbot suggestion 1'
+  });
+  const suggestion2Text = translate({
+    id: 'chatbot.suggestion2',
+    message: 'How do I create a URDF file?',
+    description: 'Chatbot suggestion 2'
+  });
+  const suggestion3Text = translate({
+    id: 'chatbot.suggestion3',
+    message: 'Explain Isaac Sim synthetic data',
+    description: 'Chatbot suggestion 3'
+  });
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -43,18 +65,41 @@ export default function ChatbotWidget(): JSX.Element {
   const [selectedText, setSelectedText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
+  const chatButtonRef = useRef<HTMLButtonElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Focus input when chat opens
+  // Combined effect for handling side-effects when chat is open
   useEffect(() => {
+    // 1. Define the click handler
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      // If the click is outside the window and button, close the chat
+      if (
+        chatWindowRef.current &&
+        !chatWindowRef.current.contains(target) &&
+        chatButtonRef.current &&
+        !chatButtonRef.current.contains(target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    // 2. Add listener and focus input if chat is open
     if (isOpen) {
       inputRef.current?.focus();
+      document.addEventListener('mousedown', handleClickOutside);
     }
-  }, [isOpen]);
+
+    // 3. Cleanup function to remove listener
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]); // This effect depends only on the `isOpen` state
 
   // Handle text selection
   useEffect(() => {
@@ -99,6 +144,7 @@ export default function ChatbotWidget(): JSX.Element {
             role: m.role,
             content: m.content,
           })),
+          language: currentLocale, // Send current locale to backend
         }),
       });
 
@@ -157,36 +203,59 @@ export default function ChatbotWidget(): JSX.Element {
         <button
           className={styles.askSelectionButton}
           onClick={handleAskAboutSelection}
-          title="Ask AI about selected text"
+          title={translate({
+            id: 'chatbot.askAboutSelectionButtonTitle',
+            message: 'Ask AI about selected text',
+            description: 'Title for the "Ask about this" button',
+          })}
         >
-          💡 Ask about this
+          💡{' '}
+          <Translate id="chatbot.askAboutSelectionButton" description="Ask about this button text">
+            Ask about this
+          </Translate>
         </button>
       )}
 
       {/* Main chat button */}
       <button
+        ref={chatButtonRef}
         className={`${styles.chatButton} ${isOpen ? styles.chatButtonOpen : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle chatbot"
+        aria-label={translate({
+          id: 'chatbot.toggleChatbotAriaLabel',
+          message: 'Toggle chatbot',
+          description: 'ARIA label for the chatbot toggle button',
+        })}
       >
         {isOpen ? '✕' : '💬'}
       </button>
 
       {/* Chat window */}
       {isOpen && (
-        <div className={styles.chatWindow}>
+        <div ref={chatWindowRef} className={`${styles.chatWindow} ${isRTL ? styles.chatWindowRTL : ''}`} dir={isRTL ? 'rtl' : 'ltr'}>
           {/* Header */}
           <div className={styles.chatHeader}>
             <div className={styles.chatTitle}>
               <span className={styles.chatIcon}>🤖</span>
-              <span>AI Teaching Assistant</span>
+              <span>
+                <Translate
+                  id="chatbot.headerTitle"
+                  description="Chatbot header title"
+                >
+                  AI Teaching Assistant
+                </Translate>
+              </span>
               {user && <span className={styles.userBadge}>{user.name}</span>}
             </div>
             <div className={styles.headerButtons}>
               <button
                 className={styles.clearButton}
                 onClick={clearChat}
-                title="Clear conversation"
+                title={translate({
+                  id: 'chatbot.clearConversationButtonTitle',
+                  message: 'Clear conversation',
+                  description: 'Title for the clear conversation button',
+                })}
               >
                 🗑️
               </button>
@@ -197,30 +266,77 @@ export default function ChatbotWidget(): JSX.Element {
           <div className={styles.chatMessages}>
             {messages.length === 0 ? (
               <div className={styles.welcomeMessage}>
-                <p>👋 Hi{user ? `, ${user.name}` : ''}! I'm your AI teaching assistant.</p>
-                <p>Ask me anything about the textbook content:</p>
-                {!user && <p className={styles.loginHint}>💡 <em>Login to get personalized answers based on your experience level!</em></p>}
+                <p>
+                  <Translate
+                    id="chatbot.welcomeGreetingFull"
+                    description="Chatbot welcome greeting with username"
+                    values={{ username: user?.name || translate({
+                      id: 'chatbot.defaultUsername',
+                      message: 'there',
+                      description: 'Default username when user is not logged in'
+                    }) }}
+                  >
+                    {'👋 Hi, {username}! I\'m your AI teaching assistant.'}
+                  </Translate>
+                </p>
+                <p>
+                  <Translate id="chatbot.askPrompt" description="Prompt for asking questions">
+                    Ask me anything about the textbook content:
+                  </Translate>
+                </p>
+                {!user && (
+                  <p className={styles.loginHint}>
+                    💡{' '}
+                    <em>
+                      <Translate
+                        id="chatbot.loginHint"
+                        description="Hint for logging in"
+                      >
+                        Login to get personalized answers based on your experience level!
+                      </Translate>
+                    </em>
+                  </p>
+                )}
                 <div className={styles.suggestionButtons}>
                   <button
                     className={styles.suggestionButton}
-                    onClick={() => sendMessage("What is a ROS 2 node?")}
+                    onClick={() => sendMessage(suggestion1Text)}
                   >
-                    What is a ROS 2 node?
+                    <Translate
+                      id="chatbot.suggestion1"
+                      description="Chatbot suggestion 1"
+                    >
+                      What is a ROS 2 node?
+                    </Translate>
                   </button>
                   <button
                     className={styles.suggestionButton}
-                    onClick={() => sendMessage("How do I create a URDF file?")}
+                    onClick={() => sendMessage(suggestion2Text)}
                   >
-                    How do I create a URDF file?
+                    <Translate
+                      id="chatbot.suggestion2"
+                      description="Chatbot suggestion 2"
+                    >
+                      How do I create a URDF file?
+                    </Translate>
                   </button>
                   <button
                     className={styles.suggestionButton}
-                    onClick={() => sendMessage("Explain Isaac Sim synthetic data")}
+                    onClick={() => sendMessage(suggestion3Text)}
                   >
-                    Explain Isaac Sim synthetic data
+                    <Translate
+                      id="chatbot.suggestion3"
+                      description="Chatbot suggestion 3"
+                    >
+                      Explain Isaac Sim synthetic data
+                    </Translate>
                   </button>
                 </div>
-                <p>You can also select text and ask about it!</p>
+                <p>
+                  <Translate id="chatbot.selectTextPrompt" description="Prompt for selecting text">
+                    You can also select text and ask about it!
+                  </Translate>
+                </p>
               </div>
             ) : (
               messages.map((message, index) => (
@@ -237,7 +353,11 @@ export default function ChatbotWidget(): JSX.Element {
                   {/* Sources */}
                   {message.sources && message.sources.length > 0 && (
                     <div className={styles.sources}>
-                      <div className={styles.sourcesTitle}>📚 Sources:</div>
+                      <div className={styles.sourcesTitle}>
+                        <Translate id="chatbot.sourcesTitle" description="Sources title">
+                          📚 Sources:
+                        </Translate>
+                      </div>
                       {message.sources.map((source, idx) => (
                         <a
                           key={idx}
@@ -276,6 +396,43 @@ export default function ChatbotWidget(): JSX.Element {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Suggestion buttons (now always visible) */}
+          <div className={styles.suggestionButtons}>
+            <button
+              className={styles.suggestionButton}
+              onClick={() => sendMessage(suggestion1Text)}
+            >
+              <Translate
+                id="chatbot.suggestion1"
+                description="Chatbot suggestion 1"
+              >
+                What is a ROS 2 node?
+              </Translate>
+            </button>
+            <button
+              className={styles.suggestionButton}
+              onClick={() => sendMessage(suggestion2Text)}
+            >
+              <Translate
+                id="chatbot.suggestion2"
+                description="Chatbot suggestion 2"
+              >
+                How do I create a URDF file?
+              </Translate>
+            </button>
+            <button
+              className={styles.suggestionButton}
+              onClick={() => sendMessage(suggestion3Text)}
+            >
+              <Translate
+                id="chatbot.suggestion3"
+                description="Chatbot suggestion 3"
+              >
+                Explain Isaac Sim synthetic data
+              </Translate>
+            </button>
+          </div>
+
           {/* Input */}
           <form onSubmit={handleSubmit} className={styles.chatInput}>
             <input
@@ -283,7 +440,11 @@ export default function ChatbotWidget(): JSX.Element {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask a question..."
+              placeholder={translate({
+                id: 'chatbot.inputPlaceholder',
+                message: 'Ask a question...',
+                description: 'Placeholder for the chatbot input field',
+              })}
               disabled={isLoading}
               className={styles.inputField}
             />

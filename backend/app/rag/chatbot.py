@@ -6,6 +6,9 @@ Uses OpenAI GPT-4 to generate answers based on retrieved context.
 """
 
 from typing import Dict, List, Optional
+from app.services.translation import translate_content
+from sqlalchemy.orm import Session
+from app.db.neon import get_db # Import get_db to pass a session to translation service
 
 from openai import OpenAI
 
@@ -28,10 +31,11 @@ TEMPERATURE = 0.7
 class ChatbotResponse:
     """Represents a chatbot response with answer and sources."""
 
-    def __init__(self, answer: str, sources: List[Dict], context_used: str):
+    def __init__(self, answer: str, sources: List[Dict], context_used: str, original_answer_english: Optional[str] = None):
         self.answer = answer
         self.sources = sources
         self.context_used = context_used
+        self.original_answer_english = original_answer_english
 
     def to_dict(self) -> Dict:
         """Convert to dictionary for API responses."""
@@ -41,6 +45,7 @@ class ChatbotResponse:
             "context_preview": self.context_used[:200] + "..."
             if len(self.context_used) > 200
             else self.context_used,
+            "original_answer_english": self.original_answer_english,
         }
 
 
@@ -105,7 +110,9 @@ def generate_answer(
     selected_text: Optional[str] = None,
     top_k: int = 5,
     software_level: Optional[str] = None,
-    hardware_level: Optional[str] = None
+    hardware_level: Optional[str] = None,
+    response_language: str = "en",
+    db: Optional[Session] = None
 ) -> ChatbotResponse:
     """
     Generate an answer to the user's question using RAG.
@@ -177,12 +184,30 @@ Please provide a clear, educational answer based on this content. If the content
         )
 
         answer = response.choices[0].message.content.strip()
+        original_answer_english = answer
+
+        # Translate the answer to the requested response_language if not English
+        if response_language != "en":
+            translated_answer_response = translate_content(
+                content=answer,
+                target_language=response_language,
+                db=db # Pass db session for caching
+            )
+            if translated_answer_response and translated_answer_response.translated_content:
+                answer = translated_answer_response.translated_content
+            else:
+                print(f"Warning: Failed to translate answer '{original_answer_english}' to {response_language}. Using English original.")
 
         # 5. Extract sources
         sources = get_unique_sources(search_results)
 
         # 6. Create response object
-        return ChatbotResponse(answer=answer, sources=sources, context_used=context)
+        return ChatbotResponse(
+            answer=answer,
+            sources=sources,
+            context_used=context,
+            original_answer_english=original_answer_english
+        )
 
     except Exception as e:
         print(f"Error generating answer: {e}")
@@ -194,7 +219,8 @@ def get_conversation_response(
     conversation_history: Optional[List[Dict]] = None,
     selected_text: Optional[str] = None,
     software_level: Optional[str] = None,
-    hardware_level: Optional[str] = None
+    hardware_level: Optional[str] = None,
+    response_language: str = "en"
 ) -> ChatbotResponse:
     """
     Generate answer with conversation history support.
@@ -209,6 +235,21 @@ def get_conversation_response(
     Returns:
         ChatbotResponse object
     """
+    original_question = question
+    if response_language == "ur":
+        # We need a db session for translation caching
+        from app.db.neon import get_db
+        with get_db() as db:
+            translated_question_response = translate_content(
+                content=question,
+                target_language="en",
+                db=db # Pass db session for caching
+            )
+            if translated_question_response and translated_question_response.translated_content:
+                question = translated_question_response.translated_content
+            else:
+                print(f"Warning: Failed to translate question '{original_question}' to English. Using original.")
+
     if conversation_history and len(conversation_history) > 0:
         # Build context-aware query using previous messages
         recent_context = " ".join(
@@ -224,14 +265,16 @@ def get_conversation_response(
             enhanced_query,
             selected_text=selected_text,
             software_level=software_level,
-            hardware_level=hardware_level
+            hardware_level=hardware_level,
+            response_language=response_language # Pass the language
         )
     else:
         return generate_answer(
             question,
             selected_text=selected_text,
             software_level=software_level,
-            hardware_level=hardware_level
+            hardware_level=hardware_level,
+            response_language=response_language # Pass the language
         )
 
 

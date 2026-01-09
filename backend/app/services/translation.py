@@ -10,6 +10,7 @@ Provider Comparison:
 """
 
 from typing import Optional
+import re
 from openai import OpenAI
 from sqlalchemy.orm import Session
 
@@ -360,6 +361,15 @@ EXAMPLES OF GOOD URDU TRANSLATION:
                 temperature=TEMPERATURE
             )
             translated_content = response.choices[0].message.content.strip()
+
+        # Post-process for RTL markdown correction (especially for Urdu)
+        if target_language == "ur":
+            # Fix patterns like `word**` to `**word`
+            translated_content = re.sub(r'(\w+)\*\*', r'**\1', translated_content)
+            # Fix patterns like `word*` to `*word`
+            translated_content = re.sub(r'(\w+)\*', r'*\1', translated_content)
+            # Fix patterns like `word`` to ``word`
+            translated_content = re.sub(r'(\w+)`', r'`\1', translated_content)
 
         # Save to cache if db session provided
         if db and save_in_cache:
