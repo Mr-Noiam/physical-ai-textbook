@@ -396,43 +396,6 @@ export default function ChatbotWidget(): JSX.Element {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Suggestion buttons (now always visible) */}
-          <div className={styles.suggestionButtons}>
-            <button
-              className={styles.suggestionButton}
-              onClick={() => sendMessage(suggestion1Text)}
-            >
-              <Translate
-                id="chatbot.suggestion1"
-                description="Chatbot suggestion 1"
-              >
-                What is a ROS 2 node?
-              </Translate>
-            </button>
-            <button
-              className={styles.suggestionButton}
-              onClick={() => sendMessage(suggestion2Text)}
-            >
-              <Translate
-                id="chatbot.suggestion2"
-                description="Chatbot suggestion 2"
-              >
-                How do I create a URDF file?
-              </Translate>
-            </button>
-            <button
-              className={styles.suggestionButton}
-              onClick={() => sendMessage(suggestion3Text)}
-            >
-              <Translate
-                id="chatbot.suggestion3"
-                description="Chatbot suggestion 3"
-              >
-                Explain Isaac Sim synthetic data
-              </Translate>
-            </button>
-          </div>
-
           {/* Input */}
           <form onSubmit={handleSubmit} className={styles.chatInput}>
             <input
